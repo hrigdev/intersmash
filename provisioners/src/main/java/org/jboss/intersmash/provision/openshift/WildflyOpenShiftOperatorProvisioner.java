@@ -63,7 +63,7 @@ public class WildflyOpenShiftOperatorProvisioner
 	@Override
 	public HasMetadataOperationsImpl<WildFlyServer, WildFlyServerList> wildflyCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, WildFlyServer.class, WildFlyServerList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, WildFlyServer.class, WildFlyServerList.class);
 	}
 }

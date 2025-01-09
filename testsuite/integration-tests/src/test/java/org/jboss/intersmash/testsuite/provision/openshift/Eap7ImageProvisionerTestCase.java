@@ -44,8 +44,7 @@ public class Eap7ImageProvisionerTestCase implements ProjectCreationCapable {
 	private static final OpenShift openShift = OpenShifts.master();
 	private static final Eap7ImageOpenShiftApplication application = OpenShiftProvisionerTestBase
 			.getEap7OpenShiftImageApplication();
-	private static final Eap7ImageOpenShiftProvisioner provisioner = new Eap7ImageOpenShiftProvisioner(
-			application);
+	private static final Eap7ImageOpenShiftProvisioner provisioner = new Eap7ImageOpenShiftProvisioner(application);
 
 	@BeforeAll
 	public static void deploy() {
@@ -64,23 +63,35 @@ public class Eap7ImageProvisionerTestCase implements ProjectCreationCapable {
 		SoftAssertions softAssertions = new SoftAssertions();
 		// verify system property added via cli
 		PodShell rsh = new PodShell(openShift, openShift.getAnyPod(application.getName()));
-		PodShellOutput output = rsh
-				.executeWithBash(String.format("$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
+		PodShellOutput output = rsh.executeWithBash(
+				String.format(
+						"$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
 						OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY));
-		softAssertions.assertThat(output.getError()).as("CLI configuration check: Error should be empty").isEmpty();
-		softAssertions.assertThat(output.getOutput()).as("CLI configuration check: Test property was not set by CLI")
+		softAssertions
+				.assertThat(output.getError())
+				.as("CLI configuration check: Error should be empty")
+				.isEmpty();
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("CLI configuration check: Test property was not set by CLI")
 				.contains("success", OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY);
 
 		// verify application git
 		GitBuildSource git = openShift.getBuildConfig(application.getName()).getSpec().getSource().getGit();
-		softAssertions.assertThat(git.getUri()).as("Git repository check")
+		softAssertions
+				.assertThat(git.getUri())
+				.as("Git repository check")
 				.isEqualTo(OpenShiftProvisionerTestBase.EAP7_TEST_APP_REPO);
-		softAssertions.assertThat(git.getRef()).as("Git repository reference check")
+		softAssertions
+				.assertThat(git.getRef())
+				.as("Git repository reference check")
 				.isEqualTo(OpenShiftProvisionerTestBase.EAP7_TEST_APP_REF);
 
 		// verify secret is mounted in /etc/secrets
 		output = rsh.executeWithBash("cat /etc/secrets/" + OpenShiftProvisionerTestBase.TEST_SECRET_FOO);
-		softAssertions.assertThat(output.getOutput()).as("Secret check: test secret was not properly mounted")
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("Secret check: test secret was not properly mounted")
 				.contains(OpenShiftProvisionerTestBase.TEST_SECRET_BAR);
 
 		// verify the ping service is created and env variables set correctly
@@ -90,7 +101,8 @@ public class Eap7ImageProvisionerTestCase implements ProjectCreationCapable {
 		expectedEnvVars.put("JGROUPS_PING_PROTOCOL", "dns.DNS_PING");
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_NAME", application.getPingServiceName());
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_PORT", "8888");
-		softAssertions.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
+		softAssertions
+				.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
 				.as("Ping service variables check")
 				.containsAllEntriesOf(expectedEnvVars);
 
@@ -100,18 +112,22 @@ public class Eap7ImageProvisionerTestCase implements ProjectCreationCapable {
 	@Test
 	public void verifyOpenShiftConfiguration() {
 		// environmentVariables
-		Assertions
-				.assertThat(
-						openShift.getBuildConfig(application.getName()).getSpec().getStrategy().getSourceStrategy().getEnv())
-				.as("Environment variable test").contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
+		Assertions.assertThat(
+				openShift
+						.getBuildConfig(application.getName())
+						.getSpec()
+						.getStrategy()
+						.getSourceStrategy()
+						.getEnv())
+				.as("Environment variable test")
+				.contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
 	}
 
-	/**
-	 * Secret resource should be created as a preDeploy() operation by a provisioner.
-	 */
+	/** Secret resource should be created as a preDeploy() operation by a provisioner. */
 	@Test
 	public void verifyDeployHooks() {
-		Assertions.assertThat(openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
+		Assertions.assertThat(
+				openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
 				.isNotNull();
 	}
 

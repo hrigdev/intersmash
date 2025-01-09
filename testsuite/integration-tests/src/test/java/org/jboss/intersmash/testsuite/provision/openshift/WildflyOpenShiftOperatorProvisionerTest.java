@@ -47,18 +47,19 @@ public class WildflyOpenShiftOperatorProvisionerTest implements ProjectCreationC
 
 	private static WildflyOpenShiftOperatorProvisioner initializeOperatorProvisioner() {
 		WildflyOpenShiftOperatorProvisioner operatorProvisioner = new WildflyOpenShiftOperatorProvisioner(
-
 				new WildflyOperatorApplication() {
 					@Override
 					public WildFlyServer getWildflyServer() {
 						String image;
 						if (IntersmashTestsuiteProperties.isCommunityTestExecutionProfileEnabled()) {
 							image = "quay.io/wildfly-quickstarts/wildfly-operator-quickstart:latest";
-						} else if (IntersmashTestsuiteProperties.isProductizedTestExecutionProfileEnabled()) {
+						} else if (IntersmashTestsuiteProperties
+								.isProductizedTestExecutionProfileEnabled()) {
 							image = "registry.redhat.io/jboss-eap-7/eap74-openjdk11-openshift-rhel8:latest";
 						} else {
 							throw new IllegalStateException(
-									String.format("Unknown Intersmash test suite execution profile: %s",
+									String.format(
+											"Unknown Intersmash test suite execution profile: %s",
 											IntersmashTestsuiteProperties.getTestExecutionProfile()));
 						}
 						return new WildFlyServerBuilder(getName())
@@ -80,8 +81,9 @@ public class WildflyOpenShiftOperatorProvisionerTest implements ProjectCreationC
 		WILDFLY_OPERATOR_PROVISIONER.configure();
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		WILDFLY_OPERATOR_PROVISIONER.unsubscribe();
 	}
@@ -95,34 +97,49 @@ public class WildflyOpenShiftOperatorProvisionerTest implements ProjectCreationC
 	@AfterEach
 	public void customResourcesCleanup() {
 		WILDFLY_OPERATOR_PROVISIONER.wildflyServerClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> WILDFLY_OPERATOR_PROVISIONER
-						.wildflyServerClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> WILDFLY_OPERATOR_PROVISIONER
+								.wildflyServerClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 	}
 
 	/**
 	 * Test actual deploy/scale/undeploy workflow by the operator
 	 *
-	 * Does subscribe/unsubscribe on its own, so no need to call explicitly here
+	 * <p>Does subscribe/unsubscribe on its own, so no need to call explicitly here
 	 *
-	 * This test adds no further checks here because {@link org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#undeploy} does the only useful
-	 * thing, i.e. check for 0 app pods, immediately after deleting, then unsubscribe the operator.
-	 * Checking through {@link org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#getPods()} here would intermittently find a resumed app pod
-	 * before unsubscribe (which doesn't wait ATM) finishes.
-	 * Basically there could be room for revisiting {@link org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#undeploy} and
-	 * {@link OperatorProvisioner#unsubscribe()}
+	 * <p>This test adds no further checks here because {@link
+	 * org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#undeploy} does the only
+	 * useful thing, i.e. check for 0 app pods, immediately after deleting, then unsubscribe the
+	 * operator. Checking through {@link
+	 * org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#getPods()} here would
+	 * intermittently find a resumed app pod before unsubscribe (which doesn't wait ATM) finishes.
+	 * Basically there could be room for revisiting {@link
+	 * org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner#undeploy} and {@link
+	 * OperatorProvisioner#unsubscribe()}
 	 */
 	@Test
 	public void basicProvisioningTest() {
 		WILDFLY_OPERATOR_PROVISIONER.deploy();
 		try {
-			Assertions.assertEquals(1, WILDFLY_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + WildflyOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					1,
+					WILDFLY_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ WildflyOperatorProvisioner.OPERATOR_ID
 							+ "' after deploy");
 
-			int scaledNum = WILDFLY_OPERATOR_PROVISIONER.getApplication().getWildflyServer().getSpec().getReplicas() + 1;
+			int scaledNum = WILDFLY_OPERATOR_PROVISIONER.getApplication().getWildflyServer().getSpec().getReplicas()
+					+ 1;
 			WILDFLY_OPERATOR_PROVISIONER.scale(scaledNum, true);
-			Assertions.assertEquals(scaledNum, WILDFLY_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + WildflyOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					scaledNum,
+					WILDFLY_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ WildflyOperatorProvisioner.OPERATOR_ID
 							+ "' after scaling");
 		} finally {
 			WILDFLY_OPERATOR_PROVISIONER.undeploy();

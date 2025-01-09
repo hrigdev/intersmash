@@ -37,9 +37,12 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 	public static final String SUPPORTED_JDK_OPENJDK_11 = "openjdk11";
 	public static final String SUPPORTED_JDK_OPENJDK_17 = "openjdk17";
 
-	public static final String[] SUPPORTED_EAP_VERSIONS = { SUPPORTED_EAP_VERSION_74, SUPPORTED_EAP_VERSION_XP4 };
-	public static final String[] SUPPORTED_JDK_VERSIONS = { SUPPORTED_JDK_OPENJDK_8, SUPPORTED_JDK_OPENJDK_11,
-			SUPPORTED_JDK_OPENJDK_17 };
+	public static final String[] SUPPORTED_EAP_VERSIONS = {
+			SUPPORTED_EAP_VERSION_74, SUPPORTED_EAP_VERSION_XP4
+	};
+	public static final String[] SUPPORTED_JDK_VERSIONS = {
+			SUPPORTED_JDK_OPENJDK_8, SUPPORTED_JDK_OPENJDK_11, SUPPORTED_JDK_OPENJDK_17
+	};
 
 	@Override
 	public String getTemplatesUrl() {
@@ -51,8 +54,10 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 		final String eapProductCode = getProductCode();
 		final String eapJdk = getEapJdk();
 		// validate used EAP image product code is allowed
-		if (!List.of(SUPPORTED_EAP_VERSIONS).stream().anyMatch(allowed -> allowed.equals(eapProductCode))) {
-			throw new IllegalStateException(String.format("Unsupported EAP product code: %s", eapProductCode));
+		if (!List.of(SUPPORTED_EAP_VERSIONS).stream()
+				.anyMatch(allowed -> allowed.equals(eapProductCode))) {
+			throw new IllegalStateException(
+					String.format("Unsupported EAP product code: %s", eapProductCode));
 		}
 
 		// validate used eap image JDK is allowed
@@ -66,11 +71,12 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 	}
 
 	/**
-	 * This is a bit different for EAP since the image stream template contains two image streams, one for builder
-	 * image, the other for runtime image. Create both image streams here, but return the list of builder image references
-	 * in order to be aligned with implementations for other products.
-	 * <p>
-	 * Update only DockerImage based tags, as the others are just tag references.
+	 * This is a bit different for EAP since the image stream template contains two image streams, one
+	 * for builder image, the other for runtime image. Create both image streams here, but return the
+	 * list of builder image references in order to be aligned with implementations for other
+	 * products.
+	 *
+	 * <p>Update only DockerImage based tags, as the others are just tag references.
 	 *
 	 * @return list of builder image stream references
 	 */
@@ -86,20 +92,24 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 					// update the DockerImage based tags with EAP runtime image set by configuration
 					runtimeImageStream.getSpec().getTags().stream()
 							.filter(tagReference -> tagReference.getFrom().getKind().equals("DockerImage"))
-							.forEach(tagReference -> {
-								tagReference.getFrom().setName(IntersmashConfig.eap7ImageURL());
-								tagReference.setImportPolicy(new TagImportPolicyBuilder().withInsecure(true).build());
-							});
+							.forEach(
+									tagReference -> {
+										tagReference.getFrom().setName(IntersmashConfig.eap7ImageURL());
+										tagReference.setImportPolicy(
+												new TagImportPolicyBuilder().withInsecure(true).build());
+									});
 					streams.add(openShift.imageStreams().createOrReplace(runtimeImageStream));
 				} else {
 					ImageStream imageStream = (ImageStream) item;
 					// update the DockerImage based tags with EAP builder image set by configuration
 					imageStream.getSpec().getTags().stream()
 							.filter(tagReference -> tagReference.getFrom().getKind().equals("DockerImage"))
-							.forEach(tagReference -> {
-								tagReference.getFrom().setName(IntersmashConfig.eap7ImageURL());
-								tagReference.setImportPolicy(new TagImportPolicyBuilder().withInsecure(true).build());
-							});
+							.forEach(
+									tagReference -> {
+										tagReference.getFrom().setName(IntersmashConfig.eap7ImageURL());
+										tagReference.setImportPolicy(
+												new TagImportPolicyBuilder().withInsecure(true).build());
+									});
 					streams.add(openShift.imageStreams().createOrReplace((ImageStream) item));
 				}
 			}
@@ -115,10 +125,11 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 	}
 
 	/**
-	 * Here the actual URL for the used EAP 7 image streams files, depending on the supported EAP 7 version
-	 *
-	 * @return String that represents the URL to the actual EAP 7 image streams files, depending on the supported EAP 7
+	 * Here the actual URL for the used EAP 7 image streams files, depending on the supported EAP 7
 	 * version
+	 *
+	 * @return String that represents the URL to the actual EAP 7 image streams files, depending on
+	 *     the supported EAP 7 version
 	 */
 	private String getUsedImageStreamUrl() {
 
@@ -127,8 +138,10 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 		final String eapJdk = getEapJdk();
 
 		// validate used EAP image product code is allowed
-		if (!List.of(SUPPORTED_EAP_VERSIONS).stream().anyMatch(allowed -> allowed.equals(eapProductCode))) {
-			throw new IllegalStateException(String.format("Unsupported EAP product code: %s", eapProductCode));
+		if (!List.of(SUPPORTED_EAP_VERSIONS).stream()
+				.anyMatch(allowed -> allowed.equals(eapProductCode))) {
+			throw new IllegalStateException(
+					String.format("Unsupported EAP product code: %s", eapProductCode));
 		}
 
 		// validate used eap image JDK is allowed
@@ -136,8 +149,10 @@ public class Eap7TemplateProvisioner implements OpenShiftTemplateProvisioner {
 			throw new IllegalStateException("Unsupported JDK version: " + eapJdk);
 		}
 
-		return getImageStreamsUrl() + eapProductCode
-				+ String.format("-%s", eapJdk) + imageStreamsFileNameSuffix;
+		return getImageStreamsUrl()
+				+ eapProductCode
+				+ String.format("-%s", eapJdk)
+				+ imageStreamsFileNameSuffix;
 	}
 
 	private String getImageStreamsUrl() {

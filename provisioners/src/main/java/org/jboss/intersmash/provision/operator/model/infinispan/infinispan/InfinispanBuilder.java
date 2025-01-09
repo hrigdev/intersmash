@@ -118,7 +118,8 @@ public final class InfinispanBuilder {
 	/**
 	 * Specify configuration for the logging functionality
 	 *
-	 * @param logging {@link Logging} instance representing configuration for the logging functionality
+	 * @param logging {@link Logging} instance representing configuration for the logging
+	 *     functionality
 	 * @return this
 	 */
 	public InfinispanBuilder logging(Logging logging) {
@@ -140,7 +141,8 @@ public final class InfinispanBuilder {
 	/**
 	 * Describe autoscaling configuration for the cluster
 	 *
-	 * @param autoscale {@link Autoscale} instance, describing autoscaling configuration for the cluster
+	 * @param autoscale {@link Autoscale} instance, describing autoscaling configuration for the
+	 *     cluster
 	 * @return this
 	 */
 	public InfinispanBuilder autoscale(Autoscale autoscale) {

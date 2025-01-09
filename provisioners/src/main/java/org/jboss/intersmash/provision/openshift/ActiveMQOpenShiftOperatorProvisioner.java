@@ -33,9 +33,7 @@ import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
 import lombok.NonNull;
 
-/**
- * ActiveMQ Operator based provisioner for OpenShift
- */
+/** ActiveMQ Operator based provisioner for OpenShift */
 public class ActiveMQOpenShiftOperatorProvisioner
 		// leverage ActiveMQ Artemis common Operator based provisioner behavior
 		extends ActiveMQOperatorProvisioner<NamespacedOpenShiftClient>
@@ -67,14 +65,15 @@ public class ActiveMQOpenShiftOperatorProvisioner
 	@Override
 	public HasMetadataOperationsImpl<ActiveMQArtemis, ActiveMQArtemisList> activeMQArtemisCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, ActiveMQArtemis.class, ActiveMQArtemisList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, ActiveMQArtemis.class, ActiveMQArtemisList.class);
 	}
 
 	@Override
 	public HasMetadataOperationsImpl<ActiveMQArtemisAddress, ActiveMQArtemisAddressList> activeMQArtemisAddressesCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, ActiveMQArtemisAddress.class, ActiveMQArtemisAddressList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(
+						crdc, ActiveMQArtemisAddress.class, ActiveMQArtemisAddressList.class);
 	}
 }

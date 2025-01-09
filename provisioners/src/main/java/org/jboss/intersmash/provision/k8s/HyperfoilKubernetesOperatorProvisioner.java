@@ -39,11 +39,12 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <p> @see io.hyperfoil.v1alpha2 <code>package-info.java</code> file, for details about how to create/update/delete an
- *     <b>Hyperfoil Custom Resource</b></p>
- * <p> @see org.jboss.intersmash.tools.provision.openshift.operator.hyperfoil.client.release021 <code>package-info.java</code>
- *     file, for details about how to interact with the <b>Hyperfoil Server</b> which is started by the <b>Hyperfoil Operator</b>
- *     when an <b>Hyperfoil Custom Resource</b> is created</p>
+ * @see io.hyperfoil.v1alpha2 <code>package-info.java</code> file, for details about how to
+ *     create/update/delete an <b>Hyperfoil Custom Resource</b>
+ *     <p>@see org.jboss.intersmash.tools.provision.openshift.operator.hyperfoil.client.release021
+ *     <code>package-info.java</code> file, for details about how to interact with the <b>Hyperfoil
+ *     Server</b> which is started by the <b>Hyperfoil Operator</b> when an <b>Hyperfoil Custom
+ *     Resource</b> is created
  */
 @Slf4j
 public class HyperfoilKubernetesOperatorProvisioner
@@ -67,15 +68,24 @@ public class HyperfoilKubernetesOperatorProvisioner
 	}
 
 	/**
-	 * On Kubernetes, the HyperFoil operator will expose the controller service externally via a {@code NodePort} type {@link Service}
+	 * On Kubernetes, the HyperFoil operator will expose the controller service externally via a
+	 * {@code NodePort} type {@link Service}
+	 *
 	 * @return A {@link URL} instance that represents the HyperFoil controller service external URL
 	 */
 	@Override
 	public URL getURL() {
-		Service service = this.client().services().inNamespace(this.client().getNamespace()).list().getItems()
-				.stream().filter(s -> getApplication().getName().equals(s.getMetadata().getName())
-						&& "NodePort".equals(s.getSpec().getType()))
-				.findFirst().orElse(null);
+		Service service = this.client()
+				.services()
+				.inNamespace(this.client().getNamespace())
+				.list()
+				.getItems()
+				.stream()
+				.filter(
+						s -> getApplication().getName().equals(s.getMetadata().getName())
+								&& "NodePort".equals(s.getSpec().getType()))
+				.findFirst()
+				.orElse(null);
 		if (Objects.nonNull(service)) {
 			final String host = KubernetesConfig.getKubernetesHostname();
 			final Integer nodePort = service.getSpec().getPorts().get(0).getNodePort();
@@ -83,7 +93,8 @@ public class HyperfoilKubernetesOperatorProvisioner
 			try {
 				return new URL(url);
 			} catch (MalformedURLException e) {
-				throw new RuntimeException(String.format("Hyperfoil operator route \"%s\"is malformed.", url), e);
+				throw new RuntimeException(
+						String.format("Hyperfoil operator route \"%s\"is malformed.", url), e);
 			}
 		}
 		return null;
@@ -94,7 +105,8 @@ public class HyperfoilKubernetesOperatorProvisioner
 	// =================================================================================================================
 	public HasMetadataOperationsImpl<Hyperfoil, HyperfoilList> hyperfoilCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return Kuberneteses.master().newHasMetadataOperation(crdc, Hyperfoil.class, HyperfoilList.class);
+		return Kuberneteses.master()
+				.newHasMetadataOperation(crdc, Hyperfoil.class, HyperfoilList.class);
 	}
 
 	@Override

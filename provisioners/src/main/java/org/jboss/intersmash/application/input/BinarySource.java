@@ -17,11 +17,8 @@ package org.jboss.intersmash.application.input;
 
 import java.nio.file.Path;
 
-/**
- * {@link BuildInput} represented by path to archive to be deployed
- */
+/** {@link BuildInput} represented by path to archive to be deployed */
 public interface BinarySource extends BuildInput {
 
 	Path getArchive();
-
 }

@@ -46,16 +46,17 @@ import lombok.NonNull;
 /**
  * An OpenShift provisioner that can provision applications through Helm Charts.
  *
- * The {@link HelmChartOpenShiftApplication} type which this generic provisioner is constrained on exposes the release
- * data through {@link HelmChartOpenShiftApplication#getRelease()}, which can be accessed during the provisioning
- * lifecycle, e.g.: when checking expected number of replicas or when scaling the replicas up or down.
- * The concrete {@link HelmChartRelease} instance obtained by
- * {@link HelmChartOpenShiftApplication#getRelease()} also implements
- * {@link SerializableHelmChartRelease} and thus provides
- * the ability to serialize the release data to a Helm Charts values file, which will be passed as an argument to
- * the `helm install/upgrade` commands.
+ * <p>The {@link HelmChartOpenShiftApplication} type which this generic provisioner is constrained
+ * on exposes the release data through {@link HelmChartOpenShiftApplication#getRelease()}, which can
+ * be accessed during the provisioning lifecycle, e.g.: when checking expected number of replicas or
+ * when scaling the replicas up or down. The concrete {@link HelmChartRelease} instance obtained by
+ * {@link HelmChartOpenShiftApplication#getRelease()} also implements {@link
+ * SerializableHelmChartRelease} and thus provides the ability to serialize the release data to a
+ * Helm Charts values file, which will be passed as an argument to the `helm install/upgrade`
+ * commands.
  *
- * Concrete implementations must provide the path for the Chart to be deployed and can extend the behavior.
+ * <p>Concrete implementations must provide the path for the Chart to be deployed and can extend the
+ * behavior.
  */
 public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShiftApplication>
 		implements OpenShiftProvisioner<A> {
@@ -63,7 +64,7 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 	protected final A application;
 	protected FailFastCheck ffCheck = () -> false;
 
-	private final static Map<String, Map<String, Path>> HELM_CHARTS = new HashMap<>();
+	private static final Map<String, Map<String, Path>> HELM_CHARTS = new HashMap<>();
 
 	public HelmChartOpenShiftProvisioner(@NonNull A application) {
 		this.application = application;
@@ -72,6 +73,7 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 	/**
 	 * Lazily initialize the XTF Helm binary client, we prefer this instead of static initialization
 	 * since the latter no cluster interaction should implicitly occur, theoretically.
+	 *
 	 * @return A static instance of {@link HelmBinary} to execute operations via the Helm CLI.
 	 */
 	protected HelmBinary helmBinary() {
@@ -112,7 +114,8 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 	@Override
 	public void undeploy() {
 		helmBinary().execute(getHelmChartUninstallArguments(this.getApplication().getName()));
-		OpenShiftWaiters.get(openShift, ffCheck).areNoPodsPresent("app.kubernetes.io/instance", application.getName())
+		OpenShiftWaiters.get(openShift, ffCheck)
+				.areNoPodsPresent("app.kubernetes.io/instance", application.getName())
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -134,7 +137,8 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 
 	protected void waitForReplicas(int replicas) {
 		OpenShiftWaiters.get(openShift, ffCheck)
-				.areExactlyNPodsReady(replicas, "app.kubernetes.io/instance", application.getName()).level(Level.DEBUG)
+				.areExactlyNPodsReady(replicas, "app.kubernetes.io/instance", application.getName())
+				.level(Level.DEBUG)
 				.waitFor();
 	}
 
@@ -144,36 +148,50 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 				.collect(Collectors.toList());
 		arguments.addAll(Arrays.asList(getHelmChartValuesFilesArguments(application)));
 		arguments.addAll(getSetOverrideArguments(application));
-		arguments.addAll(Arrays.asList(
-				"--kubeconfig", OpenShifts.adminBinary().getOcConfigPath(),
-				// since we deploy from cloned charts repository, we need to set the "--dependency-update"
-				// flag to fetch any non-local dependencies that chart requires
-				// in order to prevent any issues with the helm chart
-				"--dependency-update"));
+		arguments.addAll(
+				Arrays.asList(
+						"--kubeconfig",
+						OpenShifts.adminBinary().getOcConfigPath(),
+						// since we deploy from cloned charts repository, we need to set the
+						// "--dependency-update"
+						// flag to fetch any non-local dependencies that chart requires
+						// in order to prevent any issues with the helm chart
+						"--dependency-update"));
 		return arguments.stream().toArray(String[]::new);
 	}
 
 	private static String[] getHelmChartInstallArguments(
 			final HelmChartOpenShiftApplication application, final Path helmChartPath) {
-		List<String> arguments = Stream.of("install", application.getName(), helmChartPath.toAbsolutePath().toString(),
-				"--replace").collect(Collectors.toList());
+		List<String> arguments = Stream.of(
+				"install",
+				application.getName(),
+				helmChartPath.toAbsolutePath().toString(),
+				"--replace")
+				.collect(Collectors.toList());
 		arguments.addAll(Arrays.asList(getHelmChartValuesFilesArguments(application)));
 		arguments.addAll(getSetOverrideArguments(application));
-		arguments.addAll(Arrays.asList(
-				"--kubeconfig", OpenShifts.adminBinary().getOcConfigPath(),
-				// since we deploy from cloned charts repository, we need to set the "--dependency-update"
-				// flag to fetch any non-local dependencies that chart requires
-				// in order to prevent any issues with the helm chart
-				"--dependency-update"));
+		arguments.addAll(
+				Arrays.asList(
+						"--kubeconfig",
+						OpenShifts.adminBinary().getOcConfigPath(),
+						// since we deploy from cloned charts repository, we need to set the
+						// "--dependency-update"
+						// flag to fetch any non-local dependencies that chart requires
+						// in order to prevent any issues with the helm chart
+						"--dependency-update"));
 		return arguments.stream().toArray(String[]::new);
 	}
 
 	private static String[] getHelmChartUninstallArguments(final String releaseName) {
-		return Stream.of("uninstall", releaseName, "--kubeconfig", OpenShifts.adminBinary().getOcConfigPath())
-				.collect(Collectors.toList()).stream().toArray(String[]::new);
+		return Stream.of(
+				"uninstall", releaseName, "--kubeconfig", OpenShifts.adminBinary().getOcConfigPath())
+				.collect(Collectors.toList())
+				.stream()
+				.toArray(String[]::new);
 	}
 
-	private static String[] getHelmChartValuesFilesArguments(HelmChartOpenShiftApplication application) {
+	private static String[] getHelmChartValuesFilesArguments(
+			HelmChartOpenShiftApplication application) {
 		// adds a values file for the release data
 		List<String> arguments = Stream.of("-f", application.getRelease().toValuesFile().toAbsolutePath().toString())
 				.collect(Collectors.toList());
@@ -181,7 +199,8 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 		arguments.addAll(
 				application.getRelease().getAdditionalValuesFiles().stream()
 						.map(file -> Arrays.asList("-f", file.toAbsolutePath().toString()))
-						.flatMap(List::stream).collect(Collectors.toList()));
+						.flatMap(List::stream)
+						.collect(Collectors.toList()));
 		return arguments.stream().toArray(String[]::new);
 	}
 
@@ -205,31 +224,35 @@ public abstract class HelmChartOpenShiftProvisioner<A extends HelmChartOpenShift
 			String helmChartsBranch = this.getApplication().getHelmChartsRepositoryRef();
 			GitProject helmChartsProject = GitUtil.cloneRepository(
 					GitUtil.REPOSITORIES
-							.resolve(String.format("%s-%s", this.getClass().getSimpleName(),
-									this.getApplication().getHelmChartsRepositoryName()))
+							.resolve(
+									String.format(
+											"%s-%s",
+											this.getClass().getSimpleName(),
+											this.getApplication().getHelmChartsRepositoryName()))
 							.resolve("helm-charts"),
 					helmChartsRepository,
 					helmChartsBranch);
-			HELM_CHARTS.put(cachedChartsKey,
-					retrieveCharts(helmChartsProject.getPath(), this.getApplication().getHelmChartsRepositoryName()));
+			HELM_CHARTS.put(
+					cachedChartsKey,
+					retrieveCharts(
+							helmChartsProject.getPath(), this.getApplication().getHelmChartsRepositoryName()));
 		}
 		return HELM_CHARTS.get(cachedChartsKey);
 	}
 
 	private String forgeHelmChartsKey() {
-		return String.format("%s:%s:%s",
+		return String.format(
+				"%s:%s:%s",
 				this.getApplication().getHelmChartsRepositoryUrl(),
 				this.getApplication().getHelmChartsRepositoryRef(),
 				this.getApplication().getHelmChartsRepositoryName());
 	}
 
 	/**
-	 * Parses Helm Chart repository into a Map&lt;String, Path&gt;
-	 * with entries containing chart names and their absolute paths
-	 * Example {
-	 * 		"eap74" : /tmp/wildfly-charts/charts/eap74,
-	 * 		"eap-xp2" : /tmp/wildfly-charts/charts/eap-xp2
-	 * 	}
+	 * Parses Helm Chart repository into a Map&lt;String, Path&gt; with entries containing chart names
+	 * and their absolute paths Example { "eap74" : /tmp/wildfly-charts/charts/eap74, "eap-xp2" :
+	 * /tmp/wildfly-charts/charts/eap-xp2 }
+	 *
 	 * @param projectRoot of the Helm Chart repository
 	 * @return Map&lt;String, Path&gt; of Helm Charts and their absolute path
 	 */

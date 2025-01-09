@@ -115,7 +115,7 @@ public final class KeycloakAPIRealmBuilder {
 	}
 
 	/**
-	 *  Set Keycloak Clients.
+	 * Set Keycloak Clients.
 	 *
 	 * @param clients A {@link Set} of {@link Clients} instances
 	 * @return this
@@ -126,7 +126,7 @@ public final class KeycloakAPIRealmBuilder {
 	}
 
 	/**
-	 *  Add one Keycloak Client.
+	 * Add one Keycloak Client.
 	 *
 	 * @param client The {@link Clients} instance representing the client that should be added
 	 * @return this
@@ -153,8 +153,8 @@ public final class KeycloakAPIRealmBuilder {
 	/**
 	 * Add one Identity Provider.
 	 *
-	 * @param identityProvider The {@link IdentityProviders} instance representing the identity provider that
-	 *                         should be added
+	 * @param identityProvider The {@link IdentityProviders} instance representing the identity
+	 *     provider that should be added
 	 * @return this
 	 */
 	public KeycloakAPIRealmBuilder identityProviders(IdentityProviders identityProvider) {
@@ -179,8 +179,7 @@ public final class KeycloakAPIRealmBuilder {
 	/**
 	 * Add one Event Listener.
 	 *
-	 * @param eventsListener The string representing the events listener that
-	 *                         should be added
+	 * @param eventsListener The string representing the events listener that should be added
 	 * @return this
 	 */
 	public KeycloakAPIRealmBuilder eventsListeners(String eventsListener) {
@@ -246,7 +245,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Authentication flows.
 	//	 */
-	//	public KeycloakAPIRealmBuilder authenticationFlows(List<KeycloakAPIAuthenticationFlow> authenticationFlows) {
+	//	public KeycloakAPIRealmBuilder authenticationFlows(List<KeycloakAPIAuthenticationFlow>
+	// authenticationFlows) {
 	//		this.authenticationFlows = authenticationFlows;
 	//		return this;
 	//	}
@@ -254,7 +254,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Add Authentication flow.
 	//	 */
-	//	public KeycloakAPIRealmBuilder authenticationFlows(KeycloakAPIAuthenticationFlow authenticationFlow) {
+	//	public KeycloakAPIRealmBuilder authenticationFlows(KeycloakAPIAuthenticationFlow
+	// authenticationFlow) {
 	//		if (authenticationFlows == null) {
 	//			authenticationFlows = new ArrayList<>();
 	//		}
@@ -265,7 +266,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Authenticator config.
 	//	 */
-	//	public KeycloakAPIRealmBuilder authenticatorConfig(List<KeycloakAPIAuthenticatorConfig> authenticatorConfig) {
+	//	public KeycloakAPIRealmBuilder authenticatorConfig(List<KeycloakAPIAuthenticatorConfig>
+	// authenticatorConfig) {
 	//		this.authenticatorConfig = authenticatorConfig;
 	//		return this;
 	//	}
@@ -273,7 +275,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Add Authenticator config.
 	//	 */
-	//	public KeycloakAPIRealmBuilder authenticatorConfig(KeycloakAPIAuthenticatorConfig authenticatorConfig) {
+	//	public KeycloakAPIRealmBuilder authenticatorConfig(KeycloakAPIAuthenticatorConfig
+	// authenticatorConfig) {
 	//		if (this.authenticatorConfig == null) {
 	//			this.authenticatorConfig = new ArrayList<>();
 	//		}
@@ -282,9 +285,11 @@ public final class KeycloakAPIRealmBuilder {
 	//	}
 	//
 	//	/**
-	//	 * Point keycloak to an external user provider to validate credentials or pull in identity information.
+	//	 * Point keycloak to an external user provider to validate credentials or pull in identity
+	// information.
 	//	 */
-	//	public KeycloakAPIRealmBuilder userFederationProviders(List<UsersFederationProvider> userFederationProviders) {
+	//	public KeycloakAPIRealmBuilder userFederationProviders(List<UsersFederationProvider>
+	// userFederationProviders) {
 	//		this.userFederationProviders = userFederationProviders;
 	//		return this;
 	//	}
@@ -292,7 +297,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Add external user provider to validate credentials or pull in identity information.
 	//	 */
-	//	public KeycloakAPIRealmBuilder userFederationProviders(UsersFederationProvider userFederationProvider) {
+	//	public KeycloakAPIRealmBuilder userFederationProviders(UsersFederationProvider
+	// userFederationProvider) {
 	//		if (userFederationProviders == null) {
 	//			userFederationProviders = new ArrayList<>();
 	//		}
@@ -301,18 +307,22 @@ public final class KeycloakAPIRealmBuilder {
 	//	}
 	//
 	//	/**
-	//	 * User federation mappers are extension points triggered by the user federation at various points.
+	//	 * User federation mappers are extension points triggered by the user federation at various
+	// points.
 	//	 */
-	//	public KeycloakAPIRealmBuilder userFederationMappers(List<UsersFederationMapper> userFederationMappers) {
+	//	public KeycloakAPIRealmBuilder userFederationMappers(List<UsersFederationMapper>
+	// userFederationMappers) {
 	//		this.userFederationMappers = userFederationMappers;
 	//		return this;
 	//	}
 	//
 	//	/**
-	//	 * Add user federation mapper. User federation mappers are extension points triggered by the user federation at
+	//	 * Add user federation mapper. User federation mappers are extension points triggered by the
+	// user federation at
 	//	 * various points.
 	//	 */
-	//	public KeycloakAPIRealmBuilder userFederationMappers(UsersFederationMapper userFederationMapper) {
+	//	public KeycloakAPIRealmBuilder userFederationMappers(UsersFederationMapper
+	// userFederationMapper) {
 	//		if (userFederationMappers == null) {
 	//			userFederationMappers = new ArrayList<>();
 	//		}
@@ -331,7 +341,8 @@ public final class KeycloakAPIRealmBuilder {
 	//	/**
 	//	 * Email as username.
 	//	 */
-	//	public KeycloakAPIRealmBuilder registrationEmailAsUsername(boolean registrationEmailAsUsername) {
+	//	public KeycloakAPIRealmBuilder registrationEmailAsUsername(boolean registrationEmailAsUsername)
+	// {
 	//		this.registrationEmailAsUsername = registrationEmailAsUsername;
 	//		return this;
 	//	}

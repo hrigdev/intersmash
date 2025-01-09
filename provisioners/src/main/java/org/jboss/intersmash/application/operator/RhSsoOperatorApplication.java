@@ -25,11 +25,13 @@ import org.keycloak.v1alpha1.KeycloakRealm;
 import org.keycloak.v1alpha1.KeycloakUser;
 
 /**
- * End user Application interface which presents Keycloak operator application on OpenShift Container Platform.
+ * End user Application interface which presents Keycloak operator application on OpenShift
+ * Container Platform.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link org.jboss.intersmash.provision.operator.RhSsoOperatorProvisioner}</li>
+ *   <li>{@link org.jboss.intersmash.provision.operator.RhSsoOperatorProvisioner}
  * </ul>
  */
 @Deprecated(since = "0.0.2")

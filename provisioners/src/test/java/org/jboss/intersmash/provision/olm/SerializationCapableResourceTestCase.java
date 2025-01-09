@@ -25,9 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-/**
- * Verify the functionality provided by {@link SerializationCapableResource} interface.
- */
+/** Verify the functionality provided by {@link SerializationCapableResource} interface. */
 public class SerializationCapableResourceTestCase {
 
 	private static Stream<SerializationCapableResource> resourceProvider() {
@@ -49,14 +47,12 @@ public class SerializationCapableResourceTestCase {
 						"Intersmash"));
 	}
 
-	/**
-	 * Verify that object equals after serialization to file and deserialization back to object.
-	 */
-
+	/** Verify that object equals after serialization to file and deserialization back to object. */
 	@ParameterizedTest(name = "{displayName}#class({0})")
 	@MethodSource("resourceProvider")
-	public void writeReadEqualsTest(SerializationCapableResource resource) throws IOException, NoSuchMethodException,
-			InvocationTargetException, InstantiationException, IllegalAccessException {
+	public void writeReadEqualsTest(SerializationCapableResource resource)
+			throws IOException, NoSuchMethodException, InvocationTargetException, InstantiationException,
+			IllegalAccessException {
 		// write test
 		File yaml = resource.save();
 		// read test
@@ -64,8 +60,11 @@ public class SerializationCapableResourceTestCase {
 		SerializationCapableResource loaded = resource.getClass().getDeclaredConstructor().newInstance();
 		loaded.load(yaml);
 		//
-		Assertions.assertEquals(resource, loaded,
-				"OpenShift resource (" + resource.getClass().getSimpleName()
+		Assertions.assertEquals(
+				resource,
+				loaded,
+				"OpenShift resource ("
+						+ resource.getClass().getSimpleName()
 						+ ") does not equal after serialization into yaml file and deserialization back to an object.");
 	}
 }

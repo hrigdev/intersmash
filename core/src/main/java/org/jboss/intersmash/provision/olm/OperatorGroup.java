@@ -26,20 +26,23 @@ import io.fabric8.kubernetes.model.annotation.Group;
 import io.fabric8.kubernetes.model.annotation.Version;
 
 /**
- * An OperatorGroup is an OLM resource that provides multi-tenant configuration to OLM-installed Operators.
- * An OperatorGroup selects target namespaces in which to generate required RBAC access for its member Operators.
- * <p>
- * https://docs.openshift.com/container-platform/4.4/operators/understanding_olm/olm-understanding-operatorgroups.html#olm-operatorgroups-about_olm-understanding-operatorgroups
+ * An OperatorGroup is an OLM resource that provides multi-tenant configuration to OLM-installed
+ * Operators. An OperatorGroup selects target namespaces in which to generate required RBAC access
+ * for its member Operators.
+ *
+ * <p>https://docs.openshift.com/container-platform/4.4/operators/understanding_olm/olm-understanding-operatorgroups.html#olm-operatorgroups-about_olm-understanding-operatorgroups
  */
 @Group("operators.coreos.com")
 @Version("v1")
-public class OperatorGroup extends CustomResource implements SerializationCapableResource<OperatorGroup> {
+public class OperatorGroup extends CustomResource
+		implements SerializationCapableResource<OperatorGroup> {
 
 	private Map<String, List<String>> spec = new HashMap<>();
 
 	public OperatorGroup() {
 		this.setKind("OperatorGroup");
-		this.setApiVersion("operators.coreos.com/v1"); // todo we could get this one from target cluster as well
+		this.setApiVersion(
+				"operators.coreos.com/v1"); // todo we could get this one from target cluster as well
 	}
 
 	public OperatorGroup(String namespace) {
@@ -66,9 +69,9 @@ public class OperatorGroup extends CustomResource implements SerializationCapabl
 		if (!(o instanceof OperatorGroup))
 			return false;
 		OperatorGroup that = (OperatorGroup) o;
-		return spec.equals(that.spec) &&
-				this.getMetadata().getName().equals(that.getMetadata().getName()) &&
-				this.getMetadata().getNamespace().equals(that.getMetadata().getNamespace());
+		return spec.equals(that.spec)
+				&& this.getMetadata().getName().equals(that.getMetadata().getName())
+				&& this.getMetadata().getNamespace().equals(that.getMetadata().getNamespace());
 	}
 
 	@Override
@@ -78,9 +81,7 @@ public class OperatorGroup extends CustomResource implements SerializationCapabl
 
 	@Override
 	public String toString() {
-		return super.toString() + " OperatorGroup{" +
-				"spec=" + spec +
-				'}';
+		return super.toString() + " OperatorGroup{" + "spec=" + spec + '}';
 	}
 
 	@Override

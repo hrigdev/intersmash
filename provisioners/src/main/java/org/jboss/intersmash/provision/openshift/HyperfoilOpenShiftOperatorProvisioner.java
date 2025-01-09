@@ -39,11 +39,12 @@ import io.hyperfoil.v1alpha2.HyperfoilList;
 import lombok.NonNull;
 
 /**
- * <p> @see io.hyperfoil.v1alpha2 <code>package-info.java</code> file, for details about how to create/update/delete an
- *     <b>Hyperfoil Custom Resource</b></p>
- * <p> @see org.jboss.intersmash.tools.provision.openshift.operator.hyperfoil.client.release021 <code>package-info.java</code>
- *     file, for details about how to interact with the <b>Hyperfoil Server</b> which is started by the <b>Hyperfoil Operator</b>
- *     when an <b>Hyperfoil Custom Resource</b> is created</p>
+ * @see io.hyperfoil.v1alpha2 <code>package-info.java</code> file, for details about how to
+ *     create/update/delete an <b>Hyperfoil Custom Resource</b>
+ *     <p>@see org.jboss.intersmash.tools.provision.openshift.operator.hyperfoil.client.release021
+ *     <code>package-info.java</code> file, for details about how to interact with the <b>Hyperfoil
+ *     Server</b> which is started by the <b>Hyperfoil Operator</b> when an <b>Hyperfoil Custom
+ *     Resource</b> is created
  */
 public class HyperfoilOpenShiftOperatorProvisioner
 		// leverage Hyperfoil common Operator based provisioner behavior
@@ -70,8 +71,8 @@ public class HyperfoilOpenShiftOperatorProvisioner
 	@Override
 	protected FailFastCheck getFailFastCheck() {
 		if (ffCheck == null) {
-			ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-					getApplication().getName());
+			ffCheck = FailFastUtils.getFailFastCheck(
+					EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), getApplication().getName());
 		}
 		return ffCheck;
 	}
@@ -80,14 +81,15 @@ public class HyperfoilOpenShiftOperatorProvisioner
 	public URL getURL() {
 		Route route = OpenShiftProvisioner.openShift.getRoute(getApplication().getName());
 		if (Objects.nonNull(route)) {
-			String host = route.getSpec().getHost() != null ? route.getSpec().getHost()
+			String host = route.getSpec().getHost() != null
+					? route.getSpec().getHost()
 					: route.getStatus().getIngress().get(0).getHost();
 			String url = String.format("https://%s", host);
 			try {
-				return new URL(
-						url);
+				return new URL(url);
 			} catch (MalformedURLException e) {
-				throw new RuntimeException(String.format("Hyperfoil operator route \"%s\"is malformed.", url), e);
+				throw new RuntimeException(
+						String.format("Hyperfoil operator route \"%s\"is malformed.", url), e);
 			}
 		}
 		return null;
@@ -98,8 +100,7 @@ public class HyperfoilOpenShiftOperatorProvisioner
 	// =================================================================================================================
 	public HasMetadataOperationsImpl<Hyperfoil, HyperfoilList> hyperfoilCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, Hyperfoil.class, HyperfoilList.class);
+		return OpenShifts.master().newHasMetadataOperation(crdc, Hyperfoil.class, HyperfoilList.class);
 	}
 
 	@Override

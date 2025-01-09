@@ -88,8 +88,8 @@ public final class WildFlyServerBuilder {
 	/**
 	 * Spec to specify how standalone configuration can be read from a ConfigMap.
 	 *
-	 * @param standaloneConfigMap {@link StandaloneConfigMap} instance that stores the desired standalone
-	 *                                                           configuration
+	 * @param standaloneConfigMap {@link StandaloneConfigMap} instance that stores the desired
+	 *     standalone configuration
 	 * @return this
 	 */
 	public WildFlyServerBuilder standaloneConfigMap(StandaloneConfigMap standaloneConfigMap) {
@@ -111,7 +111,8 @@ public final class WildFlyServerBuilder {
 	/**
 	 * Name of the {@code ServiceAccount} to use to run the WildFlyServer Pods.
 	 *
-	 * @param serviceAccountName Name of of the {@code ServiceAccount} to use to run the WildFlyServer Pods.
+	 * @param serviceAccountName Name of of the {@code ServiceAccount} to use to run the WildFlyServer
+	 *     Pods.
 	 * @return this
 	 */
 	public WildFlyServerBuilder serviceAccountName(String serviceAccountName) {
@@ -120,9 +121,11 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * Set a list of environment variable present in the containers from source (either ConfigMap or Secret).
+	 * Set a list of environment variable present in the containers from source (either ConfigMap or
+	 * Secret).
 	 *
-	 * @param envFrom Desired list of environment variable to be set in the containers from source (either ConfigMap or Secret).
+	 * @param envFrom Desired list of environment variable to be set in the containers from source
+	 *     (either ConfigMap or Secret).
 	 * @return this
 	 */
 	public WildFlyServerBuilder envFrom(List<EnvFrom> envFrom) {
@@ -131,9 +134,11 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * Set an environment variable to be present in the containers from source (either ConfigMap or Secret).
+	 * Set an environment variable to be present in the containers from source (either ConfigMap or
+	 * Secret).
 	 *
-	 * @param envFrom Desired environment variable to be set in the containers from source (either ConfigMap or Secret).
+	 * @param envFrom Desired environment variable to be set in the containers from source (either
+	 *     ConfigMap or Secret).
 	 * @return this
 	 */
 	public WildFlyServerBuilder envFrom(EnvFrom envFrom) {
@@ -170,10 +175,11 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * Whether connections from the same client ip are passed to the same WildFlyServer instance/pod each time
+	 * Whether connections from the same client ip are passed to the same WildFlyServer instance/pod
+	 * each time
 	 *
-	 * @param sessionAffinity Whether connections from the same client ip should be passed to the same WildFlyServer
-	 *                           instance/pod each time
+	 * @param sessionAffinity Whether connections from the same client ip should be passed to the same
+	 *     WildFlyServer instance/pod each time
 	 * @return this
 	 */
 	public WildFlyServerBuilder sessionAffinity(Boolean sessionAffinity) {
@@ -182,8 +188,8 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * List of secret names to mount as volumes in the containers. Each secret is mounted as a read-only volume under
-	 * /etc/secrets/&lt;secret name&gt;
+	 * List of secret names to mount as volumes in the containers. Each secret is mounted as a
+	 * read-only volume under /etc/secrets/&lt;secret name&gt;
 	 *
 	 * @param secrets List of desired secret names to mount as volumes in the containers
 	 * @return this
@@ -194,8 +200,8 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * Secret name to mount as volume in the containers. Each secret is mounted as a read-only volume under
-	 * /etc/secrets/&lt;secret name&gt;
+	 * Secret name to mount as volume in the containers. Each secret is mounted as a read-only volume
+	 * under /etc/secrets/&lt;secret name&gt;
 	 *
 	 * @param secret Desired secret names to mount as volume in the containers
 	 * @return this
@@ -209,8 +215,8 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * List of ConfigMap names to mount as volumes in the containers. Each config map is mounted as a read-only
-	 * volume under /etc/configmaps/&lt;config map name&gt;
+	 * List of ConfigMap names to mount as volumes in the containers. Each config map is mounted as a
+	 * read-only volume under /etc/configmaps/&lt;config map name&gt;
 	 *
 	 * @param configMaps List of desired config map names to mount as volumes in the containers
 	 * @return this
@@ -221,8 +227,8 @@ public final class WildFlyServerBuilder {
 	}
 
 	/**
-	 * ConfigMap name to mount as volumes in the containers. Each config map is mounted as a read-only volume under
-	 * /etc/configmaps/&lt;config map name&gt;
+	 * ConfigMap name to mount as volumes in the containers. Each config map is mounted as a read-only
+	 * volume under /etc/configmaps/&lt;config map name&gt;
 	 *
 	 * @param configMap Desired config map name to mount as volume in the containers
 	 * @return this
@@ -238,8 +244,8 @@ public final class WildFlyServerBuilder {
 	/**
 	 * Disable the creation a route to the HTTP port of the application service.
 	 *
-	 * @param disableHTTPRoute Whether the creation a route to the HTTP port of the application service should be
-	 *                         disabled
+	 * @param disableHTTPRoute Whether the creation a route to the HTTP port of the application
+	 *     service should be disabled
 	 * @return this
 	 */
 	public WildFlyServerBuilder disableHTTPRoute(Boolean disableHTTPRoute) {

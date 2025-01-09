@@ -40,11 +40,10 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.openshift.api.model.GitBuildSource;
 
 /**
- * This test verifies a binary build can be executed using a remote git repository containing a maven project using the
- * wildfly-maven-plugin.
- * <br>
- * The code inside the remote git repository is pulled by the running Pod and the actual Maven build is executed
- * inside the builder image.
+ * This test verifies a binary build can be executed using a remote git repository containing a
+ * maven project using the wildfly-maven-plugin. <br>
+ * The code inside the remote git repository is pulled by the running Pod and the actual Maven build
+ * is executed inside the builder image.
  */
 @CleanBeforeAll
 @OpenShiftTest
@@ -71,23 +70,35 @@ public class WildflyImageProvisionerTestCase implements ProjectCreationCapable {
 		SoftAssertions softAssertions = new SoftAssertions();
 		// verify system property added via cli
 		PodShell rsh = new PodShell(openShift, openShift.getAnyPod(application.getName()));
-		PodShellOutput output = rsh
-				.executeWithBash(String.format("$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
+		PodShellOutput output = rsh.executeWithBash(
+				String.format(
+						"$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
 						OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY));
-		softAssertions.assertThat(output.getError()).as("CLI configuration check: Error should be empty").isEmpty();
-		softAssertions.assertThat(output.getOutput()).as("CLI configuration check: Test property was not set by CLI")
+		softAssertions
+				.assertThat(output.getError())
+				.as("CLI configuration check: Error should be empty")
+				.isEmpty();
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("CLI configuration check: Test property was not set by CLI")
 				.contains("success", OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY);
 
 		// verify application git
 		GitBuildSource git = openShift.getBuildConfig(application.getName()).getSpec().getSource().getGit();
-		softAssertions.assertThat(git.getUri()).as("Git repository check")
+		softAssertions
+				.assertThat(git.getUri())
+				.as("Git repository check")
 				.isEqualTo(OpenShiftProvisionerTestBase.TEST_REPO);
-		softAssertions.assertThat(git.getRef()).as("Git repository reference check")
+		softAssertions
+				.assertThat(git.getRef())
+				.as("Git repository reference check")
 				.isEqualTo(OpenShiftProvisionerTestBase.TEST_REF);
 
 		// verify secret is mounted in /etc/secrets
 		output = rsh.executeWithBash("cat /etc/secrets/" + TEST_SECRET_FOO);
-		softAssertions.assertThat(output.getOutput()).as("Secret check: test secret was not properly mounted")
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("Secret check: test secret was not properly mounted")
 				.contains(TEST_SECRET_BAR);
 
 		// verify the ping service is created and env variables set correctly
@@ -97,7 +108,8 @@ public class WildflyImageProvisionerTestCase implements ProjectCreationCapable {
 		expectedEnvVars.put("JGROUPS_PING_PROTOCOL", "dns.DNS_PING");
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_NAME", application.getPingServiceName());
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_PORT", "8888");
-		softAssertions.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
+		softAssertions
+				.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
 				.as("Ping service variables check")
 				.containsAllEntriesOf(expectedEnvVars);
 
@@ -107,18 +119,22 @@ public class WildflyImageProvisionerTestCase implements ProjectCreationCapable {
 	@Test
 	public void verifyOpenShiftConfiguration() {
 		// environmentVariables
-		Assertions
-				.assertThat(
-						openShift.getBuildConfig(application.getName()).getSpec().getStrategy().getSourceStrategy().getEnv())
-				.as("Environment variable test").contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
+		Assertions.assertThat(
+				openShift
+						.getBuildConfig(application.getName())
+						.getSpec()
+						.getStrategy()
+						.getSourceStrategy()
+						.getEnv())
+				.as("Environment variable test")
+				.contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
 	}
 
-	/**
-	 * Secret resource should be created as a preDeploy() operation by a provisioner.
-	 */
+	/** Secret resource should be created as a preDeploy() operation by a provisioner. */
 	@Test
 	public void verifyDeployHooks() {
-		Assertions.assertThat(openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
+		Assertions.assertThat(
+				openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
 				.isNotNull();
 	}
 

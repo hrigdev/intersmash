@@ -24,7 +24,8 @@ import org.jboss.intersmash.provision.openshift.WildflyOpenShiftOperatorProvisio
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WildflyOperatorProvisionerFactory implements ProvisionerFactory<WildflyOperatorProvisioner> {
+public class WildflyOperatorProvisionerFactory
+		implements ProvisionerFactory<WildflyOperatorProvisioner> {
 
 	@Override
 	public WildflyOperatorProvisioner getProvisioner(Application application) {
@@ -32,7 +33,8 @@ public class WildflyOperatorProvisionerFactory implements ProvisionerFactory<Wil
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
 				return new WildflyOpenShiftOperatorProvisioner((WildflyOperatorApplication) application);
 			}
-			throw new UnsupportedOperationException("WildFly operator based provisioner for Kubernetes is not implemented yet");
+			throw new UnsupportedOperationException(
+					"WildFly operator based provisioner for Kubernetes is not implemented yet");
 		}
 		return null;
 	}

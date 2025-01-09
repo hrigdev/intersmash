@@ -25,17 +25,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * <p>
  * A simple servlet taking advantage of features added in 3.0.
- * </p>
  *
- * <p>
- * The servlet is registered and mapped to /HelloServlet using the {@linkplain WebServlet
- * @HttpServlet}. The {@link HelloService} is injected by CDI.
- * </p>
+ * <p>The servlet is registered and mapped to /HelloServlet using the {@linkplain
+ * WebServlet @HttpServlet}. The {@link HelloService} is injected by CDI.
  *
  * @author Pete Muir
- *
  */
 @SuppressWarnings("serial")
 @WebServlet("/HelloWorld")
@@ -57,5 +52,4 @@ public class HelloWorldServlet extends HttpServlet {
 		writer.println(PAGE_FOOTER);
 		writer.close();
 	}
-
 }

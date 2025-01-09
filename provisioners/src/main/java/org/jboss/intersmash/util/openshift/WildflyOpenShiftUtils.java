@@ -25,15 +25,16 @@ import io.fabric8.openshift.api.model.ImageStreamTag;
 /**
  * The OpenShift Container Platform utilities related to WILDFLY services.
  *
- * The class should follow the Wildfly Applications and Provisioners.
+ * <p>The class should follow the Wildfly Applications and Provisioners.
  *
- * TODO Move the class, with Wildfly Application and Provisioner classes, to separate module in case of refactoring
+ * <p>TODO Move the class, with Wildfly Application and Provisioner classes, to separate module in
+ * case of refactoring
  */
 public class WildflyOpenShiftUtils {
 
 	/**
-	 * Import tested WILDFLY builder image into OCP, create a new image stream in test namespace and return image stream
-	 * tag reference.
+	 * Import tested WILDFLY builder image into OCP, create a new image stream in test namespace and
+	 * return image stream tag reference.
 	 *
 	 * @return builder image stream tag reference
 	 */
@@ -42,8 +43,8 @@ public class WildflyOpenShiftUtils {
 	}
 
 	/**
-	 * Import tested WILDFLY runtime image into OCP, create a new image stream in test namespace and return image stream
-	 * tag reference.
+	 * Import tested WILDFLY runtime image into OCP, create a new image stream in test namespace and
+	 * return image stream tag reference.
 	 *
 	 * @return runtime image stream tag reference
 	 */
@@ -53,8 +54,12 @@ public class WildflyOpenShiftUtils {
 
 	public static ImageStreamTag createImageStream(String image, String name, String tag) {
 		OpenShifts.master().createImageStream(Image.from(image).getImageStream(name, tag));
-		new SimpleWaiter(() -> OpenShifts.master().getImageStreamTag(name, tag) != null, TimeUnit.SECONDS, 10,
-				String.format("Waiting for %s:%s image stream tag to be created", name, tag)).waitFor();
+		new SimpleWaiter(
+				() -> OpenShifts.master().getImageStreamTag(name, tag) != null,
+				TimeUnit.SECONDS,
+				10,
+				String.format("Waiting for %s:%s image stream tag to be created", name, tag))
+				.waitFor();
 		return OpenShifts.master().getImageStreamTag(name, tag);
 	}
 }

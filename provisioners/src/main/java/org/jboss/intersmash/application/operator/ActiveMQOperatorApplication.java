@@ -23,9 +23,10 @@ import io.amq.broker.v1beta1.ActiveMQArtemisAddress;
 /**
  * End user Application interface which presents ActiveMQ operator application.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link org.jboss.intersmash.provision.operator.ActiveMQOperatorProvisioner}</li>
+ *   <li>{@link org.jboss.intersmash.provision.operator.ActiveMQOperatorProvisioner}
  * </ul>
  */
 public interface ActiveMQOperatorApplication extends OperatorApplication {

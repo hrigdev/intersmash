@@ -24,7 +24,8 @@ import org.jboss.intersmash.provision.openshift.ActiveMQOpenShiftOperatorProvisi
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ActiveMQOperatorProvisionerFactory implements ProvisionerFactory<ActiveMQOperatorProvisioner> {
+public class ActiveMQOperatorProvisionerFactory
+		implements ProvisionerFactory<ActiveMQOperatorProvisioner> {
 
 	@Override
 	public ActiveMQOperatorProvisioner getProvisioner(Application application) {

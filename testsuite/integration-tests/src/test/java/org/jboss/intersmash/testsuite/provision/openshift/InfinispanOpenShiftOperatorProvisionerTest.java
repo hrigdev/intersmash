@@ -53,9 +53,9 @@ import io.fabric8.kubernetes.api.model.Secret;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Test cases that cover usage of Infinispan model (and clients) generated from CRDs.
- * Not all examples actually run, but these tests are more about the framework functionality verification than
- * about the Infinispan operator testing.
+ * Test cases that cover usage of Infinispan model (and clients) generated from CRDs. Not all
+ * examples actually run, but these tests are more about the framework functionality verification
+ * than about the Infinispan operator testing.
  */
 @Slf4j
 @CleanBeforeAll
@@ -65,8 +65,11 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	static final String TEST_SECRET_PASSWORD = "developer";
 	static final String TEST_SECRET_NAME = "test-secret";
 	static final Secret TEST_SECRET = new SecretBuilder(TEST_SECRET_NAME)
-			.setType(SecretType.OPAQUE).addData(TEST_SECRET_USERNAME, TEST_SECRET_PASSWORD.getBytes()).build();
-	// Be aware that since we're using the static mock application, not all provisioner methods will work as expected!
+			.setType(SecretType.OPAQUE)
+			.addData(TEST_SECRET_USERNAME, TEST_SECRET_PASSWORD.getBytes())
+			.build();
+	// Be aware that since we're using the static mock application, not all provisioner methods will
+	// work as expected!
 	private static final InfinispanOpenShiftOperatorProvisioner INFINISPAN_OPERATOR_PROVISIONER = initializeOperatorProvisioner();
 
 	private static InfinispanOpenShiftOperatorProvisioner initializeOperatorProvisioner() {
@@ -111,8 +114,9 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 		matchLabels.put("app", "datagrid");
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		INFINISPAN_OPERATOR_PROVISIONER.unsubscribe();
 	}
@@ -127,19 +131,29 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	public void customResourcesCleanup() {
 		// when cleaning up, let's remove
 		INFINISPAN_OPERATOR_PROVISIONER.cachesClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> INFINISPAN_OPERATOR_PROVISIONER
-						.cachesClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> INFINISPAN_OPERATOR_PROVISIONER
+								.cachesClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// ... and the Infinispan CRs
 		INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> INFINISPAN_OPERATOR_PROVISIONER
-						.infinispansClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> INFINISPAN_OPERATOR_PROVISIONER
+								.infinispansClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 	}
 
 	/**
 	 * This test case creates and validates a minimal {@link Infinispan} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 */
 	@Test
 	public void testMinimalInfinispan() {
@@ -165,8 +179,8 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	/**
 	 * This test case creates and validates a two replicas {@link Infinispan} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 */
 	@Test
 	public void testMinimalTwoReplicasInfinispan() {
@@ -190,11 +204,11 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	}
 
 	/**
-	 * This test case creates and validates a basic {@link Infinispan} CR, configured for using DataGrid service type
-	 * and a cache secret
+	 * This test case creates and validates a basic {@link Infinispan} CR, configured for using
+	 * DataGrid service type and a cache secret
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 */
 	@Test
 	public void testCacheWithBasicSecretFromTemplate() {
@@ -216,7 +230,10 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 				name = "test-cache-definition";
 				OpenShifts.master().createSecret(TEST_SECRET);
 				Cache cache = new CacheBuilder()
-						.withNewMetadata().withName(name).withLabels(matchLabels).endMetadata()
+						.withNewMetadata()
+						.withName(name)
+						.withLabels(matchLabels)
+						.endMetadata()
 						.withNewSpec()
 						.withClusterName(clusterName)
 						.withName("testCache")
@@ -236,44 +253,56 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	/**
 	 * Test actual deploy/scale/undeploy workflow by the operator
 	 *
-	 * Does subscribe/unsubscribe on its own, so no need to call explicitly here
+	 * <p>Does subscribe/unsubscribe on its own, so no need to call explicitly here
 	 *
-	 * This test adds no further checks after {@link InfinispanOperatorProvisioner#undeploy()} based on
-	 * {@link InfinispanOperatorProvisioner#getPods()}, since it looks for a stateful set which would be null at this point.
-	 * There is room for evaluating whether to revisit {@link InfinispanOperatorProvisioner} with respect to such logic
+	 * <p>This test adds no further checks after {@link InfinispanOperatorProvisioner#undeploy()}
+	 * based on {@link InfinispanOperatorProvisioner#getPods()}, since it looks for a stateful set
+	 * which would be null at this point. There is room for evaluating whether to revisit {@link
+	 * InfinispanOperatorProvisioner} with respect to such logic
 	 */
 	@Test
 	public void basicProvisioningTest() {
 		INFINISPAN_OPERATOR_PROVISIONER.deploy();
 		try {
-			Assertions.assertEquals(1, INFINISPAN_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + InfinispanOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					1,
+					INFINISPAN_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ InfinispanOperatorProvisioner.OPERATOR_ID
 							+ "' after deploy");
 
-			int scaledNum = INFINISPAN_OPERATOR_PROVISIONER.getApplication().getInfinispan().getSpec().getReplicas() + 1;
+			int scaledNum = INFINISPAN_OPERATOR_PROVISIONER.getApplication().getInfinispan().getSpec().getReplicas()
+					+ 1;
 			INFINISPAN_OPERATOR_PROVISIONER.scale(scaledNum, true);
-			Assertions.assertEquals(scaledNum, INFINISPAN_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + InfinispanOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					scaledNum,
+					INFINISPAN_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ InfinispanOperatorProvisioner.OPERATOR_ID
 							+ "' after scaling");
 		} finally {
 			INFINISPAN_OPERATOR_PROVISIONER.undeploy();
 		}
-		Assertions.assertEquals(0,
-				INFINISPAN_OPERATOR_PROVISIONER.getPods()
-						.stream().filter(pod -> Objects.isNull(pod.getMetadata().getDeletionTimestamp()))
+		Assertions.assertEquals(
+				0,
+				INFINISPAN_OPERATOR_PROVISIONER.getPods().stream()
+						.filter(pod -> Objects.isNull(pod.getMetadata().getDeletionTimestamp()))
 						.count(),
-				"Unexpected number of cluster operator pods for '" + InfinispanOperatorProvisioner.OPERATOR_ID
+				"Unexpected number of cluster operator pods for '"
+						+ InfinispanOperatorProvisioner.OPERATOR_ID
 						+ "' after undeploy");
 	}
 
 	/**
 	 * Create and verify a minimal Infinispan resource
+	 *
 	 * @param infinispan the Infinispan resource to be created
 	 */
 	private void createAndVerifyInfinispan(Infinispan infinispan) {
 		// create and verify that exactly 1 object (Infinispan CR) exists
 		INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().createOrReplace(infinispan);
-		new SimpleWaiter(() -> INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().list().getItems().size() == 1)
+		new SimpleWaiter(
+				() -> INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().list().getItems().size() == 1)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -281,29 +310,36 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	private void createAndVerifyCache(Cache cache) {
 		// create and verify that object exists
 		INFINISPAN_OPERATOR_PROVISIONER.cachesClient().createOrReplace(cache);
-		new SimpleWaiter(() -> INFINISPAN_OPERATOR_PROVISIONER.cachesClient()
-				.list().getItems().stream()
-				.filter(c -> c.getSpec().getName().equals(cache.getSpec().getName())).count() == 1)
+		new SimpleWaiter(
+				() -> INFINISPAN_OPERATOR_PROVISIONER.cachesClient().list().getItems().stream()
+						.filter(c -> c.getSpec().getName().equals(cache.getSpec().getName()))
+						.count() == 1)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
 
 	/**
-	 * Deletes a named Infinispan resource and checks that no more Infinispan resources nor pods are present
+	 * Deletes a named Infinispan resource and checks that no more Infinispan resources nor pods are
+	 * present
+	 *
 	 * @param waitForPods
 	 */
 	private void deleteAndVerifyMinimalInfinispan(String name, boolean waitForPods) {
 		// delete and verify that object was removed
-		INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
+		INFINISPAN_OPERATOR_PROVISIONER
+				.infinispansClient()
+				.withName(name)
+				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().list().getItems().size() == 0)
+		new SimpleWaiter(
+				() -> INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().list().getItems().size() == 0)
 				.level(Level.DEBUG)
 				.waitFor();
 		if (waitForPods) {
 			// checking for size of Infinispan CR pod set is 0
-			new SimpleWaiter(
-					() -> INFINISPAN_OPERATOR_PROVISIONER.getInfinispanPods().isEmpty())
-					.level(Level.DEBUG).waitFor();
+			new SimpleWaiter(() -> INFINISPAN_OPERATOR_PROVISIONER.getInfinispanPods().isEmpty())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 
@@ -313,16 +349,18 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 
 	private void deleteAndVerifyCache(boolean waitForPods) {
 		// delete and verify that object was removed
-		INFINISPAN_OPERATOR_PROVISIONER.cachesClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
+		INFINISPAN_OPERATOR_PROVISIONER
+				.cachesClient()
+				.withName(name)
+				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> INFINISPAN_OPERATOR_PROVISIONER.cachesClient().list().getItems().size() == 0)
+		new SimpleWaiter(
+				() -> INFINISPAN_OPERATOR_PROVISIONER.cachesClient().list().getItems().size() == 0)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
 
-	/**
-	 * Let's just verify that the minimal Infinispan setup succeeded
-	 */
+	/** Let's just verify that the minimal Infinispan setup succeeded */
 	private void verifyMinimalInfinispan(final Infinispan infinispan, final boolean waitForPods) {
 		// create and verify that object exists
 		createAndVerifyInfinispan(infinispan);
@@ -330,19 +368,25 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 			// a correct number of Infinispan CRs has been created
 			new SimpleWaiter(
 					() -> INFINISPAN_OPERATOR_PROVISIONER.getInfinispanPods().size() == infinispan.getSpec().getReplicas())
-					.level(Level.DEBUG).waitFor();
-			log.debug(INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().withName(name).get().getStatus().toString());
+					.level(Level.DEBUG)
+					.waitFor();
+			log.debug(
+					INFINISPAN_OPERATOR_PROVISIONER
+							.infinispansClient()
+							.withName(name)
+							.get()
+							.getStatus()
+							.toString());
 		}
 		assertMinimalInfinispanCreation(infinispan);
-		//	NOTE: created Infinispan .spec and CRD .spec aren't equal because aggregated props are null in CRD .spec
+		//	NOTE: created Infinispan .spec and CRD .spec aren't equal because aggregated props are null
+		// in CRD .spec
 
 		// delete and verify that object was removed
 		deleteAndVerifyMinimalInfinispan(waitForPods);
 	}
 
-	/**
-	 * Verify that two replicas are up and running
-	 */
+	/** Verify that two replicas are up and running */
 	private void verifyMinimalTwoReplicasInfinispan(Infinispan infinispan, boolean waitForPods) {
 		// create and verify that object exists
 		createAndVerifyInfinispan(infinispan);
@@ -350,15 +394,23 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 			// a correct number of Infinispan CRs has been created
 			new SimpleWaiter(
 					() -> INFINISPAN_OPERATOR_PROVISIONER.getInfinispanPods().size() == infinispan.getSpec().getReplicas())
-					.level(Level.DEBUG).waitFor();
-			log.debug(INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().withName(name).get().getStatus().toString());
+					.level(Level.DEBUG)
+					.waitFor();
+			log.debug(
+					INFINISPAN_OPERATOR_PROVISIONER
+							.infinispansClient()
+							.withName(name)
+							.get()
+							.getStatus()
+							.toString());
 		}
 		assertMinimalInfinispanCreation(infinispan);
 		deleteAndVerifyMinimalInfinispan(waitForPods);
 	}
 
 	/**
-	 * Verify that two replicas are up and running and that have the relevant properties set to the same values
+	 * Verify that two replicas are up and running and that have the relevant properties set to the
+	 * same values
 	 */
 	private void verifyCacheWithBasicSecretFromTemplate(Cache cache, boolean waitForPods) {
 		createAndVerifyCache(cache);
@@ -374,24 +426,56 @@ public class InfinispanOpenShiftOperatorProvisionerTest implements ProjectCreati
 	 * - the created Infinispan .metadata.name == the CRD .metadata.name <br>
 	 * - the created Infinispan .spec.replicas == the CRD .spec.replicas
 	 *
-	 * 	Created Infinispan .spec and CRD .spec aren't equal because aggregated props are null in CRD .spec
+	 * <p>Created Infinispan .spec and CRD .spec aren't equal because aggregated props are null in CRD
+	 * .spec
 	 *
 	 * @param infinispan the Infinispan resource which configuration has to be verified
 	 */
 	private void assertMinimalInfinispanCreation(Infinispan infinispan) {
-		Assertions.assertEquals(infinispan.getMetadata().getName(),
-				INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().withName(name).get().getMetadata().getName());
-		Assertions.assertEquals(infinispan.getSpec().getReplicas(),
-				INFINISPAN_OPERATOR_PROVISIONER.infinispansClient().withName(name).get().getSpec().getReplicas());
-		//	NOTE: created Infinispan .spec and CRD .spec aren't equal because aggregated props are null in CRD .spec
+		Assertions.assertEquals(
+				infinispan.getMetadata().getName(),
+				INFINISPAN_OPERATOR_PROVISIONER
+						.infinispansClient()
+						.withName(name)
+						.get()
+						.getMetadata()
+						.getName());
+		Assertions.assertEquals(
+				infinispan.getSpec().getReplicas(),
+				INFINISPAN_OPERATOR_PROVISIONER
+						.infinispansClient()
+						.withName(name)
+						.get()
+						.getSpec()
+						.getReplicas());
+		//	NOTE: created Infinispan .spec and CRD .spec aren't equal because aggregated props are null
+		// in CRD .spec
 	}
 
 	private void assertCacheWithBasicSecretFromTemplateCreation(Cache cache) {
-		Assertions.assertEquals(cache.getMetadata().getName(),
-				INFINISPAN_OPERATOR_PROVISIONER.cachesClient().withName(name).get().getMetadata().getName());
-		Assertions.assertEquals(cache.getSpec().getClusterName(),
-				INFINISPAN_OPERATOR_PROVISIONER.cachesClient().withName(name).get().getSpec().getClusterName());
-		Assertions.assertEquals(cache.getSpec().getTemplateName(),
-				INFINISPAN_OPERATOR_PROVISIONER.cachesClient().withName(name).get().getSpec().getTemplateName());
+		Assertions.assertEquals(
+				cache.getMetadata().getName(),
+				INFINISPAN_OPERATOR_PROVISIONER
+						.cachesClient()
+						.withName(name)
+						.get()
+						.getMetadata()
+						.getName());
+		Assertions.assertEquals(
+				cache.getSpec().getClusterName(),
+				INFINISPAN_OPERATOR_PROVISIONER
+						.cachesClient()
+						.withName(name)
+						.get()
+						.getSpec()
+						.getClusterName());
+		Assertions.assertEquals(
+				cache.getSpec().getTemplateName(),
+				INFINISPAN_OPERATOR_PROVISIONER
+						.cachesClient()
+						.withName(name)
+						.get()
+						.getSpec()
+						.getTemplateName());
 	}
 }

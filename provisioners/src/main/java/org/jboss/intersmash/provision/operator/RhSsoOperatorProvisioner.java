@@ -55,12 +55,11 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 
-/**
- * Red Hat SSO (7.6, based on legacy Keycloak v20) operator provisioner
- */
+/** Red Hat SSO (7.6, based on legacy Keycloak v20) operator provisioner */
 @Deprecated(since = "0.0.2")
-public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<RhSsoOperatorApplication, C> implements Provisioner<RhSsoOperatorApplication> {
+public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<RhSsoOperatorApplication, C>
+		implements Provisioner<RhSsoOperatorApplication> {
 
 	public RhSsoOperatorProvisioner(RhSsoOperatorApplication application) {
 		super(application, RhSsoOperatorProvisioner.OPERATOR_ID);
@@ -73,9 +72,8 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 		final String name = "keycloak";
 		StatefulSet statefulSet = this.client().apps().statefulSets().withName(name).get();
 		if (Objects.isNull(statefulSet)) {
-			throw new IllegalStateException(String.format(
-					"StatefulSet with name=\"%s\" not found",
-					name));
+			throw new IllegalStateException(
+					String.format("StatefulSet with name=\"%s\" not found", name));
 		}
 		return statefulSet;
 	}
@@ -101,23 +99,28 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	@Override
 	public void deploy() {
 		FailFastCheck ffCheck = () -> false;
-		// Keycloak Operator codebase contains the name of the Keycloak image to deploy: user can override Keycloak image to
+		// Keycloak Operator codebase contains the name of the Keycloak image to deploy: user can
+		// override Keycloak image to
 		// deploy using environment variables in Keycloak Operator Subscription
 		subscribe();
 
 		// create custom resources
 		keycloakClient().createOrReplace(getApplication().getKeycloak());
 		if (getApplication().getKeycloakRealms().size() > 0) {
-			getApplication().getKeycloakRealms().stream().forEach((i) -> keycloakRealmClient().resource(i).create());
+			getApplication().getKeycloakRealms().stream()
+					.forEach((i) -> keycloakRealmClient().resource(i).create());
 		}
 		if (getApplication().getKeycloakClients().size() > 0) {
-			getApplication().getKeycloakClients().stream().forEach((i) -> keycloakClientClient().resource(i).create());
+			getApplication().getKeycloakClients().stream()
+					.forEach((i) -> keycloakClientClient().resource(i).create());
 		}
 		if (getApplication().getKeycloakUsers().size() > 0) {
-			getApplication().getKeycloakUsers().stream().forEach((i) -> keycloakUserClient().resource(i).create());
+			getApplication().getKeycloakUsers().stream()
+					.forEach((i) -> keycloakUserClient().resource(i).create());
 		}
 		if (getApplication().getKeycloakBackups().size() > 0) {
-			getApplication().getKeycloakBackups().stream().forEach((i) -> keycloakBackupClient().resource(i).create());
+			getApplication().getKeycloakBackups().stream()
+					.forEach((i) -> keycloakBackupClient().resource(i).create());
 		}
 
 		// Wait for Keycloak (and PostgreSQL) to be ready
@@ -127,8 +130,7 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 		// check that route is up, only if there's a valid external URL available
 		URL externalUrl = getURL();
 		if ((getApplication().getKeycloak().getSpec().getInstances() > 0) && (externalUrl != null)) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
@@ -142,75 +144,131 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 		int replicas = keycloak.getSpec().getInstances().intValue();
 		if (replicas > 0) {
 			// 1. check externalDatabase
-			if (keycloak.getSpec().getExternalDatabase() == null || !keycloak.getSpec().getExternalDatabase().getEnabled()) {
-				// 2. wait for PostgreSQL to be ready (Service "keycloak-postgresql" is guaranteed to exist by documentation)
-				new SimpleWaiter(() -> client().pods().inNamespace(client().getNamespace()).list().getItems()
-						.stream()
-						.filter(
-								pod -> this.client().services().withName("keycloak-postgresql").get() != null
-										&& pod.getMetadata().getLabels().entrySet().containsAll(
-												this.client().services().withName("keycloak-postgresql").get().getSpec()
-														.getSelector().entrySet())
-										&& ResourceParsers.isPodReady(pod))
-						.count() > 0).level(Level.DEBUG).waitFor();
+			if (keycloak.getSpec().getExternalDatabase() == null
+					|| !keycloak.getSpec().getExternalDatabase().getEnabled()) {
+				// 2. wait for PostgreSQL to be ready (Service "keycloak-postgresql" is guaranteed to exist
+				// by documentation)
+				new SimpleWaiter(
+						() -> client().pods().inNamespace(client().getNamespace()).list().getItems().stream()
+								.filter(
+										pod -> this.client().services().withName("keycloak-postgresql").get() != null
+												&& pod.getMetadata()
+														.getLabels()
+														.entrySet()
+														.containsAll(
+																this.client()
+																		.services()
+																		.withName("keycloak-postgresql")
+																		.get()
+																		.getSpec()
+																		.getSelector()
+																		.entrySet())
+												&& ResourceParsers.isPodReady(pod))
+								.count() > 0)
+						.level(Level.DEBUG)
+						.waitFor();
 			}
 			// 4. wait for >= 1 pods with label controller-revision-hash=keycloak-d86bb6ddc
 			final String controllerRevisionHash = getStatefulSet().getStatus().getUpdateRevision();
-			waitForExactNumberOfLabeledPodsToBeReady("controller-revision-hash", controllerRevisionHash, replicas);
+			waitForExactNumberOfLabeledPodsToBeReady(
+					"controller-revision-hash", controllerRevisionHash, replicas);
 		}
 	}
 
-	private void waitForExactNumberOfLabeledPodsToBeReady(final String labelName, final String labelValue, int replicas) {
+	private void waitForExactNumberOfLabeledPodsToBeReady(
+			final String labelName, final String labelValue, int replicas) {
 		BooleanSupplier bs = () -> getLabeledPods(labelName, labelValue).size() == replicas;
-		new SimpleWaiter(bs, TimeUnit.MINUTES, 2,
+		new SimpleWaiter(
+				bs,
+				TimeUnit.MINUTES,
+				2,
 				"Waiting for pods with label \"" + labelName + "\"=" + labelValue + " to be ready")
 				.waitFor();
 	}
 
 	private void waitForKeycloakResourceReadiness() {
 		new SimpleWaiter(() -> keycloak().get().getStatus().getReady())
-				.reason("Wait for keycloak resource to be ready").level(Level.DEBUG).waitFor();
+				.reason("Wait for keycloak resource to be ready")
+				.level(Level.DEBUG)
+				.waitFor();
 		if (getApplication().getKeycloakRealms().size() > 0)
-			new SimpleWaiter(() -> keycloakRealms().stream().map(realm -> realm.get().getStatus().getReady())
-					.reduce(Boolean::logicalAnd).get())
-					.reason("Wait for keycloakrealms to be ready.").level(Level.DEBUG).waitFor();
+			new SimpleWaiter(
+					() -> keycloakRealms().stream()
+							.map(realm -> realm.get().getStatus().getReady())
+							.reduce(Boolean::logicalAnd)
+							.get())
+					.reason("Wait for keycloakrealms to be ready.")
+					.level(Level.DEBUG)
+					.waitFor();
 		if (getApplication().getKeycloakClients().size() > 0)
-			new SimpleWaiter(() -> keycloakClients().stream().map(realm -> realm.get().getStatus().getReady())
-					.reduce(Boolean::logicalAnd).get())
-					.reason("Wait for keycloakclients to be ready.").level(Level.DEBUG).waitFor();
+			new SimpleWaiter(
+					() -> keycloakClients().stream()
+							.map(realm -> realm.get().getStatus().getReady())
+							.reduce(Boolean::logicalAnd)
+							.get())
+					.reason("Wait for keycloakclients to be ready.")
+					.level(Level.DEBUG)
+					.waitFor();
 		if (getApplication().getKeycloakUsers().size() > 0)
-			new SimpleWaiter(() -> keycloakUserClient().list().getItems().size() == getApplication().getKeycloakUsers().size())
-					.reason("Wait for keycloakusers to be ready.").level(Level.DEBUG).waitFor(); // no isReady() for users
+			new SimpleWaiter(
+					() -> keycloakUserClient().list().getItems().size() == getApplication().getKeycloakUsers().size())
+					.reason("Wait for keycloakusers to be ready.")
+					.level(Level.DEBUG)
+					.waitFor(); // no isReady() for users
 		if (getApplication().getKeycloakBackups().size() > 0)
-			new SimpleWaiter(() -> keycloakBackups().stream().map(realm -> realm.get().getStatus().getReady())
-					.reduce(Boolean::logicalAnd).get())
-					.reason("Wait for keycloakbackups to be ready.").level(Level.DEBUG).waitFor();
+			new SimpleWaiter(
+					() -> keycloakBackups().stream()
+							.map(realm -> realm.get().getStatus().getReady())
+							.reduce(Boolean::logicalAnd)
+							.get())
+					.reason("Wait for keycloakbackups to be ready.")
+					.level(Level.DEBUG)
+					.waitFor();
 	}
 
 	@Override
 	public void undeploy() {
 		// delete custom resources
 		keycloakBackups()
-				.forEach(keycloakBackup -> keycloakBackup.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.forEach(
+						keycloakBackup -> keycloakBackup.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 		new SimpleWaiter(() -> keycloakBackupClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakbackups instances to be deleted.").level(Level.DEBUG).waitFor();
-		keycloakUsers().forEach(keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.reason("Wait for all keycloakbackups instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
+		keycloakUsers()
+				.forEach(
+						keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 		new SimpleWaiter(() -> keycloakUserClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakusers instances to be deleted.").level(Level.DEBUG).waitFor();
+				.reason("Wait for all keycloakusers instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
 		keycloakClients()
-				.forEach(keycloakClient -> keycloakClient.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
-		keycloakUsers().forEach(keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.forEach(
+						keycloakClient -> keycloakClient.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+		keycloakUsers()
+				.forEach(
+						keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 		new SimpleWaiter(() -> keycloakClientClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakclients instances to be deleted.").level(Level.DEBUG).waitFor();
-		keycloakRealms().forEach(keycloakRealm -> keycloakRealm.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.reason("Wait for all keycloakclients instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
+		keycloakRealms()
+				.forEach(
+						keycloakRealm -> keycloakRealm.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 		new SimpleWaiter(() -> keycloakRealmClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakrealms instances to be deleted.").level(Level.DEBUG).waitFor();
+				.reason("Wait for all keycloakrealms instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
 		keycloak().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
 		new SimpleWaiter(() -> keycloakClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakrealms instances to be deleted.").level(Level.DEBUG).waitFor();
+				.reason("Wait for all keycloakrealms instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
 
 		// wait for 0 pods
-		waitForExactNumberOfLabeledPodsToBeReady("app", getApplication().getKeycloak().getKind().toLowerCase(), 0);
+		waitForExactNumberOfLabeledPodsToBeReady(
+				"app", getApplication().getKeycloak().getKind().toLowerCase(), 0);
 		unsubscribe();
 	}
 
@@ -223,28 +281,31 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 		tmpKeycloak.getSpec().setInstances(Long.valueOf(replicas));
 		keycloak().replace(tmpKeycloak);
 		if (wait) {
-			waitForExactNumberOfLabeledPodsToBeReady("controller-revision-hash", controllerRevisionHash, replicas);
+			waitForExactNumberOfLabeledPodsToBeReady(
+					"controller-revision-hash", controllerRevisionHash, replicas);
 		}
 		new SimpleWaiter(() -> keycloak().get().getStatus().getReady())
-				.reason("Wait for keycloak resource to be ready").level(Level.DEBUG).waitFor();
+				.reason("Wait for keycloak resource to be ready")
+				.level(Level.DEBUG)
+				.waitFor();
 		// check that route is up
 		if (originalReplicas == 0 && replicas > 0) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
 
 	/**
-	 * RH-SSO Operator based provisioner implementation is designed to return just the RH-SSO instance pods
+	 * RH-SSO Operator based provisioner implementation is designed to return just the RH-SSO instance
+	 * pods
+	 *
 	 * @return a list of {@link Pod} that represent the replicas of RH-SSO instances
 	 */
 	@Override
 	public List<Pod> getPods() {
 		StatefulSet statefulSet = getStatefulSet();
 		return Objects.nonNull(statefulSet)
-				? getLabeledPods("controller-revision-hash",
-						statefulSet.getStatus().getUpdateRevision())
+				? getLabeledPods("controller-revision-hash", statefulSet.getStatus().getUpdateRevision())
 				: Lists.emptyList();
 	}
 
@@ -255,7 +316,8 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 		try {
 			return Strings.isNullOrEmpty(externalUrl) ? null : new URL(externalUrl);
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(String.format("Keycloak operator External URL \"%s\" is malformed.", externalUrl), e);
+			throw new RuntimeException(
+					String.format("Keycloak operator External URL \"%s\" is malformed.", externalUrl), e);
 		}
 	}
 
@@ -286,7 +348,8 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	private static NonNamespaceOperation<KeycloakUser, KeycloakUserList, Resource<KeycloakUser>> KEYCLOAK_USERS_CLIENT;
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -297,17 +360,20 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 			CustomResourceDefinitionContext crdc);
 
 	/**
-	 * Get a client capable of working with {@link RhSsoOperatorProvisioner#KEYCLOAK_CRD_NAME} custom resource.
+	 * Get a client capable of working with {@link RhSsoOperatorProvisioner#KEYCLOAK_CRD_NAME} custom
+	 * resource.
 	 *
-	 * @return client for operations with {@link RhSsoOperatorProvisioner#KEYCLOAK_CRD_NAME} custom resource
+	 * @return client for operations with {@link RhSsoOperatorProvisioner#KEYCLOAK_CRD_NAME} custom
+	 *     resource
 	 */
 	public NonNamespaceOperation<Keycloak, KeycloakList, Resource<Keycloak>> keycloakClient() {
 		if (KEYCLOAKS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOAK_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOAK_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOAK_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOAK_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAKS_CLIENT = keycloakCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -315,9 +381,11 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	}
 
 	/**
-	 * Get a reference to keycloak object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
-	 * @return A concrete {@link Resource} instance representing the {@link Keycloak} resource definition
+	 * Get a reference to keycloak object. Use get() to get the actual object, or null in case it does
+	 * not exist on tested cluster.
+	 *
+	 * @return A concrete {@link Resource} instance representing the {@link Keycloak} resource
+	 *     definition
 	 */
 	public Resource<Keycloak> keycloak() {
 		return keycloakClient().withName(getApplication().getKeycloak().getMetadata().getName());
@@ -334,11 +402,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	 */
 	public NonNamespaceOperation<KeycloakRealm, KeycloakRealmList, Resource<KeycloakRealm>> keycloakRealmClient() {
 		if (KEYCLOAK_REALMS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOAK_REALM_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOAK_REALM_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOAK_REALM_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOAK_REALM_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAK_REALMS_CLIENT = keycloakRealmCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -346,11 +415,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	}
 
 	/**
-	 * Get a reference to keycloakrealms object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to keycloakrealms object. Use get() to get the actual object, or null in case
+	 * it does not exist on tested cluster.
 	 *
 	 * @param name name of the keycloakrealm custom resource
-	 * @return A concrete {@link Resource} instance representing the {@link KeycloakRealm} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link KeycloakRealm} resource
+	 *     definition
 	 */
 	public Resource<KeycloakRealm> keycloakRealm(String name) {
 		return keycloakRealmClient().withName(name);
@@ -359,9 +429,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	/**
 	 * Get all keycloakrealms maintained by the current operator instance.
 	 *
-	 * Be aware that this method return just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link KeycloakRealm} resource definitions
+	 * <p>Be aware that this method return just a references to the addresses, they might not actually
+	 * exist on the cluster. Use get() to get the actual object, or null in case it does not exist on
+	 * tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link KeycloakRealm} resource
+	 *     definitions
 	 */
 	public List<Resource<KeycloakRealm>> keycloakRealms() {
 		RhSsoOperatorApplication rhSsoOperatorApplication = getApplication();
@@ -382,11 +455,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	 */
 	public NonNamespaceOperation<KeycloakBackup, KeycloakBackupList, Resource<KeycloakBackup>> keycloakBackupClient() {
 		if (KEYCLOAK_BACKUPS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOAK_BACKUP_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOAK_BACKUP_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOAK_BACKUP_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOAK_BACKUP_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAK_BACKUPS_CLIENT = keycloakBackupCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -394,11 +468,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	}
 
 	/**
-	 * Get a reference to keycloakbackup object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to keycloakbackup object. Use get() to get the actual object, or null in case
+	 * it does not exist on tested cluster.
 	 *
 	 * @param name name of the {@link KeycloakBackup} custom resource
-	 * @return A concrete {@link Resource} instance representing the {@link KeycloakBackup} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link KeycloakBackup} resource
+	 *     definition
 	 */
 	public Resource<KeycloakBackup> keycloakBackup(String name) {
 		return keycloakBackupClient().withName(name);
@@ -407,9 +482,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	/**
 	 * Get all keycloakbackups maintained by the current operator instance.
 	 *
-	 * Be aware that this method return just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link KeycloakBackup} resource definitions
+	 * <p>Be aware that this method return just a references to the addresses, they might not actually
+	 * exist on the cluster. Use get() to get the actual object, or null in case it does not exist on
+	 * tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link KeycloakBackup} resource
+	 *     definitions
 	 */
 	public List<Resource<KeycloakBackup>> keycloakBackups() {
 		RhSsoOperatorApplication rhSsoOperatorApplication = getApplication();
@@ -430,11 +508,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	 */
 	public NonNamespaceOperation<KeycloakClient, KeycloakClientList, Resource<KeycloakClient>> keycloakClientClient() {
 		if (KEYCLOAK_CLIENTS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOAK_CLIENT_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOAK_CLIENT_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOAK_CLIENT_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOAK_CLIENT_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAK_CLIENTS_CLIENT = keycloakClientCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -442,11 +521,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	}
 
 	/**
-	 * Get a reference to keycloakclient object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to keycloakclient object. Use get() to get the actual object, or null in case
+	 * it does not exist on tested cluster.
 	 *
 	 * @param name name of the {@link KeycloakClient} custom resource
-	 * @return A concrete {@link Resource} instance representing the {@link KeycloakClient} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link KeycloakClient} resource
+	 *     definition
 	 */
 	public Resource<KeycloakClient> keycloakClient(String name) {
 		return keycloakClientClient().withName(name);
@@ -455,9 +535,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	/**
 	 * Get all keycloakclients maintained by the current operator instance.
 	 *
-	 * Be aware that this method return just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link KeycloakClient} resource definitions
+	 * <p>Be aware that this method return just a references to the addresses, they might not actually
+	 * exist on the cluster. Use get() to get the actual object, or null in case it does not exist on
+	 * tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link KeycloakClient} resource
+	 *     definitions
 	 */
 	public List<Resource<KeycloakClient>> keycloakClients() {
 		RhSsoOperatorApplication rhSsoOperatorApplication = getApplication();
@@ -478,11 +561,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	 */
 	public NonNamespaceOperation<KeycloakUser, KeycloakUserList, Resource<KeycloakUser>> keycloakUserClient() {
 		if (KEYCLOAK_USERS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOAK_USER_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOAK_USER_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOAK_USER_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOAK_USER_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAK_USERS_CLIENT = keycloakUserCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -490,11 +574,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	}
 
 	/**
-	 * Get a reference to keycloakuser object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to keycloakuser object. Use get() to get the actual object, or null in case it
+	 * does not exist on tested cluster.
 	 *
 	 * @param name name of the keycloakuser custom resource
-	 * @return A concrete {@link Resource} instance representing the {@link KeycloakUser} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link KeycloakUser} resource
+	 *     definition
 	 */
 	public Resource<KeycloakUser> keycloakUser(String name) {
 		return keycloakUserClient().withName(name);
@@ -503,9 +588,12 @@ public abstract class RhSsoOperatorProvisioner<C extends NamespacedKubernetesCli
 	/**
 	 * Get all keycloakusers maintained by the current operator instance.
 	 *
-	 * Be aware that this method return just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link KeycloakUser} resource definitions
+	 * <p>Be aware that this method return just a references to the addresses, they might not actually
+	 * exist on the cluster. Use get() to get the actual object, or null in case it does not exist on
+	 * tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link KeycloakUser} resource
+	 *     definitions
 	 */
 	public List<Resource<KeycloakUser>> keycloakUsers() {
 		RhSsoOperatorApplication rhSsoOperatorApplication = getApplication();

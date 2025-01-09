@@ -18,7 +18,8 @@ package org.jboss.intersmash.provision.olm;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSourceBuilder;
 
 /**
- * Wrapper for creating and using {@link io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource}
+ * Wrapper for creating and using {@link
+ * io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource}
  */
 public class CatalogSource extends io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource
 		implements SerializationCapableResource<CatalogSource> {
@@ -60,11 +61,14 @@ public class CatalogSource extends io.fabric8.openshift.api.model.operatorhub.v1
 
 	/**
 	 * Load CatalogSource by name from OpenShift cluster
-	 * @param existing Existing instance of {@link io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource},
-	 *                 as loaded from the cluster
+	 *
+	 * @param existing Existing instance of {@link
+	 *     io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource}, as loaded from the
+	 *     cluster
 	 * @return CatalogSource
 	 */
-	public CatalogSource load(io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource existing) {
+	public CatalogSource load(
+			io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource existing) {
 		this.setMetadata(existing.getMetadata());
 		this.setSpec(existing.getSpec());
 		return this;

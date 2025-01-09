@@ -36,7 +36,8 @@ import io.fabric8.kubernetes.api.model.Pod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftApplication> implements OpenShiftProvisioner<T> {
+public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftApplication>
+		implements OpenShiftProvisioner<T> {
 
 	protected final T dbApplication;
 	private FailFastCheck ffCheck = () -> false;
@@ -54,8 +55,10 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 	public void scale(int replicas, boolean wait) {
 		openShift.scale(dbApplication.getName(), replicas);
 		if (wait) {
-			OpenShiftWaiters.get(openShift, ffCheck).areExactlyNPodsReady(replicas, "name", dbApplication.getName())
-					.level(Level.DEBUG).waitFor();
+			OpenShiftWaiters.get(openShift, ffCheck)
+					.areExactlyNPodsReady(replicas, "name", dbApplication.getName())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 
@@ -75,9 +78,11 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 
 	@Override
 	public void deploy() {
-		ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				dbApplication.getName());
-		ApplicationBuilder appBuilder = ApplicationBuilder.fromImage(dbApplication.getName(), getImage(),
+		ffCheck = FailFastUtils.getFailFastCheck(
+				EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), dbApplication.getName());
+		ApplicationBuilder appBuilder = ApplicationBuilder.fromImage(
+				dbApplication.getName(),
+				getImage(),
 				Collections.singletonMap(APP_LABEL_KEY, dbApplication.getName()));
 
 		final DeploymentConfigBuilder builder = appBuilder.deploymentConfig(dbApplication.getName());
@@ -85,17 +90,18 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 
 		configureContainer(builder.podTemplate().container());
 
-		if (dbApplication.getPersistentVolumeClaims() != null && !dbApplication.getPersistentVolumeClaims().isEmpty()) {
+		if (dbApplication.getPersistentVolumeClaims() != null
+				&& !dbApplication.getPersistentVolumeClaims().isEmpty()) {
 			PersistentVolumeClaim pvc = dbApplication.getPersistentVolumeClaims().get(0);
-			builder.podTemplate().addPersistenVolumeClaim(
-					pvc.getName(),
-					pvc.getClaimName());
+			builder.podTemplate().addPersistenVolumeClaim(pvc.getName(), pvc.getClaimName());
 			builder.podTemplate().container().addVolumeMount(pvc.getName(), getMountpath(), false);
 			openShift.createPersistentVolumeClaim(
 					new PVCBuilder(pvc.getClaimName()).accessRWX().storageSize("100Mi").build());
 		}
 
-		appBuilder.service(getServiceName()).port(getPort())
+		appBuilder
+				.service(getServiceName())
+				.port(getPort())
 				.addContainerSelector("deploymentconfig", dbApplication.getName())
 				.addContainerSelector("name", dbApplication.getName());
 
@@ -113,7 +119,6 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 	public abstract String getMountpath();
 
 	protected void configureContainer(ContainerBuilder containerBuilder) {
-
 	}
 
 	@Override
@@ -123,7 +128,8 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 
 	@Override
 	public void undeploy() {
-		OpenShiftUtils.deleteResourcesWithLabels(openShift, Collections.singletonMap(APP_LABEL_KEY, dbApplication.getName()));
+		OpenShiftUtils.deleteResourcesWithLabels(
+				openShift, Collections.singletonMap(APP_LABEL_KEY, dbApplication.getName()));
 	}
 
 	@Override
@@ -137,12 +143,13 @@ public abstract class DBImageOpenShiftProvisioner<T extends DBImageOpenShiftAppl
 	}
 
 	/**
-	 * Returns the service name used to expose the database functionality inside OpenShift;
-	 * When using {@link ApplicationBuilder} to build the application (which is always the case here), then the service name defaults to the application nane
+	 * Returns the service name used to expose the database functionality inside OpenShift; When using
+	 * {@link ApplicationBuilder} to build the application (which is always the case here), then the
+	 * service name defaults to the application nane
+	 *
 	 * @return service name to access the database
 	 */
 	public String getServiceName() {
 		return dbApplication.getName() + "-service";
 	}
-
 }

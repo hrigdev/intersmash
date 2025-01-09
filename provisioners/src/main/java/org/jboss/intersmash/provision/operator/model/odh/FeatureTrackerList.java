@@ -19,8 +19,9 @@ import io.fabric8.kubernetes.client.CustomResourceList;
 import io.opendatahub.features.v1.FeatureTracker;
 
 /**
- * Used by {@link org.jboss.intersmash.provision.operator.OpenDataHubOperatorProvisioner} client methods,
- * this class represents a concrete {@link java.util.List} of {@link FeatureTracker} instances.
+ * Used by {@link org.jboss.intersmash.provision.operator.OpenDataHubOperatorProvisioner} client
+ * methods, this class represents a concrete {@link java.util.List} of {@link FeatureTracker}
+ * instances.
  */
 public class FeatureTrackerList extends CustomResourceList<FeatureTracker> {
 }

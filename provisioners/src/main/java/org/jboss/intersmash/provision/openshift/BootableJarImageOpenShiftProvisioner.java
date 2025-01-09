@@ -44,9 +44,7 @@ import io.fabric8.kubernetes.api.model.Secret;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Class deploys an Wildfly application based on {@link BootableJarImageOpenShiftProvisioner}
- */
+/** Class deploys an Wildfly application based on {@link BootableJarImageOpenShiftProvisioner} */
 @Slf4j
 public abstract class BootableJarImageOpenShiftProvisioner
 		implements OpenShiftProvisioner<BootableJarOpenShiftApplication> {
@@ -54,7 +52,8 @@ public abstract class BootableJarImageOpenShiftProvisioner
 	private final BootableJarOpenShiftApplication bootableApplication;
 	private FailFastCheck ffCheck = () -> false;
 
-	public BootableJarImageOpenShiftProvisioner(@NonNull BootableJarOpenShiftApplication bootableApplication) {
+	public BootableJarImageOpenShiftProvisioner(
+			@NonNull BootableJarOpenShiftApplication bootableApplication) {
 		this.bootableApplication = bootableApplication;
 	}
 
@@ -73,28 +72,26 @@ public abstract class BootableJarImageOpenShiftProvisioner
 
 	@Override
 	public void undeploy() {
-		OpenShiftUtils.deleteResourcesWithLabel(openShift, APP_LABEL_KEY, bootableApplication.getName());
-		// the bootable JAR provisioning process _might_ need to clean some custom build configs, builds,
-		// config maps, image streams and build pods which might appear as leftovers in OpenShift::clean()
+		OpenShiftUtils.deleteResourcesWithLabel(
+				openShift, APP_LABEL_KEY, bootableApplication.getName());
+		// the bootable JAR provisioning process _might_ need to clean some custom build configs,
+		// builds,
+		// config maps, image streams and build pods which might appear as leftovers in
+		// OpenShift::clean()
 		// when the build and master namespaces are the same
-		openShift.getBuildConfigs()
-				.stream()
+		openShift.getBuildConfigs().stream()
 				.filter(bc -> bc.getMetadata().getName().startsWith(bootableApplication.getName()))
 				.forEach(openShift::deleteBuildConfig);
-		openShift.getBuilds()
-				.stream()
+		openShift.getBuilds().stream()
 				.filter(b -> b.getMetadata().getName().startsWith(bootableApplication.getName()))
 				.forEach(openShift::deleteBuild);
-		openShift.getConfigMaps()
-				.stream()
+		openShift.getConfigMaps().stream()
 				.filter(cf -> cf.getMetadata().getName().startsWith(bootableApplication.getName()))
 				.forEach(openShift::deleteConfigMap);
-		openShift.getImageStreams()
-				.stream()
+		openShift.getImageStreams().stream()
 				.filter(is -> is.getMetadata().getName().startsWith(bootableApplication.getName()))
 				.forEach(openShift::deleteImageStream);
-		openShift.getPods()
-				.stream()
+		openShift.getPods().stream()
 				.filter(pod -> pod.getMetadata().getName().startsWith(bootableApplication.getName()))
 				.forEach(openShift::deletePod);
 	}
@@ -108,7 +105,8 @@ public abstract class BootableJarImageOpenShiftProvisioner
 	}
 
 	public void waitForReplicas(int replicas) {
-		OpenShiftWaiters.get(openShift, ffCheck).areExactlyNPodsReady(replicas, bootableApplication.getName())
+		OpenShiftWaiters.get(openShift, ffCheck)
+				.areExactlyNPodsReady(replicas, bootableApplication.getName())
 				.level(Level.DEBUG)
 				.waitFor();
 		WaitersUtil.serviceEndpointsAreReady(openShift, getApplication().getName(), replicas, 8080)
@@ -127,49 +125,55 @@ public abstract class BootableJarImageOpenShiftProvisioner
 
 		if (BinarySource.class.isAssignableFrom(buildInput.getClass())) {
 			BinarySource binarySource = (BinarySource) buildInput;
-			log.debug("Create application builder from artifact (path: {}).", binarySource.getArchive().toString());
+			log.debug(
+					"Create application builder from artifact (path: {}).",
+					binarySource.getArchive().toString());
 			List<EnvVar> environmentVariables = new ArrayList<>(bootableApplication.getEnvVars());
 			File archiveFile = binarySource.getArchive().toFile();
 			BinaryBuild bootableJarBuild;
 			if (archiveFile.isDirectory()) {
 				/*
-					This scenario is probably unusable and should be pruned: bootable Jar workflow doesn't envision a
-					builder image to compile the maven project: the project compilation is supposed to happen outside
-					openshift; multiple deployments might have role here: TODO: TO BE INVESTIGATED
-				 */
+				This scenario is probably unusable and should be pruned: bootable Jar workflow doesn't envision a
+				builder image to compile the maven project: the project compilation is supposed to happen outside
+				openshift; multiple deployments might have role here: TODO: TO BE INVESTIGATED
+				*/
 				bootableJarBuild = new BinarySourceBuild(
 						IntersmashConfig.bootableJarImageURL(),
 						binarySource.getArchive(),
-						environmentVariables.stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
+						environmentVariables.stream()
+								.collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
 						bootableApplication.getName());
 			} else if (archiveFile.isFile()) {
 				/*
-				  S2I Binary build which takes as input a bootable Jar;
+				 S2I Binary build which takes as input a bootable Jar;
 
-				  This kind of build corresponds to the following workflow:
+				 This kind of build corresponds to the following workflow:
 
-						oc new-build --name=wildfly-build-from-bootable-jar \
-							--labels=intersmash.app=wildfly-test-app \
-							--binary=true \
-							--strategy=source \
-							--env=ADMIN_USERNAME=admin \
-							--env=ADMIN_PASSWORD=pass.1234 \
-							--image=registry.redhat.io/ubi8/openjdk-11
+					oc new-build --name=wildfly-build-from-bootable-jar \
+						--labels=intersmash.app=wildfly-test-app \
+						--binary=true \
+						--strategy=source \
+						--env=ADMIN_USERNAME=admin \
+						--env=ADMIN_PASSWORD=pass.1234 \
+						--image=registry.redhat.io/ubi8/openjdk-11
 
-						oc start-build wildfly-build-from-bootable-jar \
-							--from-file=bootable-openshift.jar \
-							--follow
+					oc start-build wildfly-build-from-bootable-jar \
+						--from-file=bootable-openshift.jar \
+						--follow
 
-						oc new-app wildfly-build-from-bootable-jar
-				 */
+					oc new-app wildfly-build-from-bootable-jar
+				*/
 				bootableJarBuild = new BinaryBuildFromFile(
 						IntersmashConfig.bootableJarImageURL(),
 						binarySource.getArchive(),
-						environmentVariables.stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
+						environmentVariables.stream()
+								.collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)),
 						bootableApplication.getName());
 			} else {
 				throw new RuntimeException(
-						String.format("'%s' archive path must be either a directory or a file", archiveFile.getAbsolutePath()));
+						String.format(
+								"'%s' archive path must be either a directory or a file",
+								archiveFile.getAbsolutePath()));
 			}
 
 			ManagedBuildReference reference = BuildManagers.get().deploy(bootableJarBuild);
@@ -181,7 +185,9 @@ public abstract class BootableJarImageOpenShiftProvisioner
 					Collections.singletonMap(APP_LABEL_KEY, bootableApplication.getName()));
 			// Add any configured secrets
 			for (Secret secret : bootableApplication.getSecrets()) {
-				appBuilder.deploymentConfig().podTemplate()
+				appBuilder
+						.deploymentConfig()
+						.podTemplate()
 						.addSecretVolume(secret.getMetadata().getName(), secret.getMetadata().getName())
 						.container()
 						.addVolumeMount(secret.getMetadata().getName(), "/etc/secrets", false);
@@ -195,7 +201,8 @@ public abstract class BootableJarImageOpenShiftProvisioner
 		//			GitSource gitSource = (GitSource) buildInput;
 		//			log.debug("Create application builder from git reference (repo: {}, ref: {}).",
 		//					gitSource.getUri(), gitSource.getRef());
-		//			ApplicationBuilder appBuilder = ApplicationBuilder.fromS2IBuild(bootableApplication.getName(),
+		//			ApplicationBuilder appBuilder =
+		// ApplicationBuilder.fromS2IBuild(bootableApplication.getName(),
 		//					IntersmashConfig.bootableJarImageURL(),
 		//					gitSource.getUri(),
 		//					Collections.singletonMap(APP_LABEL_KEY, bootableApplication.getName()));
@@ -203,7 +210,8 @@ public abstract class BootableJarImageOpenShiftProvisioner
 		//			appBuilder.buildConfig().onConfigurationChange().gitRef(gitSource.getRef());
 		//
 		//			bootableApplication.getEnvironmentVariables().entrySet().stream()
-		//					.forEach(entry -> appBuilder.buildConfig().sti().addEnvVariable(entry.getKey(), entry.getValue()));
+		//					.forEach(entry -> appBuilder.buildConfig().sti().addEnvVariable(entry.getKey(),
+		// entry.getValue()));
 		//			return appBuilder;
 		//		}
 		//
@@ -211,23 +219,29 @@ public abstract class BootableJarImageOpenShiftProvisioner
 	}
 
 	private void deployImage() {
-		ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				bootableApplication.getName());
+		ffCheck = FailFastUtils.getFailFastCheck(
+				EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), bootableApplication.getName());
 		ApplicationBuilder appBuilder = getAppBuilder();
-		appBuilder.service()
-				.port("8080-tcp", 8080, 8080, TransportProtocol.TCP);
+		appBuilder.service().port("8080-tcp", 8080, 8080, TransportProtocol.TCP);
 
 		appBuilder.route().targetPort(8080);
 
 		// env vars
-		appBuilder.deploymentConfig().podTemplate().container()
+		appBuilder
+				.deploymentConfig()
+				.podTemplate()
+				.container()
 				.envVars(
-						bootableApplication.getEnvVars().stream().collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)));
+						bootableApplication.getEnvVars().stream()
+								.collect(Collectors.toMap(EnvVar::getName, EnvVar::getValue)));
 
 		configureAppBuilder(appBuilder);
 
 		appBuilder.buildApplication(openShift).deploy();
-		OpenShiftWaiters.get(openShift, ffCheck).isDcReady(appBuilder.getName()).level(Level.DEBUG).waitFor();
+		OpenShiftWaiters.get(openShift, ffCheck)
+				.isDcReady(appBuilder.getName())
+				.level(Level.DEBUG)
+				.waitFor();
 		// 1 by default
 		waitForReplicas(1);
 	}

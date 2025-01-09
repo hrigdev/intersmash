@@ -43,51 +43,59 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Run
- */
+/** Run */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class Run {
 	@JsonIgnore
 	private static final Logger logger = LoggerFactory.getLogger(Run.class);
 
 	public static final String SERIALIZED_NAME_ID = "id";
+
 	@SerializedName(SERIALIZED_NAME_ID)
 	private String id;
 
 	public static final String SERIALIZED_NAME_BENCHMARK = "benchmark";
+
 	@SerializedName(SERIALIZED_NAME_BENCHMARK)
 	private String benchmark;
 
 	public static final String SERIALIZED_NAME_STARTED = "started";
+
 	@SerializedName(SERIALIZED_NAME_STARTED)
 	private OffsetDateTime started;
 
 	public static final String SERIALIZED_NAME_TERMINATED = "terminated";
+
 	@SerializedName(SERIALIZED_NAME_TERMINATED)
 	private OffsetDateTime terminated;
 
 	public static final String SERIALIZED_NAME_CANCELLED = "cancelled";
+
 	@SerializedName(SERIALIZED_NAME_CANCELLED)
 	private Boolean cancelled;
 
 	public static final String SERIALIZED_NAME_COMPLETED = "completed";
+
 	@SerializedName(SERIALIZED_NAME_COMPLETED)
 	private Boolean completed;
 
 	public static final String SERIALIZED_NAME_DESCRIPTION = "description";
+
 	@SerializedName(SERIALIZED_NAME_DESCRIPTION)
 	private String description;
 
 	public static final String SERIALIZED_NAME_PHASES = "phases";
+
 	@SerializedName(SERIALIZED_NAME_PHASES)
 	private List<Phase> phases = null;
 
 	public static final String SERIALIZED_NAME_AGENTS = "agents";
+
 	@SerializedName(SERIALIZED_NAME_AGENTS)
 	private List<Agent> agents = null;
 
 	public static final String SERIALIZED_NAME_ERRORS = "errors";
+
 	@SerializedName(SERIALIZED_NAME_ERRORS)
 	private List<String> errors = null;
 
@@ -101,12 +109,12 @@ public class Run {
 	}
 
 	/**
-	* Get id
-	* @return id
-	**/
+	 * Get id
+	 *
+	 * @return id
+	 */
 	@javax.annotation.Nonnull
 	@ApiModelProperty(example = "1234", required = true, value = "")
-
 	public String getId() {
 		return id;
 	}
@@ -122,12 +130,12 @@ public class Run {
 	}
 
 	/**
-	* Get benchmark
-	* @return benchmark
-	**/
+	 * Get benchmark
+	 *
+	 * @return benchmark
+	 */
 	@javax.annotation.Nonnull
 	@ApiModelProperty(example = "my-benchmark", required = true, value = "")
-
 	public String getBenchmark() {
 		return benchmark;
 	}
@@ -143,12 +151,12 @@ public class Run {
 	}
 
 	/**
-	* Get started
-	* @return started
-	**/
+	 * Get started
+	 *
+	 * @return started
+	 */
 	@javax.annotation.Nonnull
 	@ApiModelProperty(required = true, value = "")
-
 	public OffsetDateTime getStarted() {
 		return started;
 	}
@@ -164,12 +172,12 @@ public class Run {
 	}
 
 	/**
-	* Get terminated
-	* @return terminated
-	**/
+	 * Get terminated
+	 *
+	 * @return terminated
+	 */
 	@javax.annotation.Nonnull
 	@ApiModelProperty(required = true, value = "")
-
 	public OffsetDateTime getTerminated() {
 		return terminated;
 	}
@@ -185,12 +193,12 @@ public class Run {
 	}
 
 	/**
-	* Get cancelled
-	* @return cancelled
-	**/
+	 * Get cancelled
+	 *
+	 * @return cancelled
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Boolean getCancelled() {
 		return cancelled;
 	}
@@ -206,12 +214,12 @@ public class Run {
 	}
 
 	/**
-	* Get completed
-	* @return completed
-	**/
+	 * Get completed
+	 *
+	 * @return completed
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Boolean getCompleted() {
 		return completed;
 	}
@@ -227,12 +235,12 @@ public class Run {
 	}
 
 	/**
-	* Get description
-	* @return description
-	**/
+	 * Get description
+	 *
+	 * @return description
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getDescription() {
 		return description;
 	}
@@ -256,12 +264,12 @@ public class Run {
 	}
 
 	/**
-	* Get phases
-	* @return phases
-	**/
+	 * Get phases
+	 *
+	 * @return phases
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public List<Phase> getPhases() {
 		return phases;
 	}
@@ -285,12 +293,12 @@ public class Run {
 	}
 
 	/**
-	* Get agents
-	* @return agents
-	**/
+	 * Get agents
+	 *
+	 * @return agents
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public List<Agent> getAgents() {
 		return agents;
 	}
@@ -314,12 +322,12 @@ public class Run {
 	}
 
 	/**
-	* Get errors
-	* @return errors
-	**/
+	 * Get errors
+	 *
+	 * @return errors
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public List<String> getErrors() {
 		return errors;
 	}
@@ -337,21 +345,31 @@ public class Run {
 			return false;
 		}
 		Run run = (Run) o;
-		return Objects.equals(this.id, run.id) &&
-				Objects.equals(this.benchmark, run.benchmark) &&
-				Objects.equals(this.started, run.started) &&
-				Objects.equals(this.terminated, run.terminated) &&
-				Objects.equals(this.cancelled, run.cancelled) &&
-				Objects.equals(this.completed, run.completed) &&
-				Objects.equals(this.description, run.description) &&
-				Objects.equals(this.phases, run.phases) &&
-				Objects.equals(this.agents, run.agents) &&
-				Objects.equals(this.errors, run.errors);
+		return Objects.equals(this.id, run.id)
+				&& Objects.equals(this.benchmark, run.benchmark)
+				&& Objects.equals(this.started, run.started)
+				&& Objects.equals(this.terminated, run.terminated)
+				&& Objects.equals(this.cancelled, run.cancelled)
+				&& Objects.equals(this.completed, run.completed)
+				&& Objects.equals(this.description, run.description)
+				&& Objects.equals(this.phases, run.phases)
+				&& Objects.equals(this.agents, run.agents)
+				&& Objects.equals(this.errors, run.errors);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, benchmark, started, terminated, cancelled, completed, description, phases, agents, errors);
+		return Objects.hash(
+				id,
+				benchmark,
+				started,
+				terminated,
+				cancelled,
+				completed,
+				description,
+				phases,
+				agents,
+				errors);
 	}
 
 	@Override
@@ -373,8 +391,7 @@ public class Run {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -420,7 +437,8 @@ public class Run {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in Run is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in Run is not found in the empty JSON string",
 								Run.openapiRequiredFields.toString()));
 			}
 		}
@@ -430,7 +448,8 @@ public class Run {
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!Run.openapiFields.contains(entry.getKey())) {
 				throw new IllegalArgumentException(
-						String.format("The field `%s` in the JSON string is not defined in the `Run` properties. JSON: %s",
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `Run` properties. JSON: %s",
 								entry.getKey(), jsonObj.toString()));
 			}
 		}
@@ -438,23 +457,28 @@ public class Run {
 		// check to make sure all required properties/fields are present in the JSON string
 		for (String requiredField : Run.openapiRequiredFields) {
 			if (jsonObj.get(requiredField) == null) {
-				throw new IllegalArgumentException(String.format("The required field `%s` is not found in the JSON string: %s",
-						requiredField, jsonObj.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The required field `%s` is not found in the JSON string: %s",
+								requiredField, jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("id") != null && !jsonObj.get("id").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `id` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `id` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("id").toString()));
 		}
 		if (jsonObj.get("benchmark") != null && !jsonObj.get("benchmark").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `benchmark` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `benchmark` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("benchmark").toString()));
 		}
 		if (jsonObj.get("description") != null && !jsonObj.get("description").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `description` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `description` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("description").toString()));
 		}
 		JsonElement jsonArrayphases = jsonObj.get("phases");
@@ -462,7 +486,8 @@ public class Run {
 			// ensure the json data is an array
 			if (!jsonObj.get("phases").isJsonArray()) {
 				throw new IllegalArgumentException(
-						String.format("Expected the field `phases` to be an array in the JSON string but got `%s`",
+						String.format(
+								"Expected the field `phases` to be an array in the JSON string but got `%s`",
 								jsonObj.get("phases").toString()));
 			}
 
@@ -477,7 +502,8 @@ public class Run {
 			// ensure the json data is an array
 			if (!jsonObj.get("agents").isJsonArray()) {
 				throw new IllegalArgumentException(
-						String.format("Expected the field `agents` to be an array in the JSON string but got `%s`",
+						String.format(
+								"Expected the field `agents` to be an array in the JSON string but got `%s`",
 								jsonObj.get("agents").toString()));
 			}
 
@@ -490,7 +516,8 @@ public class Run {
 		// ensure the json data is an array
 		if (jsonObj.get("errors") != null && !jsonObj.get("errors").isJsonArray()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `errors` to be an array in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `errors` to be an array in the JSON string but got `%s`",
 							jsonObj.get("errors").toString()));
 		}
 	}
@@ -518,7 +545,6 @@ public class Run {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

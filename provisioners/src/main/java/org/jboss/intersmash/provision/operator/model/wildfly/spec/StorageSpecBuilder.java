@@ -27,11 +27,11 @@ public final class StorageSpecBuilder {
 	private VolumeClaimTemplate volumeClaimTemplate;
 
 	/**
-	 * Set the {@link EmptyDirVolumeSource} to be used by the WildFly
-	 * {@link io.fabric8.kubernetes.api.model.apps.StatefulSet}
+	 * Set the {@link EmptyDirVolumeSource} to be used by the WildFly {@link
+	 * io.fabric8.kubernetes.api.model.apps.StatefulSet}
 	 *
-	 * @param emptyDir {@link EmptyDirVolumeSource} to be used by the WildFly
-	 * {@link io.fabric8.kubernetes.api.model.apps.StatefulSet}
+	 * @param emptyDir {@link EmptyDirVolumeSource} to be used by the WildFly {@link
+	 *     io.fabric8.kubernetes.api.model.apps.StatefulSet}
 	 * @return this
 	 */
 	public StorageSpecBuilder emptyDir(EmptyDir emptyDir) {
@@ -40,11 +40,11 @@ public final class StorageSpecBuilder {
 	}
 
 	/**
-	 * Set the {@link PersistentVolumeClaim} spec to be used by the WildFly
-	 * {@link io.fabric8.kubernetes.api.model.apps.StatefulSet}
+	 * Set the {@link PersistentVolumeClaim} spec to be used by the WildFly {@link
+	 * io.fabric8.kubernetes.api.model.apps.StatefulSet}
 	 *
 	 * @param volumeClaimTemplate A {@link PersistentVolumeClaim} spec to be used by the WildFly
-	 * {@link io.fabric8.kubernetes.api.model.apps.StatefulSet}
+	 *     {@link io.fabric8.kubernetes.api.model.apps.StatefulSet}
 	 * @return this
 	 */
 	public StorageSpecBuilder volumeClaimTemplate(VolumeClaimTemplate volumeClaimTemplate) {

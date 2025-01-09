@@ -114,10 +114,12 @@ public final class KeycloakIdentityProviderBuilder {
 	/**
 	 * Adds Read Token role when creating this Identity Provider.
 	 *
-	 * @param addReadTokenRoleOnCreate Whether Read Token role should be added when creating this Identity Provider
+	 * @param addReadTokenRoleOnCreate Whether Read Token role should be added when creating this
+	 *     Identity Provider
 	 * @return this
 	 */
-	public KeycloakIdentityProviderBuilder addReadTokenRoleOnCreate(boolean addReadTokenRoleOnCreate) {
+	public KeycloakIdentityProviderBuilder addReadTokenRoleOnCreate(
+			boolean addReadTokenRoleOnCreate) {
 		this.addReadTokenRoleOnCreate = addReadTokenRoleOnCreate;
 		return this;
 	}
@@ -128,7 +130,8 @@ public final class KeycloakIdentityProviderBuilder {
 	 * @param firstBrokerLoginFlowAlias The Identity Provider First Broker Login Flow Alias
 	 * @return this
 	 */
-	public KeycloakIdentityProviderBuilder firstBrokerLoginFlowAlias(String firstBrokerLoginFlowAlias) {
+	public KeycloakIdentityProviderBuilder firstBrokerLoginFlowAlias(
+			String firstBrokerLoginFlowAlias) {
 		this.firstBrokerLoginFlowAlias = firstBrokerLoginFlowAlias;
 		return this;
 	}
@@ -194,7 +197,7 @@ public final class KeycloakIdentityProviderBuilder {
 		keycloakIdentityProvider.setFirstBrokerLoginFlowAlias(firstBrokerLoginFlowAlias);
 		keycloakIdentityProvider.setPostBrokerLoginFlowAlias(postBrokerLoginFlowAlias);
 		keycloakIdentityProvider.setLinkOnly(linkOnly);
-		///keycloakIdentityProvider.setOmitempty(omitempty);
+		/// keycloakIdentityProvider.setOmitempty(omitempty);
 		return keycloakIdentityProvider;
 	}
 }

@@ -32,32 +32,27 @@ import org.keycloak.util.JsonSerialization;
 /**
  * The Keycloak Admin client
  *
- * The class should follow the Keycloak Applications and Provisioners.
+ * <p>The class should follow the Keycloak Applications and Provisioners.
  *
- * TODO Move the class, with Keycloak Application and Provisioner classes, to separate module in case of refactoring
+ * <p>TODO Move the class, with Keycloak Application and Provisioner classes, to separate module in
+ * case of refactoring
  */
 public class KeycloakAdminClient {
 
 	private final String realmName;
 	private final Keycloak keycloak;
 
-	public KeycloakAdminClient(final String url, final String realm, final String username, final String password)
+	public KeycloakAdminClient(
+			final String url, final String realm, final String username, final String password)
 			throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-		SSLContext trustAllSSLContext = SSLContextBuilder
-				.create()
-				.loadTrustMaterial(TrustAllStrategy.INSTANCE)
-				.build();
+		SSLContext trustAllSSLContext = SSLContextBuilder.create().loadTrustMaterial(TrustAllStrategy.INSTANCE).build();
 		realmName = realm;
-		keycloak = Keycloak.getInstance(
-				url,
-				realm,
-				username, password,
-				"admin-cli",
-				trustAllSSLContext);
+		keycloak = Keycloak.getInstance(url, realm, username, password, "admin-cli", trustAllSSLContext);
 	}
 
 	/**
 	 * https://www.keycloak.org/docs/9.0/server_admin/index.html#importing-a-realm-from-exported-json-file
+	 *
 	 * @param is an input stream with exported realm configuration in json format
 	 * @throws IOException If something goes wrong when deserializing JSON from the input stream
 	 */

@@ -50,11 +50,10 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 
-/**
- * Keycloak operator provisioner
- */
-public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<KeycloakOperatorApplication, C> implements Provisioner<KeycloakOperatorApplication> {
+/** Keycloak operator provisioner */
+public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<KeycloakOperatorApplication, C>
+		implements Provisioner<KeycloakOperatorApplication> {
 
 	public KeycloakOperatorProvisioner(KeycloakOperatorApplication application) {
 		super(application, KeycloakOperatorProvisioner.OPERATOR_ID);
@@ -81,39 +80,51 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 	@Override
 	public void deploy() {
 		FailFastCheck ffCheck = () -> false;
-		// Keycloak Operator codebase contains the name of the Keycloak image to deploy: user can override Keycloak image to
+		// Keycloak Operator codebase contains the name of the Keycloak image to deploy: user can
+		// override Keycloak image to
 		// deploy using environment variables in Keycloak Operator Subscription
 		subscribe();
 
-		// Custom Keycloak image to be used: overrides the Keycloak image at the Keycloak level: just this Keycloak
+		// Custom Keycloak image to be used: overrides the Keycloak image at the Keycloak level: just
+		// this Keycloak
 		// instance will be spun out of this image
 		if (!Strings.isNullOrEmpty(IntersmashConfig.keycloakImageURL())) {
 			getApplication().getKeycloak().getSpec().setImage(IntersmashConfig.keycloakImageURL());
 		}
 
 		// create keys/certificates and add them to the Keycloak resource:
-		// TODO: https://www.keycloak.org/operator/basic-deployment or ~/projects/keycloak/docs/guides/operator/basic-deployment.adoc
+		// TODO: https://www.keycloak.org/operator/basic-deployment or
+		// ~/projects/keycloak/docs/guides/operator/basic-deployment.adoc
 		if (getApplication().getKeycloak().getSpec().getHttp() == null
 				|| getApplication().getKeycloak().getSpec().getHttp().getTlsSecret() == null) {
-			if (getApplication().getKeycloak().getSpec().getHostname() == null ||
-					com.google.common.base.Strings
-							.isNullOrEmpty(getApplication().getKeycloak().getSpec().getHostname().getHostname())) {
+			if (getApplication().getKeycloak().getSpec().getHostname() == null
+					|| com.google.common.base.Strings.isNullOrEmpty(
+							getApplication().getKeycloak().getSpec().getHostname().getHostname())) {
 				throw new IllegalStateException(
 						"A .spec.hostname.hostname must be set when configuring a Keycloak resource .spec.http");
 			}
 			// create key, certificate and tls secret
 			String tlsSecretName = getApplication().getKeycloak().getMetadata().getName() + "-tls-secret";
-			CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils
-					.generateSelfSignedCertificateAndKey(
-							getApplication().getKeycloak().getSpec().getHostname().getHostname().replaceFirst("[.].*$", ""),
-							tlsSecretName, this.client(), this.client().getNamespace());
+			CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils.generateSelfSignedCertificateAndKey(
+					getApplication()
+							.getKeycloak()
+							.getSpec()
+							.getHostname()
+							.getHostname()
+							.replaceFirst("[.].*$", ""),
+					tlsSecretName,
+					this.client(),
+					this.client().getNamespace());
 			// add config to keycloak
 			if (getApplication().getKeycloak().getSpec().getHttp() == null) {
 				Http http = new Http();
 				http.setTlsSecret(certificateAndKey.tlsSecret.getMetadata().getName());
 				getApplication().getKeycloak().getSpec().setHttp(http);
 			} else {
-				getApplication().getKeycloak().getSpec().getHttp()
+				getApplication()
+						.getKeycloak()
+						.getSpec()
+						.getHttp()
 						.setTlsSecret(certificateAndKey.tlsSecret.getMetadata().getName());
 			}
 		}
@@ -121,9 +132,13 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 		// 1. check externalDatabase exists
 		if (getApplication().getKeycloak().getSpec().getDb() != null) {
 			// 2. Service "spec.db.host" must be installed beforehand
-			new SimpleWaiter(() -> this.client().services().withName(getApplication().getKeycloak().getSpec().getDb().getHost())
-					.get() != null)
-					.level(Level.DEBUG).waitFor();
+			new SimpleWaiter(
+					() -> this.client()
+							.services()
+							.withName(getApplication().getKeycloak().getSpec().getDb().getHost())
+							.get() != null)
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 
 		// create custom resources
@@ -138,8 +153,7 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 		// check that route is up, only if there's a valid external URL available
 		URL externalUrl = getURL();
 		if ((getApplication().getKeycloak().getSpec().getInstances() > 0) && (externalUrl != null)) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
@@ -151,47 +165,69 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 			String controllerRevisionHash = getStatefulSet().getStatus().getUpdateRevision();
 			BooleanSupplier bs = () -> new ArrayList<>(getLabeledPods("controller-revision-hash", controllerRevisionHash))
 					.size() == replicas.intValue();
-			new SimpleWaiter(bs, TimeUnit.MINUTES, 2,
-					"Waiting for pods with label \"controller-revision-hash\"=" + controllerRevisionHash + " to be scaled")
+			new SimpleWaiter(
+					bs,
+					TimeUnit.MINUTES,
+					2,
+					"Waiting for pods with label \"controller-revision-hash\"="
+							+ controllerRevisionHash
+							+ " to be scaled")
 					.waitFor();
 		}
 	}
 
 	public void waitFor(KeycloakRealmImport realmImport) {
-		new SimpleWaiter(() -> {
-			Resource<KeycloakRealmImport> res = keycloakRealmImportClient().withName(realmImport.getMetadata().getName());
-			if (Objects.nonNull(res)
-					&& Objects.nonNull(res.get())
-					&& Objects.nonNull(res.get().getStatus())) {
-				KeycloakRealmImport imp = res.get();
-				return imp.getStatus().getConditions().stream().filter(
-						cond -> cond.getStatus() != null
-								&& "Done".equalsIgnoreCase(cond.getType())
-								&& com.google.common.base.Strings.isNullOrEmpty(cond.getMessage()))
-						.count() == 1
-						&&
-						imp.getStatus().getConditions().stream().filter(
-								cond -> cond.getStatus() == null
-										&& "HasErrors".equalsIgnoreCase(cond.getType())
-										&& com.google.common.base.Strings.isNullOrEmpty(cond.getMessage()))
-								.count() == 1;
-			}
-			return false;
-		}).reason("Wait for KeycloakRealmImport resource to be imported").level(Level.DEBUG).waitFor();
+		new SimpleWaiter(
+				() -> {
+					Resource<KeycloakRealmImport> res = keycloakRealmImportClient()
+							.withName(realmImport.getMetadata().getName());
+					if (Objects.nonNull(res)
+							&& Objects.nonNull(res.get())
+							&& Objects.nonNull(res.get().getStatus())) {
+						KeycloakRealmImport imp = res.get();
+						return imp.getStatus().getConditions().stream()
+								.filter(
+										cond -> cond.getStatus() != null
+												&& "Done".equalsIgnoreCase(cond.getType())
+												&& com.google.common.base.Strings.isNullOrEmpty(
+														cond.getMessage()))
+								.count() == 1
+								&& imp.getStatus().getConditions().stream()
+										.filter(
+												cond -> cond.getStatus() == null
+														&& "HasErrors".equalsIgnoreCase(cond.getType())
+														&& com.google.common.base.Strings.isNullOrEmpty(
+																cond.getMessage()))
+										.count() == 1;
+					}
+					return false;
+				})
+				.reason("Wait for KeycloakRealmImport resource to be imported")
+				.level(Level.DEBUG)
+				.waitFor();
 	}
 
 	private void waitForKeycloakResourceReadiness() {
 		new SimpleWaiter(
-				() -> keycloak().get().getStatus() != null &&
-						keycloak().get().getStatus().getConditions().stream().anyMatch(
-								condition -> "Ready".equalsIgnoreCase(condition.getType()) && condition.getStatus() != null))
-				.reason("Wait for Keycloak resource to be ready").level(Level.DEBUG).waitFor();
+				() -> keycloak().get().getStatus() != null
+						&& keycloak().get().getStatus().getConditions().stream()
+								.anyMatch(
+										condition -> "Ready".equalsIgnoreCase(condition.getType())
+												&& condition.getStatus() != null))
+				.reason("Wait for Keycloak resource to be ready")
+				.level(Level.DEBUG)
+				.waitFor();
 		if (!getApplication().getKeycloakRealmImports().isEmpty()) {
-			new SimpleWaiter(() -> keycloakRealmImports().stream().allMatch(
-					realmImport -> realmImport.getStatus().getConditions().stream().anyMatch(
-							condition -> "Done".equalsIgnoreCase(condition.getType())
-									&& condition.getStatus() != null)))
-					.reason("Wait for KeycloakRealmImports to be done.").level(Level.DEBUG).waitFor();
+			new SimpleWaiter(
+					() -> keycloakRealmImports().stream()
+							.allMatch(
+									realmImport -> realmImport.getStatus().getConditions().stream()
+											.anyMatch(
+													condition -> "Done".equalsIgnoreCase(condition.getType())
+															&& condition.getStatus() != null)))
+					.reason("Wait for KeycloakRealmImports to be done.")
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 
@@ -201,13 +237,15 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 	public StatefulSet getStatefulSet() {
 		final String statefulSetName = getApplication().getKeycloak().getMetadata().getName();
 		new SimpleWaiter(
-				() -> Objects.nonNull(this.client().apps().statefulSets().withName(statefulSetName).get()))
+				() -> Objects.nonNull(
+						this.client().apps().statefulSets().withName(statefulSetName).get()))
 				.reason(
 						MessageFormat.format(
 								"Waiting for StatefulSet \"{0}\" to be created for Keycloak \"{1}\".",
-								statefulSetName,
-								getApplication().getKeycloak().getMetadata().getName()))
-				.level(Level.DEBUG).failFast(getFailFastCheck()).waitFor();
+								statefulSetName, getApplication().getKeycloak().getMetadata().getName()))
+				.level(Level.DEBUG)
+				.failFast(getFailFastCheck())
+				.waitFor();
 		return this.client().apps().statefulSets().withName(statefulSetName).get();
 	}
 
@@ -219,24 +257,36 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 								.withName(keycloakRealm.getMetadata().getName())
 								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 								.delete());
-		new SimpleWaiter(
-				() -> keycloakRealmImportClient().list().getItems().size() == 0)
-				.reason("Wait for all keycloakRealmImports instances to be deleted.").level(Level.DEBUG).waitFor();
-		keycloak().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
-		new SimpleWaiter(() -> keycloakClient().list().getItems().size() == 0)
-				.reason("Wait for Keycloak instances to be deleted.").level(Level.DEBUG).waitFor();
-
-		// wait for 0 pods
-		BooleanSupplier bs = () -> this.client().pods().inNamespace(this.client().getNamespace()).list().getItems().stream()
-				.filter(p -> !com.google.common.base.Strings.isNullOrEmpty(p.getMetadata().getLabels().get("app"))
-						&& p.getMetadata().getLabels().get("app")
-								.equals(getApplication().getKeycloak().getKind().toLowerCase()))
-				.collect(Collectors.toList()).isEmpty();
-		String reason = "Waiting for exactly 0 pods with label \"app\"="
-				+ getApplication().getKeycloak().getKind().toLowerCase() + " to be ready.";
-		new SimpleWaiter(bs, TimeUnit.MINUTES, 2, reason)
+		new SimpleWaiter(() -> keycloakRealmImportClient().list().getItems().size() == 0)
+				.reason("Wait for all keycloakRealmImports instances to be deleted.")
 				.level(Level.DEBUG)
 				.waitFor();
+		keycloak().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
+		new SimpleWaiter(() -> keycloakClient().list().getItems().size() == 0)
+				.reason("Wait for Keycloak instances to be deleted.")
+				.level(Level.DEBUG)
+				.waitFor();
+
+		// wait for 0 pods
+		BooleanSupplier bs = () -> this.client()
+				.pods()
+				.inNamespace(this.client().getNamespace())
+				.list()
+				.getItems()
+				.stream()
+				.filter(
+						p -> !com.google.common.base.Strings.isNullOrEmpty(
+								p.getMetadata().getLabels().get("app"))
+								&& p.getMetadata()
+										.getLabels()
+										.get("app")
+										.equals(getApplication().getKeycloak().getKind().toLowerCase()))
+				.collect(Collectors.toList())
+				.isEmpty();
+		String reason = "Waiting for exactly 0 pods with label \"app\"="
+				+ getApplication().getKeycloak().getKind().toLowerCase()
+				+ " to be ready.";
+		new SimpleWaiter(bs, TimeUnit.MINUTES, 2, reason).level(Level.DEBUG).waitFor();
 
 		unsubscribe();
 	}
@@ -250,29 +300,43 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 		keycloak().replace(tmpKeycloak);
 		if (wait) {
 			BooleanSupplier bs = () -> getPods().stream()
-					.filter(p -> p.getMetadata().getLabels().get("controller-revision-hash") != null
-							&& p.getMetadata().getLabels().get("controller-revision-hash").equals(controllerRevisionHash))
-					.collect(Collectors.toList()).size() == replicas;
-			new SimpleWaiter(bs, TimeUnit.MINUTES, 2,
-					"Waiting for pods with label \"controller-revision-hash\"=" + controllerRevisionHash + " to be scaled")
+					.filter(
+							p -> p.getMetadata().getLabels().get("controller-revision-hash") != null
+									&& p.getMetadata()
+											.getLabels()
+											.get("controller-revision-hash")
+											.equals(controllerRevisionHash))
+					.collect(Collectors.toList())
+					.size() == replicas;
+			new SimpleWaiter(
+					bs,
+					TimeUnit.MINUTES,
+					2,
+					"Waiting for pods with label \"controller-revision-hash\"="
+							+ controllerRevisionHash
+							+ " to be scaled")
 					.level(Level.DEBUG)
 					.waitFor();
 		}
 		new SimpleWaiter(
-				() -> keycloak().get().getStatus().getConditions().stream().anyMatch(
-						condition -> "Ready".equalsIgnoreCase(condition.getType())
-								&& condition.getStatus() != null))
-				.reason("Wait for Keycloak resource to be ready").level(Level.DEBUG).waitFor();
+				() -> keycloak().get().getStatus().getConditions().stream()
+						.anyMatch(
+								condition -> "Ready".equalsIgnoreCase(condition.getType())
+										&& condition.getStatus() != null))
+				.reason("Wait for Keycloak resource to be ready")
+				.level(Level.DEBUG)
+				.waitFor();
 		// check that route is up
 		if (originalReplicas == 0 && replicas > 0) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
 
 	/**
-	 * Keycloak operator based provisioner implementation is designed to return just the Keycloak instance pods
+	 * Keycloak operator based provisioner implementation is designed to return just the Keycloak
+	 * instance pods
+	 *
 	 * @return a list of {@link Pod} that represent the replicas of Keycloak instances
 	 */
 	public List<Pod> getPods() {
@@ -280,9 +344,12 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 		StatefulSet statefulSet = this.client().apps().statefulSets().withName(statefulSetName).get();
 		return Objects.nonNull(statefulSet)
 				? this.client().pods().inNamespace(this.client().getNamespace()).list().getItems().stream()
-						.filter(p -> p.getMetadata().getLabels().get("controller-revision-hash") != null
-								&& p.getMetadata().getLabels().get("controller-revision-hash")
-										.equals(statefulSet.getStatus().getUpdateRevision()))
+						.filter(
+								p -> p.getMetadata().getLabels().get("controller-revision-hash") != null
+										&& p.getMetadata()
+												.getLabels()
+												.get("controller-revision-hash")
+												.equals(statefulSet.getStatus().getUpdateRevision()))
 						.collect(Collectors.toList())
 				: List.of();
 	}
@@ -302,7 +369,8 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 	public String KEYCLOACK_REALM_IMPORT_CRD_NAME = "keycloakrealmimports.k8s.keycloak.org";
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -321,11 +389,12 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 
 	public NonNamespaceOperation<Keycloak, KeycloakOperatorKeycloakList, Resource<Keycloak>> keycloakClient() {
 		if (KEYCLOAKS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOACK_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOACK_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOACK_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOACK_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAKS_CLIENT = keycloaksCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -334,11 +403,12 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 
 	public NonNamespaceOperation<KeycloakRealmImport, KeycloakOperatorRealmImportList, Resource<KeycloakRealmImport>> keycloakRealmImportClient() {
 		if (KEYCLOAK_REALM_IMPORTS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(KEYCLOACK_REALM_IMPORT_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(KEYCLOACK_REALM_IMPORT_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						KEYCLOACK_REALM_IMPORT_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								KEYCLOACK_REALM_IMPORT_CRD_NAME, OPERATOR_ID));
 			}
 			KEYCLOAK_REALM_IMPORTS_CLIENT = keycloakRealmImportsCustomResourcesClient(
 					CustomResourceDefinitionContext.fromCrd(crd));
@@ -347,20 +417,21 @@ public abstract class KeycloakOperatorProvisioner<C extends NamespacedKubernetes
 	}
 
 	/**
-	 * Get a reference to keycloak object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
-	 * @return A concrete {@link Resource} instance representing the {@link Keycloak} resource definition
+	 * Get a reference to keycloak object. Use get() to get the actual object, or null in case it does
+	 * not exist on tested cluster.
+	 *
+	 * @return A concrete {@link Resource} instance representing the {@link Keycloak} resource
+	 *     definition
 	 */
 	public Resource<Keycloak> keycloak() {
-		return keycloakClient()
-				.withName(getApplication().getKeycloak().getMetadata().getName());
+		return keycloakClient().withName(getApplication().getKeycloak().getMetadata().getName());
 	}
 
 	public List<KeycloakRealmImport> keycloakRealmImports() {
-		return keycloakRealmImportClient().list().getItems()
-				.stream().filter(
-						realm -> getApplication().getKeycloakRealmImports().stream().map(
-								ri -> ri.getMetadata().getName())
+		return keycloakRealmImportClient().list().getItems().stream()
+				.filter(
+						realm -> getApplication().getKeycloakRealmImports().stream()
+								.map(ri -> ri.getMetadata().getName())
 								.anyMatch(riName -> riName.equalsIgnoreCase(realm.getMetadata().getName())))
 				.collect(Collectors.toList());
 	}

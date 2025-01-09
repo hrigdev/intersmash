@@ -37,10 +37,9 @@ import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
 
-/**
- * Provisioner that is supposed to deploy an application on OpenShift.
- */
-public interface OpenShiftProvisioner<T extends Application> extends Provisioner<T>, Scalable, HasPods {
+/** Provisioner that is supposed to deploy an application on OpenShift. */
+public interface OpenShiftProvisioner<T extends Application>
+		extends Provisioner<T>, Scalable, HasPods {
 	String SCRIPT_DEBUG = "SCRIPT_DEBUG";
 	String APP_LABEL_KEY = "intersmash.app";
 
@@ -89,13 +88,19 @@ public interface OpenShiftProvisioner<T extends Application> extends Provisioner
 			return new URL(getUrl(getApplication().getName(), false));
 		} catch (MalformedURLException ex) {
 			throw new RuntimeException(
-					String.format("Failed to get an URL for the \"%s\" route", this.getClass().getSimpleName()), ex);
+					String.format(
+							"Failed to get an URL for the \"%s\" route", this.getClass().getSimpleName()),
+					ex);
 		}
 	}
 
 	@Override
 	default List<Pod> getPods() {
-		return OpenShiftProvisioner.openShift.inNamespace(OpenShiftConfig.namespace()).pods().list().getItems();
+		return OpenShiftProvisioner.openShift
+				.inNamespace(OpenShiftConfig.namespace())
+				.pods()
+				.list()
+				.getItems();
 	}
 
 	default NonNamespaceOperation<CustomResourceDefinition, CustomResourceDefinitionList, Resource<CustomResourceDefinition>> customResourceDefinitionsClient() {

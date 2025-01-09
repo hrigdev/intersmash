@@ -24,15 +24,17 @@ import org.jboss.intersmash.provision.Provisioner;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This {@link AutoProvisioningOpenShiftApplication} concrete subclass is providing the methods implementation needed
- * by the declarative provisioning process, which is leveraged by implementing
+ * This {@link AutoProvisioningOpenShiftApplication} concrete subclass is providing the methods
+ * implementation needed by the declarative provisioning process, which is leveraged by implementing
  * {@link AutoProvisioningOpenShiftApplication}.
  *
- * The goal is to test that when an error occurs on some workflow method (e.g.: {@link Provisioner#deploy()}),
- * it is wrapped up by a custom exception representing Intersmash Auto Provisioning errors, i.e. {@link AutoProvisioningExecutionException}.
+ * <p>The goal is to test that when an error occurs on some workflow method (e.g.: {@link
+ * Provisioner#deploy()}), it is wrapped up by a custom exception representing Intersmash Auto
+ * Provisioning errors, i.e. {@link AutoProvisioningExecutionException}.
  */
 @Slf4j
-public class AutoProvisionerTestsApplicationWithMethodErrors implements AutoProvisioningOpenShiftApplication {
+public class AutoProvisionerTestsApplicationWithMethodErrors
+		implements AutoProvisioningOpenShiftApplication {
 
 	@Override
 	public void preDeploy() throws AutoProvisioningExecutionException {
@@ -47,7 +49,8 @@ public class AutoProvisionerTestsApplicationWithMethodErrors implements AutoProv
 	@Override
 	public void deploy() throws AutoProvisioningExecutionException {
 		try {
-			throw new UnsupportedOperationException(this.getClass().getName() + " doesn't support the \"deploy\" method yet.");
+			throw new UnsupportedOperationException(
+					this.getClass().getName() + " doesn't support the \"deploy\" method yet.");
 		} catch (Throwable e) {
 			throw new AutoProvisioningExecutionException(e);
 		}
@@ -56,7 +59,8 @@ public class AutoProvisionerTestsApplicationWithMethodErrors implements AutoProv
 	@Override
 	public void scale(int replicas, boolean wait) throws AutoProvisioningExecutionException {
 		try {
-			throw new UnsupportedOperationException(this.getClass().getName() + " doesn't support the \"scale\" method yet.");
+			throw new UnsupportedOperationException(
+					this.getClass().getName() + " doesn't support the \"scale\" method yet.");
 		} catch (Throwable e) {
 			throw new AutoProvisioningExecutionException(e);
 		}
@@ -85,7 +89,8 @@ public class AutoProvisionerTestsApplicationWithMethodErrors implements AutoProv
 	@Override
 	public URL getURL() throws AutoProvisioningExecutionException {
 		try {
-			throw new UnsupportedOperationException(this.getClass().getName() + " doesn't support the \"getURL\" method yet.");
+			throw new UnsupportedOperationException(
+					this.getClass().getName() + " doesn't support the \"getURL\" method yet.");
 		} catch (Throwable e) {
 			throw new AutoProvisioningExecutionException(e);
 		}

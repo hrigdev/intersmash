@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client.binary;
 
 import java.io.IOException;
@@ -21,13 +36,15 @@ import io.fabric8.kubernetes.client.VersionInfo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Class for resolving Kubernetes client binary path based on the Kubernetes cluster version, either the
- * one referenced by the configuration properties or the actual cluster one.
+ * Class for resolving Kubernetes client binary path based on the Kubernetes cluster version, either
+ * the one referenced by the configuration properties or the actual cluster one.
  *
- * Based on the configuration properties, users can configure the resolver to cache the binary client.
+ * <p>Based on the configuration properties, users can configure the resolver to cache the binary
+ * client.
  */
 @Slf4j
-public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements KubernetesClientBinaryPathResolver {
+public class ClusterVersionBasedKubernetesClientBinaryPathResolver
+		implements KubernetesClientBinaryPathResolver {
 	private static final String KUBERNETES_CLIENT_BINARY_DOWNLOAD_BASE_URL = "https://dl.k8s.io/release/";
 	public static final int BINARY_DOWNLOAD_CONNECTION_TIMEOUT = 20_000;
 	public static final int BINARY_DOWNLOAD_READ_TIMEOUT = 300_000;
@@ -36,7 +53,8 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements Ku
 	public String resolve() {
 		// gets the cluster version from configuration
 		final String configuredClusterVersion = KubernetesConfig.version();
-		// priority is given to the configuration, then fallback on k8s APIs for determining the actual cluster version
+		// priority is given to the configuration, then fallback on k8s APIs for determining the actual
+		// cluster version
 		final VersionInfo clusterVersionInfo = !Strings.isNullOrEmpty(configuredClusterVersion)
 				? new VersionInfo.Builder().withGitVersion(configuredClusterVersion).build()
 				: Kuberneteses.admin().getKubernetesVersion();
@@ -58,14 +76,17 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements Ku
 			binaryPath = copyKubernetesClientBinaryToTemporaryRuntimeLocation(binaryPath);
 		} else {
 			binaryPath = ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl();
-			log.debug("Cache is disabled, downloading Kubernetes client binary to {}.", binaryPath.toAbsolutePath());
+			log.debug(
+					"Cache is disabled, downloading Kubernetes client binary to {}.",
+					binaryPath.toAbsolutePath());
 			downloadKubernetesClient(clusterVersionInfo, binaryPath);
 		}
 		return binaryPath.toAbsolutePath().toString();
 	}
 
 	/**
-	 * Get the proper URL for a Kubernetes client, based on required version and taking the OS into account as well.
+	 * Get the proper URL for a Kubernetes client, based on required version and taking the OS into
+	 * account as well.
 	 *
 	 * @param clusterVersion {@link VersionInfo} instance holding the required Kubernetes version.
 	 * @return A string representing the required Kubernetes client URL
@@ -78,14 +99,23 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements Ku
 		if (SystemUtils.IS_OS_MAC) {
 			systemType = "darwin";
 		}
-		return String.format("%s/%s/bin/%s/%s/%s", KUBERNETES_CLIENT_BINARY_DOWNLOAD_BASE_URL, clusterVersion.getGitVersion(),
-				systemType, arch, BINARY_NAME);
+		return String.format(
+				"%s/%s/bin/%s/%s/%s",
+				KUBERNETES_CLIENT_BINARY_DOWNLOAD_BASE_URL,
+				clusterVersion.getGitVersion(),
+				systemType,
+				arch,
+				BINARY_NAME);
 	}
 
-	private void downloadKubernetesClient(final VersionInfo clusterVersionInfo, final Path binaryPath) {
+	private void downloadKubernetesClient(
+			final VersionInfo clusterVersionInfo, final Path binaryPath) {
 		final String url = getBinaryUrlBasedOnKubernetesVersion(clusterVersionInfo);
 		try {
-			Https.copyHttpsURLToFile(url, binaryPath.toFile(), BINARY_DOWNLOAD_CONNECTION_TIMEOUT,
+			Https.copyHttpsURLToFile(
+					url,
+					binaryPath.toFile(),
+					BINARY_DOWNLOAD_CONNECTION_TIMEOUT,
 					BINARY_DOWNLOAD_READ_TIMEOUT);
 		} catch (IOException ioe) {
 			throw new IllegalStateException("Failed to download the kubectl binary from " + url, ioe);
@@ -97,9 +127,14 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements Ku
 
 		final Path runtimeKubectl = ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl();
 		final Set<PosixFilePermission> permissions = Set.of(
-				PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE,
-				PosixFilePermission.GROUP_READ, PosixFilePermission.GROUP_WRITE, PosixFilePermission.GROUP_EXECUTE,
-				PosixFilePermission.OTHERS_READ, PosixFilePermission.OTHERS_EXECUTE);
+				PosixFilePermission.OWNER_READ,
+				PosixFilePermission.OWNER_WRITE,
+				PosixFilePermission.OWNER_EXECUTE,
+				PosixFilePermission.GROUP_READ,
+				PosixFilePermission.GROUP_WRITE,
+				PosixFilePermission.GROUP_EXECUTE,
+				PosixFilePermission.OTHERS_READ,
+				PosixFilePermission.OTHERS_EXECUTE);
 		try {
 			Files.copy(binaryPath, runtimeKubectl, StandardCopyOption.REPLACE_EXISTING);
 			Files.setPosixFilePermissions(runtimeKubectl, permissions);
@@ -110,7 +145,9 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolver implements Ku
 	}
 
 	static Path getCachePath(VersionInfo clusterVersionInfo) {
-		return Paths.get(KubernetesConfig.binaryCachePath(), clusterVersionInfo.getGitVersion(),
+		return Paths.get(
+				KubernetesConfig.binaryCachePath(),
+				clusterVersionInfo.getGitVersion(),
 				DigestUtils.md5Hex(clusterVersionInfo.getGitVersion()));
 	}
 

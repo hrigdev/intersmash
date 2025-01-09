@@ -35,19 +35,19 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 
 /**
- * Class provides support to get artifact by GAV from local repo (considered as remote).
- * Local repositories:
+ * Class provides support to get artifact by GAV from local repo (considered as remote). Local
+ * repositories:
+ *
  * <ul>
- *     <li>
- *         local repository from maven settings
- *         <ul>
- *             <li>M2_HOME/conf/settings.xml as global settings</li>
- *             <li>user.home/.m2/settings.xml as local settings</li>
- *         </ul>
- *         if not available, user.home/.m2/repository is considered
- *     </li>
- *     <li>sys property localRepository if given (result from -Dmaven.repo.local)</li>
+ *   <li>local repository from maven settings
+ *       <ul>
+ *         <li>M2_HOME/conf/settings.xml as global settings
+ *         <li>user.home/.m2/settings.xml as local settings
+ *       </ul>
+ *       if not available, user.home/.m2/repository is considered
+ *   <li>sys property localRepository if given (result from -Dmaven.repo.local)
  * </ul>
+ *
  * maven central and such repositories are not supported.
  */
 public class ArtifactProvider {
@@ -60,7 +60,8 @@ public class ArtifactProvider {
 	 * @param classifier optional - might be null
 	 * @return artifact file
 	 */
-	public static File resolveArtifact(String groupId, String artifactId, String version, String type, String classifier)
+	public static File resolveArtifact(
+			String groupId, String artifactId, String version, String type, String classifier)
 			throws SettingsBuildingException, ArtifactResolutionException {
 		LocalRepository localRepository = MavenSettingsUtil.getLocalRepository(MavenSettingsUtil.loadSettings());
 		RepositorySystem system = newRepositorySystem();
@@ -70,7 +71,8 @@ public class ArtifactProvider {
 		ArtifactRequest artifactRequest = new ArtifactRequest();
 		artifactRequest.setArtifact(artifact);
 
-		artifactRequest.setRepositories(MavenSettingsUtil.getRemoteRepositories(MavenSettingsUtil.loadSettings()));
+		artifactRequest.setRepositories(
+				MavenSettingsUtil.getRemoteRepositories(MavenSettingsUtil.loadSettings()));
 		ArtifactResult artifactResult = system.resolveArtifact(session, artifactRequest);
 		return artifactResult.getArtifact().getFile();
 	}
@@ -80,17 +82,19 @@ public class ArtifactProvider {
 		locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
 		locator.addService(TransporterFactory.class, FileTransporterFactory.class);
 
-		locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
-			@Override
-			public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-				throw new RuntimeException(exception);
-			}
-		});
+		locator.setErrorHandler(
+				new DefaultServiceLocator.ErrorHandler() {
+					@Override
+					public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+						throw new RuntimeException(exception);
+					}
+				});
 
 		return locator.getService(RepositorySystem.class);
 	}
 
-	public static RepositorySystemSession newRepositorySystemSession(RepositorySystem system, String localRepositoryPath) {
+	public static RepositorySystemSession newRepositorySystemSession(
+			RepositorySystem system, String localRepositoryPath) {
 		DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
 		LocalRepository localRepo = new LocalRepository(localRepositoryPath);

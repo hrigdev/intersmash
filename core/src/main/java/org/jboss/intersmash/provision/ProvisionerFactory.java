@@ -18,14 +18,16 @@ package org.jboss.intersmash.provision;
 import org.jboss.intersmash.application.Application;
 
 /**
- * Define the contract for classes that return a suitable {@link Provisioner} for a given {@link Application} class.
+ * Define the contract for classes that return a suitable {@link Provisioner} for a given {@link
+ * Application} class.
+ *
  * @param <T> The type of the {@link Provisioner} that the factory implementation shall return.
  */
 public interface ProvisionerFactory<T extends Provisioner> {
 
 	/**
-	 * @param application A concrete {@link Application} instance that represents the application/service to be
-	 *                       provisioned
+	 * @param application A concrete {@link Application} instance that represents the
+	 *     application/service to be provisioned
 	 * @return provisioner for {@link Application} or null
 	 */
 	T getProvisioner(Application application);

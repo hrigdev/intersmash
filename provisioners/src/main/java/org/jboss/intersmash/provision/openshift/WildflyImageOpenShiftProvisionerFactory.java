@@ -22,7 +22,8 @@ import org.jboss.intersmash.provision.ProvisionerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WildflyImageOpenShiftProvisionerFactory implements ProvisionerFactory<WildflyImageOpenShiftProvisioner> {
+public class WildflyImageOpenShiftProvisionerFactory
+		implements ProvisionerFactory<WildflyImageOpenShiftProvisioner> {
 
 	@Override
 	public WildflyImageOpenShiftProvisioner getProvisioner(Application application) {

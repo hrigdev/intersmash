@@ -39,13 +39,12 @@ import cz.xtf.junit5.annotations.CleanBeforeAll;
 import io.fabric8.kubernetes.api.model.Service;
 
 /**
- * This test verifies a binary build can be executed starting from a local folder containing an already provisioned
- * server and a deployed application; this is typically the "target/server" folder of a project using the
- * wildfly-maven-plugin.
- * <br>
- * No maven build is performed inside the builder image; it's supposed that the application is build locally with
- * whatever strategy, as long as it produces a "target/server" containing the server and an application deployment
- * which are compatible with a WildFly/EAP s2i v2 binary build.
+ * This test verifies a binary build can be executed starting from a local folder containing an
+ * already provisioned server and a deployed application; this is typically the "target/server"
+ * folder of a project using the wildfly-maven-plugin. <br>
+ * No maven build is performed inside the builder image; it's supposed that the application is build
+ * locally with whatever strategy, as long as it produces a "target/server" containing the server
+ * and an application deployment which are compatible with a WildFly/EAP s2i v2 binary build.
  */
 @CleanBeforeAll
 @OpenShiftTest
@@ -75,7 +74,9 @@ public class WildflyTargetServerTestCase implements ProjectCreationCapable {
 
 		// verify secret is mounted in /etc/secrets
 		PodShellOutput output = rsh.executeWithBash("cat /etc/secrets/" + TEST_SECRET_FOO);
-		softAssertions.assertThat(output.getOutput()).as("Secret check: test secret was not properly mounted")
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("Secret check: test secret was not properly mounted")
 				.contains(TEST_SECRET_BAR);
 
 		// verify the ping service is created and env variables set correctly
@@ -85,19 +86,19 @@ public class WildflyTargetServerTestCase implements ProjectCreationCapable {
 		expectedEnvVars.put("JGROUPS_PING_PROTOCOL", "dns.DNS_PING");
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_NAME", application.getPingServiceName());
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_PORT", "8888");
-		softAssertions.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
+		softAssertions
+				.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
 				.as("Ping service variables check")
 				.containsAllEntriesOf(expectedEnvVars);
 
 		softAssertions.assertAll();
 	}
 
-	/**
-	 * Secret resource should be created as a preDeploy() operation by a provisioner.
-	 */
+	/** Secret resource should be created as a preDeploy() operation by a provisioner. */
 	@Test
 	public void verifyDeployHooks() {
-		Assertions.assertThat(openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
+		Assertions.assertThat(
+				openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
 				.isNotNull();
 	}
 

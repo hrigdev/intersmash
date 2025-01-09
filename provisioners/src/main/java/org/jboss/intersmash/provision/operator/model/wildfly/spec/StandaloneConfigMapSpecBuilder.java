@@ -24,18 +24,19 @@ public final class StandaloneConfigMapSpecBuilder {
 	/**
 	 * Initialize the {@link StandaloneConfigMapSpecBuilder} with given resource name.
 	 *
-	 * @param name of the {@link io.fabric8.kubernetes.api.model.ConfigMap} containing the standalone configuration XML file.
+	 * @param name of the {@link io.fabric8.kubernetes.api.model.ConfigMap} containing the standalone
+	 *     configuration XML file.
 	 */
 	public StandaloneConfigMapSpecBuilder(String name) {
 		this.name = name;
 	}
 
 	/**
-	 * Key of the {@link io.fabric8.kubernetes.api.model.ConfigMap} whose value is the
-	 * standalone configuration XML file. If omitted, the spec will look for the standalone.xml key.
+	 * Key of the {@link io.fabric8.kubernetes.api.model.ConfigMap} whose value is the standalone
+	 * configuration XML file. If omitted, the spec will look for the standalone.xml key.
 	 *
-	 * @param key Desired key of for the {@link io.fabric8.kubernetes.api.model.ConfigMap} whose value is the
-	 * 	 standalone configuration XML file.
+	 * @param key Desired key of for the {@link io.fabric8.kubernetes.api.model.ConfigMap} whose value
+	 *     is the standalone configuration XML file.
 	 * @return this
 	 */
 	public StandaloneConfigMapSpecBuilder key(String key) {

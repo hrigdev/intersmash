@@ -18,9 +18,7 @@ package org.jboss.intersmash.test.deployments;
 import java.io.IOException;
 import java.util.Properties;
 
-/**
- * Class loads .properties from resources and provides method to get properties.
- */
+/** Class loads .properties from resources and provides method to get properties. */
 public class TestDeploymentProperties {
 	static Properties properties;
 	private static String VERSION = "version";
@@ -33,7 +31,8 @@ public class TestDeploymentProperties {
 	static {
 		properties = new Properties();
 		try {
-			properties.load(TestDeploymentProperties.class.getClassLoader().getResourceAsStream(".properties"));
+			properties.load(
+					TestDeploymentProperties.class.getClassLoader().getResourceAsStream(".properties"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -64,6 +63,7 @@ public class TestDeploymentProperties {
 	}
 
 	public static Boolean isEapXpDeploymentsBuildProfileEnabled() {
-		return WILDFLY_DEPLOYMENTS_BUILD_PROFILE_VALUE_EAP_XP.equals(getWildflyDeploymentsBuildProfile());
+		return WILDFLY_DEPLOYMENTS_BUILD_PROFILE_VALUE_EAP_XP.equals(
+				getWildflyDeploymentsBuildProfile());
 	}
 }

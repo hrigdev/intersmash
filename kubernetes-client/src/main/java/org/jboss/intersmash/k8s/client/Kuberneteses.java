@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client;
 
 import java.io.File;
@@ -23,7 +38,10 @@ public class Kuberneteses {
 		}
 
 		if (StringUtils.isNotEmpty(KubernetesConfig.adminUsername())) {
-			return Kubernetes.get(KubernetesConfig.url(), namespace, KubernetesConfig.adminUsername(),
+			return Kubernetes.get(
+					KubernetesConfig.url(),
+					namespace,
+					KubernetesConfig.adminUsername(),
 					KubernetesConfig.adminPassword());
 		}
 
@@ -37,7 +55,6 @@ public class Kuberneteses {
 	public static Kubernetes master() {
 
 		return Kuberneteses.master(NamespaceManager.getNamespace());
-
 	}
 
 	public static Kubernetes master(String namespace) {
@@ -46,7 +63,10 @@ public class Kuberneteses {
 		}
 
 		if (StringUtils.isNotEmpty(KubernetesConfig.masterUsername())) {
-			return Kubernetes.get(KubernetesConfig.url(), namespace, KubernetesConfig.masterUsername(),
+			return Kubernetes.get(
+					KubernetesConfig.url(),
+					namespace,
+					KubernetesConfig.masterUsername(),
 					KubernetesConfig.masterPassword());
 		}
 
@@ -58,7 +78,9 @@ public class Kuberneteses {
 	}
 
 	public static String getBinaryPath() {
-		return KubernetesClientBinaryManagerFactory.INSTANCE.getKubernetesClientBinaryManager().getBinaryPath();
+		return KubernetesClientBinaryManagerFactory.INSTANCE
+				.getKubernetesClientBinaryManager()
+				.getBinaryPath();
 	}
 
 	public static KubernetesClientBinary masterBinary() {
@@ -66,7 +88,9 @@ public class Kuberneteses {
 	}
 
 	public static KubernetesClientBinary masterBinary(String namespace) {
-		return KubernetesClientBinaryManagerFactory.INSTANCE.getKubernetesClientBinaryManager().masterBinary(namespace);
+		return KubernetesClientBinaryManagerFactory.INSTANCE
+				.getKubernetesClientBinaryManager()
+				.masterBinary(namespace);
 	}
 
 	public static KubernetesClientBinary adminBinary() {
@@ -74,7 +98,9 @@ public class Kuberneteses {
 	}
 
 	public static KubernetesClientBinary adminBinary(String namespace) {
-		return KubernetesClientBinaryManagerFactory.INSTANCE.getKubernetesClientBinaryManager().adminBinary(namespace);
+		return KubernetesClientBinaryManagerFactory.INSTANCE
+				.getKubernetesClientBinaryManager()
+				.adminBinary(namespace);
 	}
 
 	private static String getHomeDir() {
@@ -98,10 +124,12 @@ public class Kuberneteses {
 	//     * @param ocUrl String, download URL.
 	//     * @param ocTarFile String, workdir file.
 	//     * @throws IOException
-	//     * @deprecated this should have never been made public, can be removed in future versions. It is not used internally by XTF
+	//     * @deprecated this should have never been made public, can be removed in future versions.
+	// It is not used internally by XTF
 	//     */
 	//    @Deprecated
-	//    public static void saveOcOnCache(String version, String ocUrl, File ocTarFile) throws IOException {
+	//    public static void saveOcOnCache(String version, String ocUrl, File ocTarFile) throws
+	// IOException {
 	//        if (OpenShiftConfig.isBinaryCacheEnabled()) {
 	//            File cacheRootFile = new File(OpenShiftConfig.binaryCachePath());
 	//            if (!cacheRootFile.exists() && !cacheRootFile.mkdirs()) {
@@ -114,22 +142,27 @@ public class Kuberneteses {
 	//    }
 	//
 	//    /**
-	//     * Retrieve the file from the folder populated by {@link #saveOcOnCache(String, String, File)}.
+	//     * Retrieve the file from the folder populated by {@link #saveOcOnCache(String, String,
+	// File)}.
 	//     *
 	//     * @param version String, OCP cluster version.
 	//     * @param ocUrl String, download URL.
 	//     * @param ocTarFile String, workdir file.
-	//     * @return File, reference to the file, if the cache is not populated, the file is not null, but it doesn't exist.
+	//     * @return File, reference to the file, if the cache is not populated, the file is not null,
+	// but it doesn't exist.
 	//     * @throws IOException
-	//     * @deprecated this should have never been made public, can be removed in future versions. It is not used internally by XTF
+	//     * @deprecated this should have never been made public, can be removed in future versions.
+	// It is not used internally by XTF
 	//     */
 	//    @Deprecated
-	//    public static File getOcFromCache(String version, String ocUrl, File ocTarFile) throws IOException {
+	//    public static File getOcFromCache(String version, String ocUrl, File ocTarFile) throws
+	// IOException {
 	//        return new File(getOcCachePath(version, ocUrl).toFile(), ocTarFile.getName());
 	//    }
 	//
 	//    /**
-	//     * * @deprecated this should have never been made public, can be removed in future versions. It is not used internally by
+	//     * * @deprecated this should have never been made public, can be removed in future versions.
+	// It is not used internally by
 	//     * XTF
 	//     */
 	//    @Deprecated
@@ -138,7 +171,8 @@ public class Kuberneteses {
 	//    }
 	//
 	//    /**
-	//     * Returns {@link OpenShiftConfig#version()}. If not available then access OpenShift endpoint for a version. Be aware
+	//     * Returns {@link OpenShiftConfig#version()}. If not available then access OpenShift
+	// endpoint for a version. Be aware
 	//     * that this operation requires admin role for OpenShift 4 unlike to OpenShift 3.
 	//     *
 	//     * @return Openshift cluster version if configured or detected from cluster, null otherwise
@@ -148,16 +182,19 @@ public class Kuberneteses {
 	//    }
 	//
 	//    public static String getMasterToken() {
-	//        return getToken(OpenShiftConfig.masterToken(), OpenShiftConfig.masterUsername(), OpenShiftConfig.masterPassword(),
+	//        return getToken(OpenShiftConfig.masterToken(), OpenShiftConfig.masterUsername(),
+	// OpenShiftConfig.masterPassword(),
 	//                OpenShiftConfig.masterKubeconfig());
 	//    }
 	//
 	//    public static String getAdminToken() {
-	//        return getToken(OpenShiftConfig.adminToken(), OpenShiftConfig.adminUsername(), OpenShiftConfig.adminPassword(),
+	//        return getToken(OpenShiftConfig.adminToken(), OpenShiftConfig.adminUsername(),
+	// OpenShiftConfig.adminPassword(),
 	//                OpenShiftConfig.adminKubeconfig());
 	//    }
 	//
-	//    private static String getToken(String token, String username, String password, String kubeconfig) {
+	//    private static String getToken(String token, String username, String password, String
+	// kubeconfig) {
 	//        if (StringUtils.isNotEmpty(token)) {
 	//            return token;
 	//        }
@@ -169,14 +206,18 @@ public class Kuberneteses {
 	//                if (getVersion() != null && getVersion().startsWith("3")) {
 	//                    connection = Https.getHttpsConnection(new URL(
 	//                            OpenShiftConfig.url()
-	//                                    + "/oauth/authorize?response_type=token&client_id=openshift-challenging-client"));
+	//                                    +
+	// "/oauth/authorize?response_type=token&client_id=openshift-challenging-client"));
 	//                } else {
-	//                    connection = Https.getHttpsConnection(new URL("https://oauth-openshift.apps." +
+	//                    connection = Https.getHttpsConnection(new
+	// URL("https://oauth-openshift.apps." +
 	//                            StringUtils.substringBetween(OpenShiftConfig.url(), "api.", ":")
-	//                            + "/oauth/authorize?response_type=token&client_id=openshift-challenging-client"));
+	//                            +
+	// "/oauth/authorize?response_type=token&client_id=openshift-challenging-client"));
 	//                }
 	//                String encoded = Base64.getEncoder()
-	//                        .encodeToString((username + ":" + password).getBytes(StandardCharsets.UTF_8));
+	//                        .encodeToString((username + ":" +
+	// password).getBytes(StandardCharsets.UTF_8));
 	//                connection.setRequestProperty("Authorization", "Basic " + encoded);
 	//                connection.setInstanceFollowRedirects(false);
 	//
@@ -186,11 +227,14 @@ public class Kuberneteses {
 	//
 	//                List<String> location = headers.get("Location");
 	//                if (location != null) {
-	//                    Optional<String> acces_token = location.stream().filter(s -> s.contains("access_token")).findFirst();
-	//                    return acces_token.map(s -> StringUtils.substringBetween(s, "#access_token=", "&")).orElse(null);
+	//                    Optional<String> acces_token = location.stream().filter(s ->
+	// s.contains("access_token")).findFirst();
+	//                    return acces_token.map(s -> StringUtils.substringBetween(s,
+	// "#access_token=", "&")).orElse(null);
 	//                }
 	//            } catch (IOException ex) {
-	//                log.error("Unable to retrieve token from Location header: {} ", ex.getMessage());
+	//                log.error("Unable to retrieve token from Location header: {} ",
+	// ex.getMessage());
 	//            } finally {
 	//                if (connection != null)
 	//                    connection.disconnect();
@@ -201,7 +245,8 @@ public class Kuberneteses {
 	//        if (StringUtils.isNotEmpty(kubeconfig)) {
 	//            try {
 	//                Config config = Config.fromKubeconfig(null,
-	//                        new String(Files.readAllBytes(Paths.get(kubeconfig)), StandardCharsets.UTF_8), kubeconfig);
+	//                        new String(Files.readAllBytes(Paths.get(kubeconfig)),
+	// StandardCharsets.UTF_8), kubeconfig);
 	//                return config.getOauthToken();
 	//            } catch (IOException e) {
 	//                log.error("Unable to retrieve token from kubeconfig: {} ", kubeconfig, e);
@@ -212,11 +257,13 @@ public class Kuberneteses {
 	//        File defaultKubeConfig = Paths.get(getHomeDir(), ".kube", "config").toFile();
 	//        try {
 	//            Config config = Config.fromKubeconfig(null,
-	//                    new String(Files.readAllBytes(defaultKubeConfig.toPath()), StandardCharsets.UTF_8),
+	//                    new String(Files.readAllBytes(defaultKubeConfig.toPath()),
+	// StandardCharsets.UTF_8),
 	//                    defaultKubeConfig.getAbsolutePath());
 	//            return config.getOauthToken();
 	//        } catch (IOException e) {
-	//            log.error("Unable to retrieve token from default kubeconfig: {} ", defaultKubeConfig, e);
+	//            log.error("Unable to retrieve token from default kubeconfig: {} ",
+	// defaultKubeConfig, e);
 	//        }
 	//        return null;
 	//    }

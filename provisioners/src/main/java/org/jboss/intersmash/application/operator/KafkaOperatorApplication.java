@@ -24,11 +24,13 @@ import io.strimzi.api.kafka.model.KafkaTopic;
 import io.strimzi.api.kafka.model.KafkaUser;
 
 /**
- * End user Application interface which presents Kafka operator application on OpenShift Container Platform.
- * <p>
- * The application will be deployed by:
+ * End user Application interface which presents Kafka operator application on OpenShift Container
+ * Platform.
+ *
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link KafkaOperatorProvisioner}</li>
+ *   <li>{@link KafkaOperatorProvisioner}
  * </ul>
  */
 public interface KafkaOperatorApplication extends OperatorApplication {
@@ -40,8 +42,8 @@ public interface KafkaOperatorApplication extends OperatorApplication {
 	long USER_RECONCILIATION_INTERVAL_SECONDS = 120L;
 
 	/**
-	 * Provides Kafka Cluster definition. Note: even though the Kafka operator supports multiple instances of
-	 * these Kafka clusters, with current implementation we expect to have only one.
+	 * Provides Kafka Cluster definition. Note: even though the Kafka operator supports multiple
+	 * instances of these Kafka clusters, with current implementation we expect to have only one.
 	 *
 	 * @return Kafka Cluster
 	 */

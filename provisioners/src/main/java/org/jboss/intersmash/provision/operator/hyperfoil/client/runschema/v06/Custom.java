@@ -26,14 +26,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-/**
- * Custom statistics.
- *
- */
+/** Custom statistics. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-
-})
+@JsonPropertyOrder({})
 @Generated("jsonschema2pojo")
 public class Custom {
 
@@ -49,5 +44,4 @@ public class Custom {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
-
 }

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client;
 
 import java.util.HashMap;
@@ -25,13 +40,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NamespaceManager {
 	/**
-	 * By default (xtf.openshift.namespace.per.testcase=false) all entries in map point to value returned by
+	 * By default (xtf.openshift.namespace.per.testcase=false) all entries in map point to value
+	 * returned by
 	 *
-	 * @see KubernetesConfig#namespace().
-	 *  If intersmash.k8s.namespace.per.testcase=true then each entry points to namespace
-	 *      assigned to each test case by {@see NamespaceManager#getNamespaceForTestClass}
-	 *
-	 *      Maps testcase -> namespace
+	 * @see KubernetesConfig#namespace(). If intersmash.k8s.namespace.per.testcase=true then each
+	 *     entry points to namespace assigned to each test case by {@see
+	 *     NamespaceManager#getNamespaceForTestClass}
+	 *     <p>Maps testcase -> namespace
 	 */
 	private static final Map<String, String> testcaseToNamespaceMap = new HashMap<String, String>();
 
@@ -79,31 +94,45 @@ public class NamespaceManager {
 
 			kubernetes.namespaces().create(projectNamespace);
 
-			new SimpleWaiter(() -> kubernetes.namespaces().withName(kubernetes.getNamespace()) != null,
-					TimeUnit.MINUTES, 2,
-					"Waiting for " + namespace + " project deletion").waitFor();
+			new SimpleWaiter(
+					() -> kubernetes.namespaces().withName(kubernetes.getNamespace()) != null,
+					TimeUnit.MINUTES,
+					2,
+					"Waiting for " + namespace + " project deletion")
+					.waitFor();
 
 			try {
-				// Adding a label can be only done via 'namespace'. It cannot be set via 'project' API. Thus we do this
-				// separately. Also, to update namespace label, it's necessary to have 'patch resource "namespaces"'
+				// Adding a label can be only done via 'namespace'. It cannot be set via 'project' API. Thus
+				// we do this
+				// separately. Also, to update namespace label, it's necessary to have 'patch resource
+				// "namespaces"'
 				// permission for current user and updated namespace, e.g. by having 'cluster-admin' role.
 				// Otherwise you can see:
 				// $ oc label namespace <name> "label1=foo"
-				// Error from server (Forbidden): namespaces "<name>" is forbidden: User "<user>" cannot patch resource "namespaces" in API group "" in the namespace "<name>"
-				Kuberneteses.admin(namespace).namespaces().withName(kubernetes.getNamespace())
-						.edit(new Visitor<NamespaceBuilder>() {
-							@Override
-							public void visit(NamespaceBuilder builder) {
-								builder.editMetadata()
-										.addToLabels(Kubernetes.INTERSMASH_MANAGED_LABEL, "true");
-							}
-						});
+				// Error from server (Forbidden): namespaces "<name>" is forbidden: User "<user>" cannot
+				// patch resource "namespaces" in API group "" in the namespace "<name>"
+				Kuberneteses.admin(namespace)
+						.namespaces()
+						.withName(kubernetes.getNamespace())
+						.edit(
+								new Visitor<NamespaceBuilder>() {
+									@Override
+									public void visit(NamespaceBuilder builder) {
+										builder.editMetadata().addToLabels(Kubernetes.INTERSMASH_MANAGED_LABEL, "true");
+									}
+								});
 			} catch (KubernetesClientException e) {
-				// We weren't able to assign a label to the new project. Let's just print warning since this information
-				// is not critical to the tests execution. Possible cause for this are insufficient permissions since
+				// We weren't able to assign a label to the new project. Let's just print warning since this
+				// information
+				// is not critical to the tests execution. Possible cause for this are insufficient
+				// permissions since
 				// some projects using XTF are executed on OCP instances without 'admin' accounts available.
-				log.warn("Couldn't assign label '" + Kubernetes.INTERSMASH_MANAGED_LABEL + "' to the new project '"
-						+ kubernetes.getNamespace() + "'. Possible cause are insufficient permissions.");
+				log.warn(
+						"Couldn't assign label '"
+								+ Kubernetes.INTERSMASH_MANAGED_LABEL
+								+ "' to the new project '"
+								+ kubernetes.getNamespace()
+								+ "'. Possible cause are insufficient permissions.");
 				log.debug(e.getMessage());
 			}
 
@@ -127,7 +156,6 @@ public class NamespaceManager {
 	 * Deletes namespace as returned by @see #getNamespace
 	 *
 	 * @param waitForDeletion whether to wait for deletion (timeout 2 min)
-	 *
 	 * @return true if successful, false otherwise
 	 */
 	public static boolean deleteProject(boolean waitForDeletion) {
@@ -139,18 +167,23 @@ public class NamespaceManager {
 	 *
 	 * @param namespace namespace name to delete
 	 * @param waitForDeletion whether to wait for deletion (timeout 2 min)
-	 *
 	 * @return true if successful, false otherwise
 	 */
 	public static boolean deleteProject(String namespace, boolean waitForDeletion) {
 		boolean deleted = false;
-		// problem with OpenShift.getProject() is that it might return null even if namespace still exists (is in terminating state)
+		// problem with OpenShift.getProject() is that it might return null even if namespace still
+		// exists (is in terminating state)
 		// thus use Openshift.namespaces() which do not suffer by this problem
-		// openshift.namespaces() requires admin privileges otherwise following KubernetesClientException is thrown:
+		// openshift.namespaces() requires admin privileges otherwise following
+		// KubernetesClientException is thrown:
 		// ... User "xpaasqe" cannot get resource "namespaces" in API group "" in the namespace ...
 		if (Kuberneteses.admin(namespace).namespaces().withName(namespace).get() != null) {
 			Kubernetes kubernetes = Kuberneteses.master(namespace);
-			log.info("Start deleting namespace: " + kubernetes.getNamespace() + ", wait for deletion: " + waitForDeletion);
+			log.info(
+					"Start deleting namespace: "
+							+ kubernetes.getNamespace()
+							+ ", wait for deletion: "
+							+ waitForDeletion);
 			List<StatusDetails> details = kubernetes.namespaces().withName(namespace).delete();
 			deleted = details.stream().allMatch(d -> d.getCauses().isEmpty());
 			if (deleted) {
@@ -164,9 +197,8 @@ public class NamespaceManager {
 	}
 
 	/**
-	 *
-	 * Deletes namespace as returned by @see #getNamespace.
-	 * Deletes namespace only if @see {@link KubernetesConfig#useNamespacePerTestCase()} is true.
+	 * Deletes namespace as returned by @see #getNamespace. Deletes namespace only if @see {@link
+	 * KubernetesConfig#useNamespacePerTestCase()} is true.
 	 *
 	 * @param waitForDeletion wait for deletion of namespace
 	 * @return true if successful, false otherwise
@@ -186,23 +218,32 @@ public class NamespaceManager {
 
 	private static String getNamespaceForTestClass(TestDescriptor testDescriptor) {
 		if (KubernetesConfig.useNamespacePerTestCase()) {
-			// some test case names can be really long resulting in long namespace names. This can cause issues
+			// some test case names can be really long resulting in long namespace names. This can cause
+			// issues
 			// with routes which have 64 chars limit for prefix of domain name. In case of route like:
 			// galleon-provisioning-xml-prio-mnovak-galleonprovisioningxmltest.apps.eapqe-024-dryf.eapqe.psi.redhat.com
 			// route prefix is: galleon-provisioning-xml-prio-mnovak-galleonprovisioningxmltest
 			// route suffix is: .apps.eapqe-024-dryf.eapqe.psi.redhat.com
-			if ((KubernetesConfig.namespace() + "-"
+			if ((KubernetesConfig.namespace()
+					+ "-"
 					+ testDescriptor.getParent().get().getDisplayName().toLowerCase())
 					.length() > KubernetesConfig.getNamespaceLengthLimitForUniqueNamespacePerTest()) {
 
-				return KubernetesConfig.namespace() + "-"
-						+ StringUtils.truncate(DigestUtils.sha256Hex(testDescriptor.getParent().get().getDisplayName()
-								.toLowerCase()),
+				return KubernetesConfig.namespace()
+						+ "-"
+						+ StringUtils.truncate(
+								DigestUtils.sha256Hex(
+										testDescriptor.getParent().get().getDisplayName().toLowerCase()),
 								KubernetesConfig.getNamespaceLengthLimitForUniqueNamespacePerTest()
 										- KubernetesConfig.namespace().length());
 			} else {
-				return KubernetesConfig.namespace() + "-"
-						+ testDescriptor.getParent().get().getDisplayName().toLowerCase(); // namespace must not have upper case letters
+				return KubernetesConfig.namespace()
+						+ "-"
+						+ testDescriptor
+								.getParent()
+								.get()
+								.getDisplayName()
+								.toLowerCase(); // namespace must not have upper case letters
 			}
 		} else {
 			return KubernetesConfig.namespace();
@@ -215,16 +256,18 @@ public class NamespaceManager {
 	 * @param testDescriptor test descriptor
 	 */
 	public static void addTestCaseToNamespaceEntryIfAbsent(TestDescriptor testDescriptor) {
-		getTestCaseToNamespaceMap().putIfAbsent(((MethodBasedTestDescriptor) testDescriptor).getTestClass().getName(),
-				getNamespaceForTestClass(testDescriptor));
+		getTestCaseToNamespaceMap()
+				.putIfAbsent(
+						((MethodBasedTestDescriptor) testDescriptor).getTestClass().getName(),
+						getNamespaceForTestClass(testDescriptor));
 	}
 
 	/**
-	 * @return Returns default namespace as defined in xtf.openshift.namespace property or namespace for currently running test
-	 *         case when:
-	 *         -Dintersmash.kubernetes.namespace.per.testcase=true.
-	 *         In case when current thread does not have associated test case (for example when initializing Kubernetes instance
-	 *         in static variable or static block) then {@link java.lang.RuntimeException} exception is thrown.
+	 * @return Returns default namespace as defined in xtf.openshift.namespace property or namespace
+	 *     for currently running test case when: -Dintersmash.kubernetes.namespace.per.testcase=true.
+	 *     In case when current thread does not have associated test case (for example when
+	 *     initializing Kubernetes instance in static variable or static block) then {@link
+	 *     java.lang.RuntimeException} exception is thrown.
 	 */
 	public static String getNamespace() {
 		if (KubernetesConfig.useNamespacePerTestCase()) {

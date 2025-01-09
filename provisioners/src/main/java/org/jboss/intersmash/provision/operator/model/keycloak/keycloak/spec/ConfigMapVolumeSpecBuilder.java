@@ -61,7 +61,8 @@ public final class ConfigMapVolumeSpecBuilder {
 	/**
 	 * Add one ConfigMap mount detail item.
 	 *
-	 * @param item {@link Items} instances representing the ConfigMap mount details that should be added
+	 * @param item {@link Items} instances representing the ConfigMap mount details that should be
+	 *     added
 	 * @return this
 	 */
 	public ConfigMapVolumeSpecBuilder items(Items item) {

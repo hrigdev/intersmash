@@ -25,7 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Deprecated(since = "0.0.2")
-public class RhSsoOperatorProvisionerFactory implements ProvisionerFactory<RhSsoOperatorProvisioner> {
+public class RhSsoOperatorProvisionerFactory
+		implements ProvisionerFactory<RhSsoOperatorProvisioner> {
 
 	@Override
 	public RhSsoOperatorProvisioner getProvisioner(Application application) {

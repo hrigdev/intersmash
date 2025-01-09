@@ -31,7 +31,8 @@ public class InfinispanOperatorProvisionerFactory
 	public InfinispanOperatorProvisioner getProvisioner(Application application) {
 		if (InfinispanOperatorApplication.class.isAssignableFrom(application.getClass())) {
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
-				return new InfinispanOpenShiftOperatorProvisioner((InfinispanOperatorApplication) application);
+				return new InfinispanOpenShiftOperatorProvisioner(
+						(InfinispanOperatorApplication) application);
 			}
 			throw new UnsupportedOperationException(
 					"Infinispan operator based provisioner for Kubernetes is not implemented yet");

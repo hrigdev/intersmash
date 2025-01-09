@@ -64,7 +64,8 @@ public final class KeycloakBuilder {
 	}
 
 	//	/**
-	//	 * When set to true, this Keycloak will be marked as unmanaged and will not be managed by this operator.
+	//	 * When set to true, this Keycloak will be marked as unmanaged and will not be managed by this
+	// operator.
 	//	 *
 	//	 * It can then be used for targeting purposes.
 	//	 */
@@ -74,7 +75,8 @@ public final class KeycloakBuilder {
 	//	}
 	//
 	//	/**
-	//	 * Contains configuration for external Keycloak instances. Unmanaged needs to be set to true to use this.
+	//	 * Contains configuration for external Keycloak instances. Unmanaged needs to be set to true to
+	// use this.
 	//	 */
 	//	public KeycloakBuilder external(KeycloakExternal external) {
 	//		this.external = external;
@@ -82,7 +84,8 @@ public final class KeycloakBuilder {
 	//	}
 
 	/**
-	 * Set a list of extensions, where each one is a URL to a JAR files that will be deployed in Keycloak.
+	 * Set a list of extensions, where each one is a URL to a JAR files that will be deployed in
+	 * Keycloak.
 	 *
 	 * @param extensions List of extensions that should be added
 	 * @return this
@@ -129,32 +132,22 @@ public final class KeycloakBuilder {
 	}
 
 	/**
-	 * 	Controls external database settings.
-	 * 	Using an external database requires providing a secret containing credentials
-	 * 	as well as connection details. Here's an example of such secret:
+	 * Controls external database settings. Using an external database requires providing a secret
+	 * containing credentials as well as connection details. Here's an example of such secret:
 	 *
-	 * 	    apiVersion: v1
-	 * 	    kind: Secret
-	 * 	    metadata:
-	 * 	        name: keycloak-db-secret
-	 * 	        namespace: keycloak
-	 * 	    stringData:
-	 * 	        POSTGRES_DATABASE: &lt;Database Name&gt;
-	 * 	        POSTGRES_EXTERNAL_ADDRESS: &lt;External Database IP or URL (resolvable by K8s)&gt;
-	 * 	        POSTGRES_EXTERNAL_PORT: &lt;External Database Port&gt;
-	 * 	        # Strongly recommended to use &lt;'Keycloak CR Name'-postgresql&gt;
-	 * 	        POSTGRES_HOST: &lt;Database Service Name&gt;
-	 * 	        POSTGRES_PASSWORD: &lt;Database Password&gt;
-	 * 	        # Required for AWS Backup functionality
-	 * 	        POSTGRES_SUPERUSER: true
-	 * 	        POSTGRES_USERNAME: &lt;Database Username&gt;
-	 * 	     type: Opaque
+	 * <p>apiVersion: v1 kind: Secret metadata: name: keycloak-db-secret namespace: keycloak
+	 * stringData: POSTGRES_DATABASE: &lt;Database Name&gt; POSTGRES_EXTERNAL_ADDRESS: &lt;External
+	 * Database IP or URL (resolvable by K8s)&gt; POSTGRES_EXTERNAL_PORT: &lt;External Database
+	 * Port&gt; # Strongly recommended to use &lt;'Keycloak CR Name'-postgresql&gt; POSTGRES_HOST:
+	 * &lt;Database Service Name&gt; POSTGRES_PASSWORD: &lt;Database Password&gt; # Required for AWS
+	 * Backup functionality POSTGRES_SUPERUSER: true POSTGRES_USERNAME: &lt;Database Username&gt;
+	 * type: Opaque
 	 *
-	 * 	Both POSTGRES_EXTERNAL_ADDRESS and POSTGRES_EXTERNAL_PORT are specifically required for creating
-	 * 	connection to the external database. The secret name is created using the following convention:
-	 * 	      &lt;Custom Resource Name&gt;-db-secret
+	 * <p>Both POSTGRES_EXTERNAL_ADDRESS and POSTGRES_EXTERNAL_PORT are specifically required for
+	 * creating connection to the external database. The secret name is created using the following
+	 * convention: &lt;Custom Resource Name&gt;-db-secret
 	 *
-	 * 	For more information, please refer to the Operator documentation.
+	 * <p>For more information, please refer to the Operator documentation.
 	 *
 	 * @param externalDatabase Stores external database configuration for Keycloak
 	 * @return this
@@ -197,7 +190,8 @@ public final class KeycloakBuilder {
 	//	/**
 	//	 * Resources (Requests and Limits) for PostgresDeployment.
 	//	 */
-	//	public KeycloakBuilder postgresDeploymentSpec(PostgresqlDeploymentSpec postgresDeploymentSpec) {
+	//	public KeycloakBuilder postgresDeploymentSpec(PostgresqlDeploymentSpec postgresDeploymentSpec)
+	// {
 	//		this.postgresDeploymentSpec = postgresDeploymentSpec;
 	//		return this;
 	//	}

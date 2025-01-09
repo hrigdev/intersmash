@@ -28,9 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a Git project in the relevant terms for the {@link GitUtil} utilities, which can be used when
- * automating Git related operations, as for instance when cloning Helm Charts repositories.
- *
+ * Represents a Git project in the relevant terms for the {@link GitUtil} utilities, which can be
+ * used when automating Git related operations, as for instance when cloning Helm Charts
+ * repositories.
  */
 public class GitProject {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GitProject.class);

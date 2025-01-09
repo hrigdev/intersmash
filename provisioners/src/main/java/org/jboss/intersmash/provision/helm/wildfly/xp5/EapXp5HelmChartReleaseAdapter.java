@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.provision.helm.wildfly.xp5;
 
 import java.nio.file.Path;
@@ -32,14 +47,15 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * An adapter that implements a valid EAP 8 {@link HelmChartRelease} by exposing an internal instance of
- * {@link HelmXp5Release} to store an EAP 8 Helm Charts release data and to represent a values file which can be serialized
- * as an output for {@link HelmChartRelease#toValuesFile()}
+ * An adapter that implements a valid EAP 8 {@link HelmChartRelease} by exposing an internal
+ * instance of {@link HelmXp5Release} to store an EAP 8 Helm Charts release data and to represent a
+ * values file which can be serialized as an output for {@link HelmChartRelease#toValuesFile()}
  *
- * This adapter is compliant with the contract which is required by the
- * {@link org.jboss.intersmash.provision.helm.HelmChartOpenShiftProvisioner} logic, i.e. to
- * implement {@link HelmChartRelease}, and allows for us to leverage a generated
- * {@link EapXp5HelmChartReleaseAdapter#adaptee}, i.e. in terms of UX, provide native release YAML definitions.
+ * <p>This adapter is compliant with the contract which is required by the {@link
+ * org.jboss.intersmash.provision.helm.HelmChartOpenShiftProvisioner} logic, i.e. to implement
+ * {@link HelmChartRelease}, and allows for us to leverage a generated {@link
+ * EapXp5HelmChartReleaseAdapter#adaptee}, i.e. in terms of UX, provide native release YAML
+ * definitions.
  */
 @Slf4j
 public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmXp5Release>
@@ -50,21 +66,25 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		initDefaultReplicas(release);
 	}
 
-	public EapXp5HelmChartReleaseAdapter(@NonNull HelmXp5Release release, List<Path> additionalValuesFiles) {
+	public EapXp5HelmChartReleaseAdapter(
+			@NonNull HelmXp5Release release, List<Path> additionalValuesFiles) {
 		super(release, additionalValuesFiles);
 		initDefaultReplicas(release);
 	}
 
 	@Override
 	public Map<String, String> getDeploymentEnvironmentVariables() {
-		return adaptee.getDeploy() == null ? Map.of()
-				: adaptee.getDeploy().getEnv() == null || adaptee.getDeploy().getEnv().isEmpty() ? Map.of()
+		return adaptee.getDeploy() == null
+				? Map.of()
+				: adaptee.getDeploy().getEnv() == null || adaptee.getDeploy().getEnv().isEmpty()
+						? Map.of()
 						: adaptee.getDeploy().getEnv().stream()
 								.collect(Collectors.toMap(e -> e.getName(), e -> e.getValue()));
 	}
 
 	@Override
-	public void setDeploymentEnvironmentVariables(Map<String, String> deploymentEnvironmentVariables) {
+	public void setDeploymentEnvironmentVariables(
+			Map<String, String> deploymentEnvironmentVariables) {
 		if (adaptee.getDeploy() == null) {
 			adaptee.setDeploy(new Deploy());
 		}
@@ -76,7 +96,11 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((deploymentEnvironmentVariables != null) && !deploymentEnvironmentVariables.isEmpty()) {
 			deploymentEnvironmentVariables.entrySet().stream()
-					.forEach(e -> adaptee.getDeploy().getEnv().add(new Env__1().withName(e.getKey()).withValue(e.getValue())));
+					.forEach(
+							e -> adaptee
+									.getDeploy()
+									.getEnv()
+									.add(new Env__1().withName(e.getKey()).withValue(e.getValue())));
 		}
 	}
 
@@ -100,8 +124,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public Map<String, String> getBuildEnvironmentVariables() {
-		return adaptee.getBuild() == null ? Map.of()
-				: adaptee.getBuild().getEnv() == null || adaptee.getBuild().getEnv().isEmpty() ? Map.of()
+		return adaptee.getBuild() == null
+				? Map.of()
+				: adaptee.getBuild().getEnv() == null || adaptee.getBuild().getEnv().isEmpty()
+						? Map.of()
 						: adaptee.getBuild().getEnv().stream()
 								.collect(Collectors.toMap(e -> e.getName(), e -> e.getValue()));
 	}
@@ -119,11 +145,16 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((buildEnvironmentVariables != null) && !buildEnvironmentVariables.isEmpty()) {
 			buildEnvironmentVariables.entrySet().stream()
-					.forEach(e -> adaptee.getBuild().getEnv().add(new Env().withName(e.getKey()).withValue(e.getValue())));
+					.forEach(
+							e -> adaptee
+									.getBuild()
+									.getEnv()
+									.add(new Env().withName(e.getKey()).withValue(e.getValue())));
 		}
 	}
 
-	public WildflyHelmChartRelease withBuildEnvironmentVariables(Map<String, String> buildEnvironmentVariables) {
+	public WildflyHelmChartRelease withBuildEnvironmentVariables(
+			Map<String, String> buildEnvironmentVariables) {
 		this.setBuildEnvironmentVariables(buildEnvironmentVariables);
 		return this;
 	}
@@ -142,8 +173,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public List<Image> getInjectedImages() {
-		return adaptee.getBuild() == null ? List.of()
-				: adaptee.getBuild().getImages() == null ? List.of()
+		return adaptee.getBuild() == null
+				? List.of()
+				: adaptee.getBuild().getImages() == null
+						? List.of()
 						: (List<Image>) adaptee.getBuild().getImages();
 	}
 
@@ -183,8 +216,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public List<Volume> getVolumes() {
-		return adaptee.getDeploy() == null ? List.of()
-				: adaptee.getDeploy().getVolumes() == null ? List.of()
+		return adaptee.getDeploy() == null
+				? List.of()
+				: adaptee.getDeploy().getVolumes() == null
+						? List.of()
 						: adaptee.getDeploy().getVolumes().stream()
 								.map(v -> (Volume) v)
 								.collect(Collectors.toList());
@@ -225,15 +260,19 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public List<VolumeMount> getVolumeMounts() {
-		return adaptee.getDeploy() == null ? List.of()
-				: adaptee.getDeploy().getVolumeMounts() == null ? List.of()
+		return adaptee.getDeploy() == null
+				? List.of()
+				: adaptee.getDeploy().getVolumeMounts() == null
+						? List.of()
 						: adaptee.getDeploy().getVolumeMounts().stream()
-								.map(v -> new VolumeMount(
-										v.getMountPath(),
-										v.getMountPropagation(),
-										v.getName(),
-										v.getReadOnly(),
-										v.getSubPath(), null))
+								.map(
+										v -> new VolumeMount(
+												v.getMountPath(),
+												v.getMountPropagation(),
+												v.getName(),
+												v.getReadOnly(),
+												v.getSubPath(),
+												null))
 								.collect(Collectors.toList());
 	}
 
@@ -242,7 +281,8 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		if (adaptee.getDeploy() == null) {
 			adaptee.setDeploy(new Deploy());
 		}
-		if ((adaptee.getDeploy().getVolumeMounts() == null) || adaptee.getDeploy().getVolumeMounts().isEmpty()) {
+		if ((adaptee.getDeploy().getVolumeMounts() == null)
+				|| adaptee.getDeploy().getVolumeMounts().isEmpty()) {
 			adaptee.getDeploy().setVolumeMounts(new ArrayList<>());
 		} else {
 			adaptee.getDeploy().getVolumeMounts().clear();
@@ -250,13 +290,17 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((volumeMounts != null) && !volumeMounts.isEmpty()) {
 			volumeMounts.stream()
-					.forEach(v -> adaptee.getDeploy().getVolumeMounts().add(
-							new org.jboss.intersmash.model.helm.charts.values.xp5.VolumeMount()
-									.withName(v.getName())
-									.withMountPath(v.getMountPath())
-									.withMountPropagation(v.getMountPropagation())
-									.withReadOnly(v.getReadOnly())
-									.withSubPath(v.getSubPath())));
+					.forEach(
+							v -> adaptee
+									.getDeploy()
+									.getVolumeMounts()
+									.add(
+											new org.jboss.intersmash.model.helm.charts.values.xp5.VolumeMount()
+													.withName(v.getName())
+													.withMountPath(v.getMountPath())
+													.withMountPropagation(v.getMountPropagation())
+													.withReadOnly(v.getReadOnly())
+													.withSubPath(v.getSubPath())));
 		}
 	}
 
@@ -271,22 +315,27 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		if (adaptee.getDeploy() == null) {
 			adaptee.setDeploy(new Deploy());
 		}
-		if ((adaptee.getDeploy().getVolumeMounts() == null) || adaptee.getDeploy().getVolumeMounts().isEmpty()) {
+		if ((adaptee.getDeploy().getVolumeMounts() == null)
+				|| adaptee.getDeploy().getVolumeMounts().isEmpty()) {
 			adaptee.getDeploy().setVolumeMounts(new ArrayList<>());
 		}
-		adaptee.getDeploy().getVolumeMounts().add(
-				new org.jboss.intersmash.model.helm.charts.values.xp5.VolumeMount()
-						.withName(volumeMount.getName())
-						.withMountPath(volumeMount.getMountPath())
-						.withMountPropagation(volumeMount.getMountPropagation())
-						.withReadOnly(volumeMount.getReadOnly())
-						.withSubPath(volumeMount.getSubPath()));
+		adaptee
+				.getDeploy()
+				.getVolumeMounts()
+				.add(
+						new org.jboss.intersmash.model.helm.charts.values.xp5.VolumeMount()
+								.withName(volumeMount.getName())
+								.withMountPath(volumeMount.getMountPath())
+								.withMountPropagation(volumeMount.getMountPropagation())
+								.withReadOnly(volumeMount.getReadOnly())
+								.withSubPath(volumeMount.getSubPath()));
 		return this;
 	}
 
 	@Override
 	public String getRouteHost() {
-		return adaptee.getDeploy() == null ? ""
+		return adaptee.getDeploy() == null
+				? ""
 				: adaptee.getDeploy().getRoute() == null ? "" : adaptee.getDeploy().getRoute().getHost();
 	}
 
@@ -308,9 +357,12 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public boolean isRouteTLSEnabled() {
-		return adaptee.getDeploy() == null ? Boolean.FALSE
-				: adaptee.getDeploy().getRoute() == null ? Boolean.FALSE
-						: adaptee.getDeploy().getRoute().getTls() == null ? Boolean.FALSE
+		return adaptee.getDeploy() == null
+				? Boolean.FALSE
+				: adaptee.getDeploy().getRoute() == null
+						? Boolean.FALSE
+						: adaptee.getDeploy().getRoute().getTls() == null
+								? Boolean.FALSE
 								: adaptee.getDeploy().getRoute().getTls().getEnabled();
 	}
 
@@ -336,9 +388,13 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public boolean isTlsEnabled() {
-		return adaptee.getDeploy() == null ? Boolean.FALSE
-				: adaptee.getDeploy().getRoute() == null ? Boolean.FALSE
-						: adaptee.getDeploy().getTls() == null ? Boolean.FALSE : adaptee.getDeploy().getTls().getEnabled();
+		return adaptee.getDeploy() == null
+				? Boolean.FALSE
+				: adaptee.getDeploy().getRoute() == null
+						? Boolean.FALSE
+						: adaptee.getDeploy().getTls() == null
+								? Boolean.FALSE
+								: adaptee.getDeploy().getTls().getEnabled();
 	}
 
 	@Override
@@ -361,7 +417,8 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 	@Override
 	public LinkedHashSet<String> getS2iFeaturePacks() {
 		LinkedHashSet<String> result = new LinkedHashSet<>();
-		if (adaptee.getBuild() != null && adaptee.getBuild().getS2i() != null
+		if (adaptee.getBuild() != null
+				&& adaptee.getBuild().getS2i() != null
 				&& !Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getFeaturePacks())) {
 			Arrays.stream(adaptee.getBuild().getS2i().getFeaturePacks().split(","))
 					.forEach(fp -> result.add(fp));
@@ -379,7 +436,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((s2iFeaturePacks != null) && !s2iFeaturePacks.isEmpty()) {
-			adaptee.getBuild().getS2i().setFeaturePacks(s2iFeaturePacks.stream().collect(Collectors.joining(",")));
+			adaptee
+					.getBuild()
+					.getS2i()
+					.setFeaturePacks(s2iFeaturePacks.stream().collect(Collectors.joining(",")));
 		}
 	}
 
@@ -407,18 +467,23 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		final List<String> featurePacks = new ArrayList<>();
 		if (!Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getFeaturePacks())) {
-			featurePacks.addAll(Arrays.stream(adaptee.getBuild().getS2i().getFeaturePacks().split(","))
-					.collect(Collectors.toList()));
+			featurePacks.addAll(
+					Arrays.stream(adaptee.getBuild().getS2i().getFeaturePacks().split(","))
+							.collect(Collectors.toList()));
 		}
 		featurePacks.add(s2iFeaturePack);
-		adaptee.getBuild().getS2i().setFeaturePacks(featurePacks.stream().collect(Collectors.joining(",")));
+		adaptee
+				.getBuild()
+				.getS2i()
+				.setFeaturePacks(featurePacks.stream().collect(Collectors.joining(",")));
 		return this;
 	}
 
 	@Override
 	public LinkedHashSet<String> getS2iGalleonLayers() {
 		LinkedHashSet result = new LinkedHashSet();
-		if (adaptee.getBuild() != null && adaptee.getBuild().getS2i() != null
+		if (adaptee.getBuild() != null
+				&& adaptee.getBuild().getS2i() != null
 				&& !Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getGalleonLayers())) {
 			Arrays.stream(adaptee.getBuild().getS2i().getGalleonLayers().split(","))
 					.forEach(gl -> result.add(gl));
@@ -436,7 +501,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((s2iGalleonLayers != null) && !s2iGalleonLayers.isEmpty()) {
-			adaptee.getBuild().getS2i().setGalleonLayers(s2iGalleonLayers.stream().collect(Collectors.joining(",")));
+			adaptee
+					.getBuild()
+					.getS2i()
+					.setGalleonLayers(s2iGalleonLayers.stream().collect(Collectors.joining(",")));
 		}
 	}
 
@@ -464,18 +532,23 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		final List<String> galleonLayers = new ArrayList<>();
 		if (!Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getGalleonLayers())) {
-			galleonLayers.addAll(Arrays.stream(adaptee.getBuild().getS2i().getGalleonLayers().split(","))
-					.collect(Collectors.toList()));
+			galleonLayers.addAll(
+					Arrays.stream(adaptee.getBuild().getS2i().getGalleonLayers().split(","))
+							.collect(Collectors.toList()));
 		}
 		galleonLayers.add(s2iGalleonLayer);
-		adaptee.getBuild().getS2i().setGalleonLayers(galleonLayers.stream().collect(Collectors.joining(",")));
+		adaptee
+				.getBuild()
+				.getS2i()
+				.setGalleonLayers(galleonLayers.stream().collect(Collectors.joining(",")));
 		return this;
 	}
 
 	@Override
 	public LinkedHashSet<String> getS2iChannels() {
 		LinkedHashSet result = new LinkedHashSet();
-		if (adaptee.getBuild() != null && adaptee.getBuild().getS2i() != null
+		if (adaptee.getBuild() != null
+				&& adaptee.getBuild().getS2i() != null
 				&& !Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getChannels())) {
 			Arrays.stream(adaptee.getBuild().getS2i().getChannels().split(","))
 					.forEach(ch -> result.add(ch));
@@ -493,7 +566,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		// let's check just here, so there's a way to clear, i.e. by passing an empty or null list
 		if ((s2iChannels != null) && !s2iChannels.isEmpty()) {
-			adaptee.getBuild().getS2i().setChannels(s2iChannels.stream().collect(Collectors.joining(",")));
+			adaptee
+					.getBuild()
+					.getS2i()
+					.setChannels(s2iChannels.stream().collect(Collectors.joining(",")));
 		}
 	}
 
@@ -513,8 +589,9 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 		}
 		final List<String> channels = new ArrayList<>();
 		if (!Strings.isNullOrEmpty(adaptee.getBuild().getS2i().getChannels())) {
-			channels.addAll(Arrays.stream(adaptee.getBuild().getS2i().getChannels().split(","))
-					.collect(Collectors.toList()));
+			channels.addAll(
+					Arrays.stream(adaptee.getBuild().getS2i().getChannels().split(","))
+							.collect(Collectors.toList()));
 		}
 		channels.add(s2iChannel);
 		adaptee.getBuild().getS2i().setChannels(channels.stream().collect(Collectors.joining(",")));
@@ -561,8 +638,11 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public String getBootableJarBuilderImage() {
-		return adaptee.getBuild() == null ? ""
-				: adaptee.getBuild().getBootableJar() == null ? "" : adaptee.getBuild().getBootableJar().getBuilderImage();
+		return adaptee.getBuild() == null
+				? ""
+				: adaptee.getBuild().getBootableJar() == null
+						? ""
+						: adaptee.getBuild().getBootableJar().getBuilderImage();
 	}
 
 	@Override
@@ -698,8 +778,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public String getJdk17BuilderImage() {
-		return adaptee.getBuild() == null ? ""
-				: adaptee.getBuild().getS2i().getJdk17() == null ? ""
+		return adaptee.getBuild() == null
+				? ""
+				: adaptee.getBuild().getS2i().getJdk17() == null
+						? ""
 						: adaptee.getBuild().getS2i().getJdk17().getBuilderImage();
 	}
 
@@ -726,8 +808,10 @@ public class EapXp5HelmChartReleaseAdapter extends HelmChartReleaseAdapter<HelmX
 
 	@Override
 	public String getJdk17RuntimeImage() {
-		return adaptee.getBuild() == null ? ""
-				: adaptee.getBuild().getS2i().getJdk17() == null ? ""
+		return adaptee.getBuild() == null
+				? ""
+				: adaptee.getBuild().getS2i().getJdk17() == null
+						? ""
 						: adaptee.getBuild().getS2i().getJdk17().getRuntimeImage();
 	}
 

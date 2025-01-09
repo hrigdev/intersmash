@@ -47,42 +47,56 @@ public class ProvisionerCleanupTestCase implements ProjectCreationCapable {
 		if (IntersmashTestsuiteProperties.isCommunityTestExecutionProfileEnabled()) {
 			return Stream.of(
 					// Infinispan
-					new InfinispanOpenShiftOperatorProvisioner(OpenShiftProvisionerTestBase.getInfinispanOperatorApplication())
+					new InfinispanOpenShiftOperatorProvisioner(
+							OpenShiftProvisionerTestBase.getInfinispanOperatorApplication())
 					// WildFly
-					, new WildflyBootableJarImageOpenShiftProvisioner(
+					,
+					new WildflyBootableJarImageOpenShiftProvisioner(
 							OpenShiftProvisionerTestBase.getWildflyBootableJarOpenShiftApplication()),
 					new WildflyBootableJarImageOpenShiftProvisioner(
 							OpenShiftProvisionerTestBase.getEap7BootableJarOpenShiftApplication())
 					// Keycloak
-					, new KeycloakOpenShiftOperatorProvisioner(
+					,
+					new KeycloakOpenShiftOperatorProvisioner(
 							OpenShiftProvisionerTestBase.getKeycloakOperatorApplication())
 					// MySQL
-					, new MysqlImageOpenShiftProvisioner(OpenShiftProvisionerTestBase.getMysqlOpenShiftApplication())
+					,
+					new MysqlImageOpenShiftProvisioner(
+							OpenShiftProvisionerTestBase.getMysqlOpenShiftApplication())
 					// PostgreSql
-					, new PostgreSQLImageOpenShiftProvisioner(
+					,
+					new PostgreSQLImageOpenShiftProvisioner(
 							OpenShiftProvisionerTestBase.getPostgreSQLImageOpenShiftApplication()),
 					new PostgreSQLTemplateOpenShiftProvisioner(
 							OpenShiftProvisionerTestBase.getPostgreSQLTemplateOpenShiftApplication())
 					// ODH
-					, new OpenDataHubOpenShiftOperatorProvisioner(
+					,
+					new OpenDataHubOpenShiftOperatorProvisioner(
 							OpenShiftProvisionerTestBase.getOpenDataHubOperatorApplication()));
 		} else if (IntersmashTestsuiteProperties.isProductizedTestExecutionProfileEnabled()) {
 			return Stream.of(
 					// RHDG
-					new InfinispanOpenShiftOperatorProvisioner(OpenShiftProvisionerTestBase.getInfinispanOperatorApplication())
+					new InfinispanOpenShiftOperatorProvisioner(
+							OpenShiftProvisionerTestBase.getInfinispanOperatorApplication())
 					// EAP latest GA
-					, new WildflyImageOpenShiftProvisioner(
+					,
+					new WildflyImageOpenShiftProvisioner(
 							OpenShiftProvisionerTestBase.getWildflyOpenShiftLocalBinaryTargetServerApplication())
 					// EAP 7
-					, new Eap7ImageOpenShiftProvisioner(OpenShiftProvisionerTestBase.getEap7OpenShiftImageApplication())
+					,
+					new Eap7ImageOpenShiftProvisioner(
+							OpenShiftProvisionerTestBase.getEap7OpenShiftImageApplication())
 					// RHSSO 7.6.x
-					, new RhSsoTemplateOpenShiftProvisioner(OpenShiftProvisionerTestBase.getHttpsRhSso())
+					,
+					new RhSsoTemplateOpenShiftProvisioner(OpenShiftProvisionerTestBase.getHttpsRhSso())
 					// RHBK
-					, new KeycloakOpenShiftOperatorProvisioner(
+					,
+					new KeycloakOpenShiftOperatorProvisioner(
 							OpenShiftProvisionerTestBase.getKeycloakOperatorApplication()));
 		} else {
 			throw new IllegalStateException(
-					String.format("Unknown Intersmash test suite execution profile: %s",
+					String.format(
+							"Unknown Intersmash test suite execution profile: %s",
 							IntersmashTestsuiteProperties.getTestExecutionProfile()));
 		}
 	}
@@ -98,8 +112,14 @@ public class ProvisionerCleanupTestCase implements ProjectCreationCapable {
 				try {
 					provisioner.deploy();
 					try {
-						openShift.configMaps()
-								.create(new ConfigMapBuilder().withNewMetadata().withName("no-delete").endMetadata().build());
+						openShift
+								.configMaps()
+								.create(
+										new ConfigMapBuilder()
+												.withNewMetadata()
+												.withName("no-delete")
+												.endMetadata()
+												.build());
 					} finally {
 						provisioner.undeploy();
 					}
@@ -126,16 +146,21 @@ public class ProvisionerCleanupTestCase implements ProjectCreationCapable {
 	private static void evalOperatorSetup(OpenShiftProvisioner provisioner) throws IOException {
 		if (OperatorProvisioner.class.isAssignableFrom(provisioner.getClass())) {
 			operatorCleanup();
-			log.debug("Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
+			log.debug(
+					"Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
 					new OperatorGroup(OpenShiftConfig.namespace()).getMetadata().getName());
-			OpenShifts.adminBinary().execute("apply", "-f",
-					new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+			OpenShifts.adminBinary()
+					.execute(
+							"apply",
+							"-f",
+							new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		}
 	}
 
 	/**
-	 * EapS2iBuild application requires additional image streams to be created. CleanBeforeEach would delete it if the
-	 * provisioner is initialized in {@link #provisionerProvider()}, so we need a separate test method.
+	 * EapS2iBuild application requires additional image streams to be created. CleanBeforeEach would
+	 * delete it if the provisioner is initialized in {@link #provisionerProvider()}, so we need a
+	 * separate test method.
 	 */
 	@Test
 	@NotForCommunityExecutionProfile
@@ -144,17 +169,25 @@ public class ProvisionerCleanupTestCase implements ProjectCreationCapable {
 				OpenShiftProvisionerTestBase.getEap7LegacyS2iBuildTemplateApplication());
 		provisioner.preDeploy();
 		provisioner.deploy();
-		openShift.configMaps().create(new ConfigMapBuilder().withNewMetadata().withName("no-delete").endMetadata().build());
+		openShift
+				.configMaps()
+				.create(
+						new ConfigMapBuilder().withNewMetadata().withName("no-delete").endMetadata().build());
 		provisioner.undeploy();
 		provisioner.postUndeploy();
 		Assertions.assertNotNull(openShift.configMaps().withName("no-delete").get());
 		openShift.configMaps().withName("no-delete").delete();
 		// delete the images streams created by EapS2iBuildTemplateApplication
-		openShift.imageStreams()
-				.withName(((String) provisioner.getApplication().getParameters().get("EAP_IMAGE")).split(":")[0])
+		openShift
+				.imageStreams()
+				.withName(
+						((String) provisioner.getApplication().getParameters().get("EAP_IMAGE")).split(":")[0])
 				.delete();
-		openShift.imageStreams()
-				.withName(((String) provisioner.getApplication().getParameters().get("EAP_RUNTIME_IMAGE")).split(":")[0])
+		openShift
+				.imageStreams()
+				.withName(
+						((String) provisioner.getApplication().getParameters().get("EAP_RUNTIME_IMAGE"))
+								.split(":")[0])
 				.delete();
 
 		openShift.waiters().isProjectClean().waitFor();
@@ -162,6 +195,7 @@ public class ProvisionerCleanupTestCase implements ProjectCreationCapable {
 
 	/**
 	 * Clean all OLM related objects.
+	 *
 	 * <p>
 	 */
 	public static void operatorCleanup() {

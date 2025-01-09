@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.provision.helm.wildfly;
 
 import java.util.LinkedHashSet;
@@ -11,9 +26,10 @@ import io.fabric8.kubernetes.api.model.Volume;
 import io.fabric8.kubernetes.api.model.VolumeMount;
 
 /**
- * A contract that allows to create adapters that work seamlessly for both WildFly and EAP 8 Helm Charts releases.
+ * A contract that allows to create adapters that work seamlessly for both WildFly and EAP 8 Helm
+ * Charts releases.
  *
- * Can be used on the test side on order to accomplish dynamic configuration more easily.
+ * <p>Can be used on the test side on order to accomplish dynamic configuration more easily.
  */
 public interface WildflyHelmChartRelease extends HelmChartRelease {
 
@@ -21,7 +37,8 @@ public interface WildflyHelmChartRelease extends HelmChartRelease {
 
 	void setDeploymentEnvironmentVariables(Map<String, String> deploymentEnvironmentVariables);
 
-	WildflyHelmChartRelease withDeploymentEnvironmentVariables(Map<String, String> deploymentEnvironmentVariables);
+	WildflyHelmChartRelease withDeploymentEnvironmentVariables(
+			Map<String, String> deploymentEnvironmentVariables);
 
 	WildflyHelmChartRelease withDeploymentEnvironmentVariable(String key, String value);
 
@@ -29,7 +46,8 @@ public interface WildflyHelmChartRelease extends HelmChartRelease {
 
 	void setBuildEnvironmentVariables(Map<String, String> buildEnvironmentVariables);
 
-	WildflyHelmChartRelease withBuildEnvironmentVariables(Map<String, String> buildEnvironmentVariables);
+	WildflyHelmChartRelease withBuildEnvironmentVariables(
+			Map<String, String> buildEnvironmentVariables);
 
 	WildflyHelmChartRelease withBuildEnvironmentVariable(String key, String value);
 
@@ -164,7 +182,6 @@ public interface WildflyHelmChartRelease extends HelmChartRelease {
 	WildflyHelmChartRelease withJdk17RuntimeImage(String jdk17RuntimeImage);
 
 	enum BuildMode {
-
 		S2I("s2i"),
 		BOOTABLE_JAR("bootable-jar");
 

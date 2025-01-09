@@ -49,8 +49,10 @@ public class HyperfoilKubernetesOperatorProvisionerTest implements NamespaceCrea
 		public Hyperfoil getHyperfoil() {
 			return new HyperfoilBuilder(
 					getName(),
-					// see https://github.com/Hyperfoil/hyperfoil-operator/issues/18, "latest" (default) would fail.
-					"0.24.2").build();
+					// see https://github.com/Hyperfoil/hyperfoil-operator/issues/18, "latest" (default)
+					// would fail.
+					"0.24.2")
+					.build();
 		}
 
 		@Override
@@ -60,7 +62,8 @@ public class HyperfoilKubernetesOperatorProvisionerTest implements NamespaceCrea
 	}
 
 	private static HyperfoilKubernetesOperatorProvisioner initializeProvisioner() {
-		return new HyperfoilKubernetesOperatorProvisioner(new MyKubernetesHyperfoilOperatorApplication());
+		return new HyperfoilKubernetesOperatorProvisioner(
+				new MyKubernetesHyperfoilOperatorApplication());
 	}
 
 	@BeforeAll
@@ -68,8 +71,11 @@ public class HyperfoilKubernetesOperatorProvisionerTest implements NamespaceCrea
 		PROVISIONER.configure();
 		IntersmashExtension.operatorCleanup(true, false);
 		// create operator group - this should be done by InteropExtension
-		Kuberneteses.adminBinary().execute("apply", "-f",
-				new OperatorGroup(KubernetesConfig.namespace()).save().getAbsolutePath());
+		Kuberneteses.adminBinary()
+				.execute(
+						"apply",
+						"-f",
+						new OperatorGroup(KubernetesConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		PROVISIONER.unsubscribe();
 	}
@@ -83,27 +89,21 @@ public class HyperfoilKubernetesOperatorProvisionerTest implements NamespaceCrea
 		PROVISIONER.dismiss();
 	}
 
-	/**
-	 * Test deployment of HyperFoil via its operator (includes subscription logic)
-	 */
+	/** Test deployment of HyperFoil via its operator (includes subscription logic) */
 	@Test
 	@Order(1)
 	public void deploy() {
 		HyperfoilOperatorProvisionerTests.verifyDeploy(PROVISIONER);
 	}
 
-	/**
-	 * Test running a Benchmark on Hyperfoil
-	 */
+	/** Test running a Benchmark on Hyperfoil */
 	@Test
 	@Order(2)
 	public void benchmark() throws ApiException, InterruptedException, IOException {
 		HyperfoilOperatorProvisionerTests.verifyBenchmark(PROVISIONER);
 	}
 
-	/**
-	 * Test undeployment of HyperFoil Operator and resources, including subscription removal
-	 */
+	/** Test undeployment of HyperFoil Operator and resources, including subscription removal */
 	@Test
 	@Order(3)
 	public void undeploy() {

@@ -133,7 +133,9 @@ public class IntersmashConfig {
 	}
 
 	public static String[] getKnownCatalogSources() {
-		return new String[] { COMMUNITY_OPERATOR_CATALOG_SOURCE_NAME, REDHAT_OPERATOR_CATALOG_SOURCE_NAME };
+		return new String[] {
+				COMMUNITY_OPERATOR_CATALOG_SOURCE_NAME, REDHAT_OPERATOR_CATALOG_SOURCE_NAME
+		};
 	}
 
 	public static String defaultOperatorCatalogSourceName() {
@@ -141,11 +143,13 @@ public class IntersmashConfig {
 	}
 
 	public static String defaultOperatorCatalogSourceNamespace() {
-		return XTFConfig.get(OLM_OPERATOR_CATALOG_SOURCE_NAMESPACE, DEFAULT_OPERATOR_CATALOG_SOURCE_NAMESPACE);
+		return XTFConfig.get(
+				OLM_OPERATOR_CATALOG_SOURCE_NAMESPACE, DEFAULT_OPERATOR_CATALOG_SOURCE_NAMESPACE);
 	}
 
 	public static String infinispanOperatorCatalogSource() {
-		return XTFConfig.get(INFINISPAN_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
+		return XTFConfig.get(
+				INFINISPAN_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
 	}
 
 	public static String infinispanOperatorIndexImage() {
@@ -157,7 +161,8 @@ public class IntersmashConfig {
 	}
 
 	public static String infinispanOperatorPackageManifest() {
-		return XTFConfig.get(INFINISPAN_OPERATOR_PACKAGE_MANIFEST, DEFAULT_INFINISPAN_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				INFINISPAN_OPERATOR_PACKAGE_MANIFEST, DEFAULT_INFINISPAN_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	public static String rhSsoOperatorCatalogSource() {
@@ -173,7 +178,8 @@ public class IntersmashConfig {
 	}
 
 	public static String rhSsoOperatorPackageManifest() {
-		return XTFConfig.get(RHSSO_OPERATOR_PACKAGE_MANIFEST, PRODUCT_KEYCLOAK_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				RHSSO_OPERATOR_PACKAGE_MANIFEST, PRODUCT_KEYCLOAK_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	public static String wildflyOperatorCatalogSource() {
@@ -189,7 +195,8 @@ public class IntersmashConfig {
 	}
 
 	public static String wildflyOperatorPackageManifest() {
-		return XTFConfig.get(WILDFLY_OPERATOR_PACKAGE_MANIFEST, DEFAULT_WILDFLY_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				WILDFLY_OPERATOR_PACKAGE_MANIFEST, DEFAULT_WILDFLY_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	public static String kafkaOperatorCatalogSource() {
@@ -221,11 +228,13 @@ public class IntersmashConfig {
 	}
 
 	public static String activeMQOperatorPackageManifest() {
-		return XTFConfig.get(ACTIVEMQ_OPERATOR_PACKAGE_MANIFEST, DEFAULT_ACTIVEMQ_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				ACTIVEMQ_OPERATOR_PACKAGE_MANIFEST, DEFAULT_ACTIVEMQ_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	public static String hyperfoilOperatorCatalogSource() {
-		return XTFConfig.get(HYPERFOIL_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
+		return XTFConfig.get(
+				HYPERFOIL_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
 	}
 
 	public static String hyperfoilOperatorIndexImage() {
@@ -237,7 +246,8 @@ public class IntersmashConfig {
 	}
 
 	public static String hyperfoilOperatorPackageManifest() {
-		return XTFConfig.get(HYPERFOIL_OPERATOR_PACKAGE_MANIFEST, DEFAULT_HYPERFOIL_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				HYPERFOIL_OPERATOR_PACKAGE_MANIFEST, DEFAULT_HYPERFOIL_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	public static String bootableJarImageURL() {
@@ -358,7 +368,8 @@ public class IntersmashConfig {
 	}
 
 	public static String getOcpVersion(OpenShift openShift) {
-		return String.format("%s.%s", openShift.getVersion().getMajor(), openShift.getVersion().getMinor());
+		return String.format(
+				"%s.%s", openShift.getVersion().getMajor(), openShift.getVersion().getMinor());
 	}
 
 	public static boolean isOcp3x(OpenShift openShift) {
@@ -366,25 +377,28 @@ public class IntersmashConfig {
 	}
 
 	/**
-	 * Git repository URL to deployments repository. Look for the value of {@link #DEPLOYMENTS_REPOSITORY_URL}
-	 * in intersmash config. In case the one is not set, try to look into the git config and find a value there. Fallback
-	 * to "https://github.com/Intersmash/intersmash.git" if none of above works.
+	 * Git repository URL to deployments repository. Look for the value of {@link
+	 * #DEPLOYMENTS_REPOSITORY_URL} in intersmash config. In case the one is not set, try to look into
+	 * the git config and find a value there. Fallback to
+	 * "https://github.com/Intersmash/intersmash.git" if none of above works.
 	 *
 	 * @return intersmash-deployments git repository url
 	 */
 	public static String deploymentsRepositoryUrl() {
-		return XTFConfig.get(DEPLOYMENTS_REPOSITORY_URL, IntersmashDeploymentsGitHelper.repositoryUrl());
+		return XTFConfig.get(
+				DEPLOYMENTS_REPOSITORY_URL, IntersmashDeploymentsGitHelper.repositoryUrl());
 	}
 
 	/**
-	 * Git repository REF to deployments repository. Look for the value of {@link #DEPLOYMENTS_REPOSITORY_REF}
-	 * in intersmash config. In case the one is not set, try to look into the git config and find a value there. Fallback
-	 * to "master" if none of above works.
+	 * Git repository REF to deployments repository. Look for the value of {@link
+	 * #DEPLOYMENTS_REPOSITORY_REF} in intersmash config. In case the one is not set, try to look into
+	 * the git config and find a value there. Fallback to "master" if none of above works.
 	 *
 	 * @return deployments git repository ref
 	 */
 	public static String deploymentsRepositoryRef() {
-		return XTFConfig.get(DEPLOYMENTS_REPOSITORY_REF, IntersmashDeploymentsGitHelper.repositoryReference());
+		return XTFConfig.get(
+				DEPLOYMENTS_REPOSITORY_REF, IntersmashDeploymentsGitHelper.repositoryReference());
 	}
 
 	public static String getWildflyHelmChartsName() {
@@ -412,45 +426,55 @@ public class IntersmashConfig {
 	}
 
 	public static String keycloakOperatorPackageManifest() {
-		return XTFConfig.get(KEYCLOAK_OPERATOR_PACKAGE_MANIFEST, DEFAULT_KEYCLOAK_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				KEYCLOAK_OPERATOR_PACKAGE_MANIFEST, DEFAULT_KEYCLOAK_OPERATOR_PACKAGE_MANIFEST);
 	}
 
 	/**
-	 * Read the configuration property for the Open Data Hub Operator catalog source, i.e. {@code intersmash.odh.operators.catalog_source}.
+	 * Read the configuration property for the Open Data Hub Operator catalog source, i.e. {@code
+	 * intersmash.odh.operators.catalog_source}.
 	 *
-	 * @return The value for the {@code intersmash.odh.operators.catalog_source} property or the default catalog source,
-	 * i.e. the value of {@code intersmash.olm.operators.catalog_source} property.
+	 * @return The value for the {@code intersmash.odh.operators.catalog_source} property or the
+	 *     default catalog source, i.e. the value of {@code intersmash.olm.operators.catalog_source}
+	 *     property.
 	 */
 	public static String openDataHubOperatorCatalogSource() {
-		return XTFConfig.get(OPEN_DATA_HUB_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
+		return XTFConfig.get(
+				OPEN_DATA_HUB_OPERATOR_CATALOG_SOURCE_NAME, defaultOperatorCatalogSourceName());
 	}
 
 	/**
-	 * Read the configuration property for the Open Data Hub Operator index image, i.e. {@code intersmash.odh.operators.index_image}.
+	 * Read the configuration property for the Open Data Hub Operator index image, i.e. {@code
+	 * intersmash.odh.operators.index_image}.
 	 *
-	 * @return The value for the {@code intersmash.odh.operators.index_image} property, representing a custom index image.
+	 * @return The value for the {@code intersmash.odh.operators.index_image} property, representing a
+	 *     custom index image.
 	 */
 	public static String openDataHubOperatorIndexImage() {
 		return XTFConfig.get(OPEN_DATA_HUB_OPERATOR_INDEX_IMAGE);
 	}
 
 	/**
-	 * Read the configuration property for the Open Data Hub Operator channel to be used, i.e. {@code intersmash.odh.operators.channel}.
+	 * Read the configuration property for the Open Data Hub Operator channel to be used, i.e. {@code
+	 * intersmash.odh.operators.channel}.
 	 *
-	 * @return The value for the {@code intersmash.odh.operators.channel} property. If not provided the default operator
-	 * channel is used.
+	 * @return The value for the {@code intersmash.odh.operators.channel} property. If not provided
+	 *     the default operator channel is used.
 	 */
 	public static String openDataHubOperatorChannel() {
 		return XTFConfig.get(OPEN_DATA_HUB_OPERATOR_CHANNEL);
 	}
 
 	/**
-	 * Read the configuration property for the Open Data Hub Operator channel to be used, i.e. {@code intersmash.odh.operators.package_manifest}.
+	 * Read the configuration property for the Open Data Hub Operator channel to be used, i.e. {@code
+	 * intersmash.odh.operators.package_manifest}.
 	 *
-	 * @return The value for the {@code intersmash.odh.operators.package_manifest} property or the default package manifest
-	 * that should be used for this operator, i.e. {@code opendatahub-operator} property.
+	 * @return The value for the {@code intersmash.odh.operators.package_manifest} property or the
+	 *     default package manifest that should be used for this operator, i.e. {@code
+	 *     opendatahub-operator} property.
 	 */
 	public static String openDataHubOperatorPackageManifest() {
-		return XTFConfig.get(OPEN_DATA_HUB_OPERATOR_PACKAGE_MANIFEST, DEFAULT_OPEN_DATA_HUB_OPERATOR_PACKAGE_MANIFEST);
+		return XTFConfig.get(
+				OPEN_DATA_HUB_OPERATOR_PACKAGE_MANIFEST, DEFAULT_OPEN_DATA_HUB_OPERATOR_PACKAGE_MANIFEST);
 	}
 }

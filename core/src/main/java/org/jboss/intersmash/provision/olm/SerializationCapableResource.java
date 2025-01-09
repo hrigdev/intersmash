@@ -25,9 +25,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import io.fabric8.kubernetes.client.CustomResource;
 
-/**
- * Interface of common methods for OpenShift resources.
- */
+/** Interface of common methods for OpenShift resources. */
 public interface SerializationCapableResource<T extends SerializationCapableResource<T>> {
 
 	ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -70,14 +68,15 @@ public interface SerializationCapableResource<T extends SerializationCapableReso
 	 * @param file a file with object definition in yaml format
 	 * @return OpenShiftResource setup with values loaded from external source
 	 * @throws IOException if something goes wrong when de-serializing the resource from a file.
-	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure the current object with the values from a loaded one.
+	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure
+	 *     the current object with the values from a loaded one.
 	 */
 	default T load(File file) throws IOException {
 		return load((T) mapper.readValue(file, this.getClass()));
-
 	}
 
-	static <CR extends CustomResource> CR load(File file, Class<CR> clazz, CR target) throws IOException {
+	static <CR extends CustomResource> CR load(File file, Class<CR> clazz, CR target)
+			throws IOException {
 		CR loaded = mapper.readValue(file, clazz);
 		target.setMetadata(loaded.getMetadata());
 		target.setSpec(loaded.getSpec());
@@ -90,7 +89,8 @@ public interface SerializationCapableResource<T extends SerializationCapableReso
 	 * @param inputStream a input stream with object definition in yaml format
 	 * @return OpenShiftResource setup with values loaded from external source
 	 * @throws IOException if something goes wrong when de-serializing the resource from a file.
-	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure the current object with the values from a loaded one.
+	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure
+	 *     the current object with the values from a loaded one.
 	 */
 	default T load(InputStream inputStream) throws IOException {
 		return load((T) mapper.readValue(inputStream, this.getClass()));
@@ -102,7 +102,8 @@ public interface SerializationCapableResource<T extends SerializationCapableReso
 	 * @param url a URL with object definition in yaml format
 	 * @return OpenShiftResource setup with values loaded from external source
 	 * @throws IOException if something goes wrong when de-serializing the resource from a file.
-	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure the current object with the values from a loaded one.
+	 * @see SerializationCapableResource#load(SerializationCapableResource) which is used to configure
+	 *     the current object with the values from a loaded one.
 	 */
 	default T load(URL url) throws IOException {
 		return load((T) mapper.readValue(url, this.getClass()));
@@ -118,5 +119,4 @@ public interface SerializationCapableResource<T extends SerializationCapableReso
 	 * @see #load(InputStream)
 	 */
 	T load(T loaded);
-
 }

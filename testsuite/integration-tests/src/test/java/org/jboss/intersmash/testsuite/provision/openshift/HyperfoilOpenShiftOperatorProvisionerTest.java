@@ -47,13 +47,16 @@ import io.hyperfoil.v1alpha2.HyperfoilBuilder;
 public class HyperfoilOpenShiftOperatorProvisionerTest implements ProjectCreationCapable {
 	private static final HyperfoilOpenShiftOperatorProvisioner PROVISIONER = initializeProvisioner();
 
-	private static class MyOpenShiftHyperfoilOperatorApplication implements HyperfoilOperatorApplication, OpenShiftApplication {
+	private static class MyOpenShiftHyperfoilOperatorApplication
+			implements HyperfoilOperatorApplication, OpenShiftApplication {
 		@Override
 		public Hyperfoil getHyperfoil() {
 			return new HyperfoilBuilder(
 					getName(),
-					// see https://github.com/Hyperfoil/hyperfoil-operator/issues/18, "latest" (default) would fail.
-					"0.24.2").build();
+					// see https://github.com/Hyperfoil/hyperfoil-operator/issues/18, "latest" (default)
+					// would fail.
+					"0.24.2")
+					.build();
 		}
 
 		@Override
@@ -71,8 +74,9 @@ public class HyperfoilOpenShiftOperatorProvisionerTest implements ProjectCreatio
 		PROVISIONER.configure();
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		PROVISIONER.unsubscribe();
 	}
@@ -86,27 +90,21 @@ public class HyperfoilOpenShiftOperatorProvisionerTest implements ProjectCreatio
 		PROVISIONER.dismiss();
 	}
 
-	/**
-	 * Test deployment of HyperFoil via its operator (includes subscription logic)
-	 */
+	/** Test deployment of HyperFoil via its operator (includes subscription logic) */
 	@Test
 	@Order(1)
 	public void deploy() {
 		HyperfoilOperatorProvisionerTests.verifyDeploy(PROVISIONER);
 	}
 
-	/**
-	 * Test running a Benchmark on Hyperfoil
-	 */
+	/** Test running a Benchmark on Hyperfoil */
 	@Test
 	@Order(2)
 	public void benchmark() throws ApiException, InterruptedException, IOException {
 		HyperfoilOperatorProvisionerTests.verifyBenchmark(PROVISIONER);
 	}
 
-	/**
-	 * Test undeployment of HyperFoil Operator and resources, including subscription removal
-	 */
+	/** Test undeployment of HyperFoil Operator and resources, including subscription removal */
 	@Test
 	@Order(3)
 	public void undeploy() {

@@ -19,13 +19,12 @@ import java.util.List;
 
 import io.fabric8.kubernetes.api.model.Pod;
 
-/**
- * Provisioner is able to return its pods.
- */
+/** Provisioner is able to return its pods. */
 public interface HasPods {
 
 	/**
 	 * Get the provisioned application service related Pods
+	 *
 	 * @return A list of related {@link Pod} instances
 	 */
 	List<Pod> getPods();

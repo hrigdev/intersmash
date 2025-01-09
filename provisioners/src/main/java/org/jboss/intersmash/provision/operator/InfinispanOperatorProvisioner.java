@@ -43,10 +43,12 @@ import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 
 /**
- * Defines the contract and default behavior of an Operator based provisioner for the Infinispan Operator
+ * Defines the contract and default behavior of an Operator based provisioner for the Infinispan
+ * Operator
  */
-public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<InfinispanOperatorApplication, C> implements Provisioner<InfinispanOperatorApplication> {
+public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<InfinispanOperatorApplication, C>
+		implements Provisioner<InfinispanOperatorApplication> {
 
 	public InfinispanOperatorProvisioner(InfinispanOperatorApplication application) {
 		super(application, InfinispanOperatorProvisioner.OPERATOR_ID);
@@ -56,15 +58,21 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 	// Infinispan related
 	// =================================================================================================================
 	public List<Pod> getInfinispanPods() {
-		return getPods().stream().filter(
-				// the following criteria is implemented based on similar requirements taken from the
-				// infinispan-operator project, see
-				// https://github.com/infinispan/infinispan-operator/blob/main/test/e2e/utils/kubernetes.go#L599-L604
-				p -> p.getMetadata().getLabels().entrySet().stream()
-						.anyMatch(tl -> "app".equals(tl.getKey()) && "infinispan-pod".equals(tl.getValue())
-								&& p.getMetadata().getLabels().entrySet().stream().anyMatch(
-										cnl -> "clusterName".equals(cnl.getKey())
-												&& getApplication().getName().equals(cnl.getValue()))))
+		return getPods().stream()
+				.filter(
+						// the following criteria is implemented based on similar requirements taken from the
+						// infinispan-operator project, see
+						// https://github.com/infinispan/infinispan-operator/blob/main/test/e2e/utils/kubernetes.go#L599-L604
+						p -> p.getMetadata().getLabels().entrySet().stream()
+								.anyMatch(
+										tl -> "app".equals(tl.getKey())
+												&& "infinispan-pod".equals(tl.getValue())
+												&& p.getMetadata().getLabels().entrySet().stream()
+														.anyMatch(
+																cnl -> "clusterName".equals(cnl.getKey())
+																		&& getApplication()
+																				.getName()
+																				.equals(cnl.getValue()))))
 				.collect(Collectors.toList());
 	}
 
@@ -90,14 +98,20 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 		new SimpleWaiter(
 				() -> infinispan().get().getStatus().getConditions().stream()
 						.anyMatch(
-								c -> c.getType().equals(InfinispanConditionBuilder.ConditionType.ConditionWellFormed.getValue())
+								c -> c.getType()
+										.equals(
+												InfinispanConditionBuilder.ConditionType.ConditionWellFormed
+														.getValue())
 										&& c.getStatus().equals("True")))
-				.reason("Wait for infinispan resource to be ready").level(Level.DEBUG)
+				.reason("Wait for infinispan resource to be ready")
+				.level(Level.DEBUG)
 				.waitFor();
 		// and with the expected number of Cache CR(s)
 		if (getApplication().getCaches().size() > 0)
 			new SimpleWaiter(() -> cachesClient().list().getItems().size() == caches().size())
-					.reason("Wait for caches to be ready.").level(Level.DEBUG).waitFor();
+					.reason("Wait for caches to be ready.")
+					.level(Level.DEBUG)
+					.waitFor();
 	}
 
 	// =================================================================================================================
@@ -138,13 +152,19 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 	@Override
 	public void undeploy() {
 		// delete Cache CR(s)
-		caches().forEach(keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+		caches()
+				.forEach(
+						keycloakUser -> keycloakUser.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 		// delete Infinispan CR
 		infinispan().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
 		// wait for 0 pods
 		BooleanSupplier bs = () -> getInfinispanPods().isEmpty();
-		new SimpleWaiter(bs, TimeUnit.MINUTES, 2,
-				"Waiting for 0 pods with label \"clusterName\"=" + getApplication().getInfinispan().getMetadata().getName())
+		new SimpleWaiter(
+				bs,
+				TimeUnit.MINUTES,
+				2,
+				"Waiting for 0 pods with label \"clusterName\"="
+						+ getApplication().getInfinispan().getMetadata().getName())
 				.waitFor();
 		unsubscribe();
 	}
@@ -179,7 +199,8 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 	private static String INFINISPAN_CACHE_CRD_NAME = "caches.infinispan.org";
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -198,11 +219,12 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 
 	public NonNamespaceOperation<Infinispan, InfinispanList, Resource<Infinispan>> infinispansClient() {
 		if (INFINISPAN_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(INFINISPAN_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(INFINISPAN_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						INFINISPAN_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								INFINISPAN_CRD_NAME, OPERATOR_ID));
 			}
 			INFINISPAN_CLIENT = infinispanCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -211,11 +233,12 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 
 	public NonNamespaceOperation<Cache, CacheList, Resource<Cache>> cachesClient() {
 		if (INFINISPAN_CACHES_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(INFINISPAN_CACHE_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(INFINISPAN_CACHE_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						INFINISPAN_CACHE_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								INFINISPAN_CACHE_CRD_NAME, OPERATOR_ID));
 			}
 			INFINISPAN_CACHES_CLIENT = cacheCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -223,17 +246,19 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 	}
 
 	/**
-	 * Get a reference to infinispan object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
-	 * @return A concrete {@link Resource} instance representing the {@link Infinispan} resource definition
+	 * Get a reference to infinispan object. Use get() to get the actual object, or null in case it
+	 * does not exist on tested cluster.
+	 *
+	 * @return A concrete {@link Resource} instance representing the {@link Infinispan} resource
+	 *     definition
 	 */
 	public Resource<Infinispan> infinispan() {
 		return infinispansClient().withName(getApplication().getInfinispan().getMetadata().getName());
 	}
 
 	/**
-	 * Get a reference to cache object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to cache object. Use get() to get the actual object, or null in case it does
+	 * not exist on tested cluster.
 	 *
 	 * @param name name of the cache custom resource
 	 * @return A concrete {@link Resource} instance representing the {@link Cache} resource definition
@@ -244,10 +269,13 @@ public abstract class InfinispanOperatorProvisioner<C extends NamespacedKubernet
 
 	/**
 	 * Get all caches maintained by the current operator instance.
-	 * <p>
-	 * Be aware that this method returns just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link Cache} resource definitions
+	 *
+	 * <p>Be aware that this method returns just a references to the addresses, they might not
+	 * actually exist on the cluster. Use get() to get the actual object, or null in case it does not
+	 * exist on tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link Cache} resource
+	 *     definitions
 	 */
 	public List<Resource<Cache>> caches() {
 		InfinispanOperatorApplication infinispanOperatorApplication = getApplication();

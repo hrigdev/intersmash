@@ -31,13 +31,14 @@ import cz.xtf.builder.builders.pod.VolumeMount;
 import io.fabric8.kubernetes.api.model.EnvVar;
 
 /**
- * End user Application interface which presents a Wildfly image application on
- * OpenShift Container Platform.
+ * End user Application interface which presents a Wildfly image application on OpenShift Container
+ * Platform.
  */
 public interface WildflyImageOpenShiftApplication extends WildflyOpenShiftApplication, HasEnvVars {
 
 	/**
-	 * Use the {@link BuildInputBuilder} to get instances implementing the {@link BuildInput} interface.
+	 * Use the {@link BuildInputBuilder} to get instances implementing the {@link BuildInput}
+	 * interface.
 	 *
 	 * @see GitSourceBuilder
 	 * @see BinarySourceBuilder
@@ -47,6 +48,7 @@ public interface WildflyImageOpenShiftApplication extends WildflyOpenShiftApplic
 
 	/**
 	 * Setup mount points to WILDFLY pod and persistent volume claims to be created.
+	 *
 	 * @return A {@link Map} instance storing PVCs needed by the WILDFLY application service
 	 */
 	default Map<PersistentVolumeClaim, Set<VolumeMount>> getPersistentVolumeClaimMounts() {
@@ -59,10 +61,10 @@ public interface WildflyImageOpenShiftApplication extends WildflyOpenShiftApplic
 	}
 
 	/**
-	 * Override this in the implementation class to return a non-null value in case you want to create a ping service
-	 * to be used for DNS_PING clustering. The provisioner will take care of setting up all the ENV variables needed
-	 * for clustering to work.
-	 * If this method returns null, no service will be created.
+	 * Override this in the implementation class to return a non-null value in case you want to create
+	 * a ping service to be used for DNS_PING clustering. The provisioner will take care of setting up
+	 * all the ENV variables needed for clustering to work. If this method returns null, no service
+	 * will be created.
 	 *
 	 * @return The name of the ping-service that will be created.
 	 */
@@ -71,8 +73,9 @@ public interface WildflyImageOpenShiftApplication extends WildflyOpenShiftApplic
 	}
 
 	/**
-	 * Gives a chance at modifying local sources before they are uploaded to the builder image; only works when
-	 * performing a binary build from local sources
+	 * Gives a chance at modifying local sources before they are uploaded to the builder image; only
+	 * works when performing a binary build from local sources
+	 *
 	 * @param mavenProjectRoot path to maven project root
 	 * @return
 	 */

@@ -34,15 +34,17 @@ import io.fabric8.openshift.api.model.Route;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This {@link OpenShiftApplication} concrete subclass is providing the methods implementation needed by the
- * declarative provisioning process.
+ * This {@link OpenShiftApplication} concrete subclass is providing the methods implementation
+ * needed by the declarative provisioning process.
  *
- * The goal is to test the automatic (or declarative or application dictated) provisioning process by deploying the
- * <i>hello-openshift</i> application (inspired by
- * https://github.com/openshift/origin/tree/master/examples/hello-openshift) through a deployment resource.
+ * <p>The goal is to test the automatic (or declarative or application dictated) provisioning
+ * process by deploying the <i>hello-openshift</i> application (inspired by
+ * https://github.com/openshift/origin/tree/master/examples/hello-openshift) through a deployment
+ * resource.
  */
 @Slf4j
-public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioningOpenShiftApplication {
+public class AutoProvisioningHelloOpenShiftApplication
+		implements AutoProvisioningOpenShiftApplication {
 
 	// TODO - intentionally using target files here, to be changed
 	private static final String HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION = "target/test-classes/org/jboss/intersmash/testsuite/provision/openshift/auto/hello-openshift-deployment.yaml";
@@ -53,7 +55,8 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 
 	@Override
 	public void preDeploy() {
-		// on preDeploy, we've got nothing to do... (yet, maybe we could create the secret for securing the route)
+		// on preDeploy, we've got nothing to do... (yet, maybe we could create the secret for securing
+		// the route)
 		/// TODO
 	}
 
@@ -62,19 +65,21 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 		final int replicas = 1;
 		// set initial replicas
 		try {
-			adjustConfiguration(HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
+			adjustConfiguration(
+					HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
 					String.format("replicas: %s", HELLO_OPENSHIFT_APP_REPLICAS_PLACEHOLDER),
 					String.format("replicas: %d", replicas));
 		} catch (IOException e) {
 			throw new AutoProvisioningExecutionException(e);
 		}
 		try {
-			// on @Deploy, we'll provision the app pod as per the JSON definition in HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION
-			OpenShifts.masterBinary().execute(
-					"apply", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
+			// on @Deploy, we'll provision the app pod as per the JSON definition in
+			// HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION
+			OpenShifts.masterBinary().execute("apply", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
 		} finally {
 			try {
-				adjustConfiguration(HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
+				adjustConfiguration(
+						HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
 						String.format("replicas: %d", replicas),
 						String.format("replicas: %s", HELLO_OPENSHIFT_APP_REPLICAS_PLACEHOLDER));
 			} catch (IOException e) {
@@ -82,20 +87,20 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 			}
 		}
 		// let's wait for the exact number of pods
-		OpenShiftWaiters.get(OpenShifts.master(), () -> false).areExactlyNPodsReady(
-				1, "app", getName()).waitFor();
+		OpenShiftWaiters.get(OpenShifts.master(), () -> false)
+				.areExactlyNPodsReady(1, "app", getName())
+				.waitFor();
 		// then create a service for the hello-openshift app
-		OpenShifts.masterBinary().execute(
-				"apply", "-f", HELLO_OPENSHIFT_SERVICE_DEFINITION);
+		OpenShifts.masterBinary().execute("apply", "-f", HELLO_OPENSHIFT_SERVICE_DEFINITION);
 		// and let's expose the service through a route so that it is available externally
-		OpenShifts.masterBinary().execute(
-				"apply", "-f", HELLO_OPENSHIFT_ROUTE_DEFINITION);
+		OpenShifts.masterBinary().execute("apply", "-f", HELLO_OPENSHIFT_ROUTE_DEFINITION);
 	}
 
 	@Override
 	public void scale(int replicas, boolean wait) throws AutoProvisioningExecutionException {
 		try {
-			adjustConfiguration(HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
+			adjustConfiguration(
+					HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
 					String.format("replicas: %s", HELLO_OPENSHIFT_APP_REPLICAS_PLACEHOLDER),
 					String.format("replicas: %d", replicas));
 		} catch (IOException e) {
@@ -104,11 +109,11 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 		}
 		try {
 			// on scale we'll update the Pod resource definition in order to set the number of replicas
-			OpenShifts.masterBinary().execute(
-					"apply", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
+			OpenShifts.masterBinary().execute("apply", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
 		} finally {
 			try {
-				adjustConfiguration(HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
+				adjustConfiguration(
+						HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION,
 						String.format("replicas: %d", replicas),
 						String.format("replicas: %s", HELLO_OPENSHIFT_APP_REPLICAS_PLACEHOLDER));
 			} catch (IOException e) {
@@ -118,24 +123,22 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 		// on request, we can wait for the scaling operation to finish
 		if (wait) {
 			//	let's wait for the exact number of pods
-			OpenShiftWaiters.get(OpenShifts.master(), () -> false).areExactlyNPodsReady(
-					replicas, "app", getName()).waitFor();
+			OpenShiftWaiters.get(OpenShifts.master(), () -> false)
+					.areExactlyNPodsReady(replicas, "app", getName())
+					.waitFor();
 		}
 	}
 
 	@Override
 	public void undeploy() throws AutoProvisioningExecutionException {
 		// on undeploy we're removing the application external route...
-		OpenShifts.masterBinary().execute(
-				"delete", "-f", HELLO_OPENSHIFT_ROUTE_DEFINITION);
+		OpenShifts.masterBinary().execute("delete", "-f", HELLO_OPENSHIFT_ROUTE_DEFINITION);
 		// ... its service
-		OpenShifts.masterBinary().execute(
-				"delete", "-f", HELLO_OPENSHIFT_SERVICE_DEFINITION);
+		OpenShifts.masterBinary().execute("delete", "-f", HELLO_OPENSHIFT_SERVICE_DEFINITION);
 		// ... then gracefully stop (scale down to 0)
 		scale(0, true);
 		// ... and finally remove the deployment
-		OpenShifts.masterBinary().execute(
-				"delete", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
+		OpenShifts.masterBinary().execute("delete", "-f", HELLO_OPENSHIFT_DEPLOYMENT_DEFINITION);
 	}
 
 	@Override
@@ -162,7 +165,8 @@ public class AutoProvisioningHelloOpenShiftApplication implements AutoProvisioni
 		return HELLO_OPENSHIFT_APP_NAME;
 	}
 
-	private static void adjustConfiguration(String filePath, String oldString, String newString) throws IOException {
+	private static void adjustConfiguration(String filePath, String oldString, String newString)
+			throws IOException {
 		Path configurationPath = Paths.get(filePath);
 
 		String yamlContent = new String(Files.readAllBytes(configurationPath), StandardCharsets.UTF_8);

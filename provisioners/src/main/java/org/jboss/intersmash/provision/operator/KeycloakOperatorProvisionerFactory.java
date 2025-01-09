@@ -33,7 +33,8 @@ public class KeycloakOperatorProvisionerFactory
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
 				return new KeycloakOpenShiftOperatorProvisioner((KeycloakOperatorApplication) application);
 			}
-			throw new UnsupportedOperationException("Kafka operator based provisioner for Kubernetes is not implemented yet");
+			throw new UnsupportedOperationException(
+					"Kafka operator based provisioner for Kubernetes is not implemented yet");
 		}
 		return null;
 	}

@@ -50,44 +50,64 @@ public class Summary {
 
 	@JsonProperty("startTime")
 	private Long startTime;
+
 	@JsonProperty("endTime")
 	private Long endTime;
+
 	@JsonProperty("minResponseTime")
 	private Long minResponseTime;
+
 	@JsonProperty("meanResponseTime")
 	private Long meanResponseTime;
+
 	@JsonProperty("maxResponseTime")
 	private Long maxResponseTime;
+
 	@JsonProperty("meanSendTime")
 	private Long meanSendTime;
+
 	@JsonProperty("percentileResponseTime")
 	private Percentiles percentileResponseTime;
+
 	@JsonProperty("connectFailureCount")
 	private Long connectFailureCount;
+
 	@JsonProperty("requestCount")
 	private Long requestCount;
+
 	@JsonProperty("responseCount")
 	private Long responseCount;
+
 	@JsonProperty("status_2xx")
 	private Long status2xx;
+
 	@JsonProperty("status_3xx")
 	private Long status3xx;
+
 	@JsonProperty("status_4xx")
 	private Long status4xx;
+
 	@JsonProperty("status_5xx")
 	private Long status5xx;
+
 	@JsonProperty("status_other")
 	private Long statusOther;
+
 	@JsonProperty("invalid")
 	private Long invalid;
+
 	@JsonProperty("cacheHits")
 	private Long cacheHits;
+
 	@JsonProperty("resetCount")
 	private Long resetCount;
+
 	@JsonProperty("timeouts")
 	private Long timeouts;
+
 	@JsonProperty("blockedCount")
 	private Long blockedCount;
+
 	@JsonProperty("blockedTime")
 	private Long blockedTime;
 
@@ -300,5 +320,4 @@ public class Summary {
 	public void setBlockedTime(Long blockedTime) {
 		this.blockedTime = blockedTime;
 	}
-
 }

@@ -19,8 +19,8 @@ import org.jboss.intersmash.provision.openshift.template.OpenShiftTemplate;
 
 /**
  * OpenShift template for EAP 7.z (i.e. WildFly Jakarta EE 8 &lt;= 26.1.2) applications.
- * <p>
- * See e.g.: https://github.com/jboss-container-images/jboss-eap-7-openshift-image
+ *
+ * <p>See e.g.: https://github.com/jboss-container-images/jboss-eap-7-openshift-image
  */
 public enum Eap7Template implements OpenShiftTemplate {
 	AMQ_PERSISTENT("amq-persistent"),

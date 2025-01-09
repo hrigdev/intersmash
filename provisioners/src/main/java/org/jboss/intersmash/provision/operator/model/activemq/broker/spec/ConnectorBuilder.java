@@ -54,8 +54,8 @@ public class ConnectorBuilder {
 	}
 
 	/**
-	 * Whether the CN of the connecting client's SSL certificate will be compared to its hostname to verify they match.
-	 * This is useful only for 2-way SSL.
+	 * Whether the CN of the connecting client's SSL certificate will be compared to its hostname to
+	 * verify they match. This is useful only for 2-way SSL.
 	 *
 	 * @param verifyHost Whether to verify the remote host
 	 * @return this
@@ -66,7 +66,8 @@ public class ConnectorBuilder {
 	}
 
 	/**
-	 * Tells a client connecting to this acceptor that 2-way SSL is requested but not required. Overridden by needClientAuth.
+	 * Tells a client connecting to this acceptor that 2-way SSL is requested but not required.
+	 * Overridden by needClientAuth.
 	 *
 	 * @param wantClientAuth Whether authentication from client is required too
 	 * @return this
@@ -110,8 +111,8 @@ public class ConnectorBuilder {
 	}
 
 	/**
-	 * Tells a client connecting to this acceptor that 2-way SSL is required.
-	 * This property takes precedence over wantClientAuth.
+	 * Tells a client connecting to this acceptor that 2-way SSL is required. This property takes
+	 * precedence over wantClientAuth.
 	 *
 	 * @param needClientAuth Whether authentication from client is required
 	 * @return this
@@ -133,8 +134,8 @@ public class ConnectorBuilder {
 	}
 
 	/**
-	 * A regular expression used to match the server_name extension on incoming SSL connections. If the name doesn't
-	 * match then the connection to the acceptor will be rejected.
+	 * A regular expression used to match the server_name extension on incoming SSL connections. If
+	 * the name doesn't match then the connection to the acceptor will be rejected.
 	 *
 	 * @param sniHost The desired SNI host
 	 * @return this
@@ -147,7 +148,8 @@ public class ConnectorBuilder {
 	/**
 	 * Comma separated list of protocols used for SSL communication.
 	 *
-	 * @param enabledProtocols Comma separated list of protocols that should be used for SSL communication
+	 * @param enabledProtocols Comma separated list of protocols that should be used for SSL
+	 *     communication
 	 * @return this
 	 */
 	public ConnectorBuilder enabledProtocols(String enabledProtocols) {

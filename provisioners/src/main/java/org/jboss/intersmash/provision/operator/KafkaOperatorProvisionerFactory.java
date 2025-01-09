@@ -24,7 +24,8 @@ import org.jboss.intersmash.provision.openshift.KafkaOpenShiftOperatorProvisione
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class KafkaOperatorProvisionerFactory implements ProvisionerFactory<KafkaOperatorProvisioner> {
+public class KafkaOperatorProvisionerFactory
+		implements ProvisionerFactory<KafkaOperatorProvisioner> {
 
 	@Override
 	public KafkaOperatorProvisioner getProvisioner(Application application) {
@@ -32,7 +33,8 @@ public class KafkaOperatorProvisionerFactory implements ProvisionerFactory<Kafka
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
 				return new KafkaOpenShiftOperatorProvisioner((KafkaOperatorApplication) application);
 			}
-			throw new UnsupportedOperationException("Kafka operator based provisioner for Kubernetes is not implemented yet");
+			throw new UnsupportedOperationException(
+					"Kafka operator based provisioner for Kubernetes is not implemented yet");
 		}
 		return null;
 	}

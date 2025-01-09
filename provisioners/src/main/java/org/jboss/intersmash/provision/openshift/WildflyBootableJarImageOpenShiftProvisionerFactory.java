@@ -28,7 +28,8 @@ public class WildflyBootableJarImageOpenShiftProvisionerFactory
 	@Override
 	public WildflyBootableJarImageOpenShiftProvisioner getProvisioner(Application application) {
 		if (BootableJarOpenShiftApplication.class.isAssignableFrom(application.getClass()))
-			return new WildflyBootableJarImageOpenShiftProvisioner((BootableJarOpenShiftApplication) application);
+			return new WildflyBootableJarImageOpenShiftProvisioner(
+					(BootableJarOpenShiftApplication) application);
 		return null;
 	}
 }

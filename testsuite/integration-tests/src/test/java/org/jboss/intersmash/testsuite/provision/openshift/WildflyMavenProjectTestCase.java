@@ -39,11 +39,10 @@ import cz.xtf.junit5.annotations.CleanBeforeAll;
 import io.fabric8.kubernetes.api.model.Service;
 
 /**
- * This test verifies a binary build can be executed using a local folder containing a maven project using the
- * wildfly-maven-plugin.
- * <br>
- * The code inside the local folder is uploaded to the builder image and the actual maven build is executed
- * inside the builder image via the s2i binary build process.
+ * This test verifies a binary build can be executed using a local folder containing a maven project
+ * using the wildfly-maven-plugin. <br>
+ * The code inside the local folder is uploaded to the builder image and the actual maven build is
+ * executed inside the builder image via the s2i binary build process.
  */
 @CleanBeforeAll
 @OpenShiftTest
@@ -70,16 +69,24 @@ public class WildflyMavenProjectTestCase implements ProjectCreationCapable {
 		SoftAssertions softAssertions = new SoftAssertions();
 		// verify system property added via cli
 		PodShell rsh = new PodShell(openShift, openShift.getAnyPod(application.getName()));
-		PodShellOutput output = rsh
-				.executeWithBash(String.format("$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
+		PodShellOutput output = rsh.executeWithBash(
+				String.format(
+						"$JBOSS_HOME/bin/jboss-cli.sh -c /system-property=%s:read-resource",
 						OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY));
-		softAssertions.assertThat(output.getError()).as("CLI configuration check: Error should be empty").isEmpty();
-		softAssertions.assertThat(output.getOutput()).as("CLI configuration check: Test property was not set by CLI")
+		softAssertions
+				.assertThat(output.getError())
+				.as("CLI configuration check: Error should be empty")
+				.isEmpty();
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("CLI configuration check: Test property was not set by CLI")
 				.contains("success", OpenShiftProvisionerTestBase.WILDFLY_TEST_PROPERTY);
 
 		// verify secret is mounted in /etc/secrets
 		output = rsh.executeWithBash("cat /etc/secrets/" + TEST_SECRET_FOO);
-		softAssertions.assertThat(output.getOutput()).as("Secret check: test secret was not properly mounted")
+		softAssertions
+				.assertThat(output.getOutput())
+				.as("Secret check: test secret was not properly mounted")
 				.contains(TEST_SECRET_BAR);
 
 		// verify the ping service is created and env variables set correctly
@@ -89,7 +96,8 @@ public class WildflyMavenProjectTestCase implements ProjectCreationCapable {
 		expectedEnvVars.put("JGROUPS_PING_PROTOCOL", "dns.DNS_PING");
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_NAME", application.getPingServiceName());
 		expectedEnvVars.put("OPENSHIFT_DNS_PING_SERVICE_PORT", "8888");
-		softAssertions.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
+		softAssertions
+				.assertThat(openShift.getDeploymentConfigEnvVars(application.getName()))
 				.as("Ping service variables check")
 				.containsAllEntriesOf(expectedEnvVars);
 
@@ -99,19 +107,22 @@ public class WildflyMavenProjectTestCase implements ProjectCreationCapable {
 	@Test
 	public void verifyOpenShiftConfiguration() {
 		// environmentVariables
-		Assertions
-				.assertThat(
-						OpenShifts.master(BuildManagerConfig.namespace()).getBuildConfig(application.getName()).getSpec()
-								.getStrategy().getSourceStrategy().getEnv())
-				.as("Environment variable test").contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
+		Assertions.assertThat(
+				OpenShifts.master(BuildManagerConfig.namespace())
+						.getBuildConfig(application.getName())
+						.getSpec()
+						.getStrategy()
+						.getSourceStrategy()
+						.getEnv())
+				.as("Environment variable test")
+				.contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
 	}
 
-	/**
-	 * Secret resource should be created as a preDeploy() operation by a provisioner.
-	 */
+	/** Secret resource should be created as a preDeploy() operation by a provisioner. */
 	@Test
 	public void verifyDeployHooks() {
-		Assertions.assertThat(openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
+		Assertions.assertThat(
+				openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
 				.isNotNull();
 	}
 

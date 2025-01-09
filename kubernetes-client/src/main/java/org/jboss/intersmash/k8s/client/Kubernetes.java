@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client;
 
 import java.io.IOException;
@@ -43,16 +58,15 @@ public class Kubernetes extends DefaultKubernetesClient {
 	private static ServiceLoader<CustomResourceDefinitionContextProvider> crdContextProviderLoader;
 
 	/**
-	 * This label is supposed to be used for any resource created by Intersmash to easily distinguish which resources have
-	 * been created by Intersmash automation.
-	 * NOTE: at the moment only place where this is used is for labeling namespaces. Other usages may be added in the future.
+	 * This label is supposed to be used for any resource created by Intersmash to easily distinguish
+	 * which resources have been created by Intersmash automation. NOTE: at the moment only place
+	 * where this is used is for labeling namespaces. Other usages may be added in the future.
 	 */
 	public static final String INTERSMASH_MANAGED_LABEL = "intersmash/managed";
-	/**
-	 * Used to cache created Kubernetes clients for given test case.
-	 */
+	/** Used to cache created Kubernetes clients for given test case. */
 	public static final Multimap<String, Kubernetes> namespaceToKubernetesClientMap = Multimaps
 			.synchronizedListMultimap(ArrayListMultimap.create());
+
 	private static final String KEEP_LABEL = "intersmash/keep";
 
 	/**
@@ -76,7 +90,8 @@ public class Kubernetes extends DefaultKubernetesClient {
 	public static Kubernetes get(Path kubeconfigPath, String namespace) {
 		try {
 			String kubeconfigContents = new String(Files.readAllBytes(kubeconfigPath), StandardCharsets.UTF_8);
-			Config kubeconfig = Config.fromKubeconfig(null, kubeconfigContents, kubeconfigPath.toAbsolutePath().toString());
+			Config kubeconfig = Config.fromKubeconfig(
+					null, kubeconfigContents, kubeconfigPath.toAbsolutePath().toString());
 
 			setupTimeouts(kubeconfig);
 
@@ -90,13 +105,15 @@ public class Kubernetes extends DefaultKubernetesClient {
 		}
 	}
 
-	public static Kubernetes get(String masterUrl, String namespace, String username, String password) {
+	public static Kubernetes get(
+			String masterUrl, String namespace, String username, String password) {
 		Config kubeconfig = new ConfigBuilder()
 				.withMasterUrl(masterUrl)
 				.withTrustCerts(true)
 				.withNamespace(namespace)
 				.withUsername(username)
-				.withPassword(password).build();
+				.withPassword(password)
+				.build();
 
 		setupTimeouts(kubeconfig);
 
@@ -124,12 +141,12 @@ public class Kubernetes extends DefaultKubernetesClient {
 	}
 
 	/**
-	 * Convenient method to create pull secret for authenticated image registries.
-	 * The secret content must be provided in "dockerconfigjson" formar.
+	 * Convenient method to create pull secret for authenticated image registries. The secret content
+	 * must be provided in "dockerconfigjson" formar.
 	 *
-	 * E.g.: {@code {"auths":{"registry.redhat.io":{"auth":"<REDACTED_TOKEN>"}}}}
+	 * <p>E.g.: {@code {"auths":{"registry.redhat.io":{"auth":"<REDACTED_TOKEN>"}}}}
 	 *
-	 * TODO - Check Linking Secret to ServiceAccount
+	 * <p>TODO - Check Linking Secret to ServiceAccount
 	 *
 	 * @param name of the Secret to be created
 	 * @param secret content of Secret in json format
@@ -141,31 +158,43 @@ public class Kubernetes extends DefaultKubernetesClient {
 				.addToLabels(Kubernetes.KEEP_LABEL, "true")
 				.endMetadata()
 				.withType("kubernetes.io/dockerconfigjson")
-				.withData(Collections.singletonMap(".dockerconfigjson", Base64.getEncoder().encodeToString(secret.getBytes())))
+				.withData(
+						Collections.singletonMap(
+								".dockerconfigjson", Base64.getEncoder().encodeToString(secret.getBytes())))
 				.build();
 		secrets().createOrReplace(pullSecret);
-		serviceAccounts().withName("default").edit(new Visitor<ServiceAccountBuilder>() {
-			@Override
-			public void visit(ServiceAccountBuilder builder) {
-				builder.addToImagePullSecrets(
-						new LocalObjectReferenceBuilder().withName(pullSecret.getMetadata().getName()).build());
-			}
-		});
+		serviceAccounts()
+				.withName("default")
+				.edit(
+						new Visitor<ServiceAccountBuilder>() {
+							@Override
+							public void visit(ServiceAccountBuilder builder) {
+								builder.addToImagePullSecrets(
+										new LocalObjectReferenceBuilder()
+												.withName(pullSecret.getMetadata().getName())
+												.build());
+							}
+						});
 
-		serviceAccounts().withName("builder").edit(new Visitor<ServiceAccountBuilder>() {
-			@Override
-			public void visit(ServiceAccountBuilder builder) {
-				builder.addToSecrets(new ObjectReferenceBuilder().withName(pullSecret.getMetadata().getName()).build());
-			}
-		});
+		serviceAccounts()
+				.withName("builder")
+				.edit(
+						new Visitor<ServiceAccountBuilder>() {
+							@Override
+							public void visit(ServiceAccountBuilder builder) {
+								builder.addToSecrets(
+										new ObjectReferenceBuilder()
+												.withName(pullSecret.getMetadata().getName())
+												.build());
+							}
+						});
 	}
 
 	private static Kubernetes get(Config kubeconfig) {
 		Kubernetes kubernetes;
 
 		// check whether such a client already exists
-		Optional<Kubernetes> optionalKubernetes = namespaceToKubernetesClientMap
-				.get(kubeconfig.getNamespace()).stream()
+		Optional<Kubernetes> optionalKubernetes = namespaceToKubernetesClientMap.get(kubeconfig.getNamespace()).stream()
 				.filter(kc -> isEqualConfig(kubeconfig, kc.getConfiguration()))
 				.findFirst();
 
@@ -179,7 +208,7 @@ public class Kubernetes extends DefaultKubernetesClient {
 	}
 
 	private static void setupTimeouts(Config config) {
-		//___*** (ShipWright?)config.setBuildTimeout(10 * 60 * 1000);
+		// ___*** (ShipWright?)config.setBuildTimeout(10 * 60 * 1000);
 		config.setRequestTimeout(120_000);
 		config.setConnectionTimeout(120_000);
 	}
@@ -203,19 +232,21 @@ public class Kubernetes extends DefaultKubernetesClient {
 	}
 
 	/**
-	 * Retrieves all configmaps but "kube-root-ca.crt" and "openshift-service-ca.crt" which are created out of the box.
+	 * Retrieves all configmaps but "kube-root-ca.crt" and "openshift-service-ca.crt" which are
+	 * created out of the box.
 	 *
 	 * @return List of configmaps created by user
 	 */
 	public List<ConfigMap> getUserConfigMaps() {
 		return configMaps().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems().stream()
 				.filter(cm -> !cm.getMetadata().getName().equals("kube-root-ca.crt"))
-				//.filter(cm -> !cm.getMetadata().getName().equals("openshift-service-ca.crt"))
+				// .filter(cm -> !cm.getMetadata().getName().equals("openshift-service-ca.crt"))
 				.collect(Collectors.toList());
 	}
 
 	/**
-	 * Retrieves secrets that aren't considered default. Secrets that are left out contain type starting with 'kubernetes.io/'.
+	 * Retrieves secrets that aren't considered default. Secrets that are left out contain type
+	 * starting with 'kubernetes.io/'.
 	 *
 	 * @return List of secrets that aren't considered default.
 	 */
@@ -226,39 +257,52 @@ public class Kubernetes extends DefaultKubernetesClient {
 	}
 
 	/**
-	 * Retrieves service accounts that aren't considered default.
-	 * Service accounts that are left out from list:
+	 * Retrieves service accounts that aren't considered default. Service accounts that are left out
+	 * from list:
+	 *
 	 * <ul>
-	 * <li>builder</li>
-	 * <li>default</li>
-	 * <li>deployer</li>
+	 *   <li>builder
+	 *   <li>default
+	 *   <li>deployer
 	 * </ul>
 	 *
 	 * @return List of service accounts that aren't considered default.
 	 */
 	public List<ServiceAccount> getUserServiceAccounts() {
-		return serviceAccounts().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems().stream()
+		return serviceAccounts()
+				.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+				.list()
+				.getItems()
+				.stream()
 				.filter(sa -> !sa.getMetadata().getName().matches("builder|default|deployer"))
 				.collect(Collectors.toList());
 	}
 
 	/**
-	 * Retrieves role bindings that aren't considered default.
-	 * Role bindings that are left out from list:
+	 * Retrieves role bindings that aren't considered default. Role bindings that are left out from
+	 * list:
+	 *
 	 * <ul>
-	 * <li>admin</li>
-	 * <li>system:deployers</li>
-	 * <li>system:image-builders</li>
-	 * <li>system:image-pullers</li>
+	 *   <li>admin
+	 *   <li>system:deployers
+	 *   <li>system:image-builders
+	 *   <li>system:image-pullers
 	 * </ul>
 	 *
 	 * @return List of role bindings that aren't considered default.
 	 */
 	public List<RoleBinding> getUserRoleBindings() {
-		return rbac().roleBindings().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
-				.withLabelNotIn("olm.owner.kind", "ClusterServiceVersion").list().getItems().stream()
-				.filter(rb -> !rb.getMetadata().getName()
-						.matches("admin|system:deployers|system:image-builders|system:image-pullers"))
+		return rbac()
+				.roleBindings()
+				.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+				.withLabelNotIn("olm.owner.kind", "ClusterServiceVersion")
+				.list()
+				.getItems()
+				.stream()
+				.filter(
+						rb -> !rb.getMetadata()
+								.getName()
+								.matches("admin|system:deployers|system:image-builders|system:image-pullers"))
 				.collect(Collectors.toList());
 	}
 
@@ -267,10 +311,13 @@ public class Kubernetes extends DefaultKubernetesClient {
 			try {
 				// TODO - check
 				genericKubernetesResources(crdContextProvider.getContext())
-						.inNamespace(getNamespace()).delete();
+						.inNamespace(getNamespace())
+						.delete();
 				log.debug("DELETE :: " + crdContextProvider.getContext().getName() + " instances");
 			} catch (KubernetesClientException kce) {
-				log.debug(crdContextProvider.getContext().getName() + " might not be installed on the cluster.", kce);
+				log.debug(
+						crdContextProvider.getContext().getName() + " might not be installed on the cluster.",
+						kce);
 			}
 		}
 
@@ -293,27 +340,41 @@ public class Kubernetes extends DefaultKubernetesClient {
 		services().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").delete();
 		pods().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").withGracePeriod(0).delete();
 		persistentVolumeClaims().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").delete();
-		autoscaling().v1().horizontalPodAutoscalers().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").delete();
+		autoscaling()
+				.v1()
+				.horizontalPodAutoscalers()
+				.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+				.delete();
 
 		getUserConfigMaps().forEach(c -> configMaps().delete(c));
 		getUserSecrets().forEach(s -> secrets().delete(s));
-		getUserServiceAccounts().forEach((sa) -> {
-			serviceAccounts().delete(sa);
-		});
+		getUserServiceAccounts()
+				.forEach(
+						(sa) -> {
+							serviceAccounts().delete(sa);
+						});
 		getUserRoleBindings().forEach(r -> rbac().roleBindings().delete(r));
-		rbac().roles().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+		rbac()
+				.roles()
+				.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
 				.withLabelNotIn("olm.owner.kind", "ClusterServiceVersion")
 				.delete();
 
 		for (HasMetadata hasMetadata : listRemovableResources()) {
-			log.warn("DELETE LEFTOVER :: " + hasMetadata.getKind() + "/" + hasMetadata.getMetadata().getName());
+			log.warn(
+					"DELETE LEFTOVER :: "
+							+ hasMetadata.getKind()
+							+ "/"
+							+ hasMetadata.getMetadata().getName());
 			resource(hasMetadata).cascading(true).withGracePeriod(0).delete();
 		}
 
 		FailFastCheck failFastCheck = () -> false;
 		return new SimpleWaiter(
 				() -> isNamespaceClean(),
-				TimeUnit.MILLISECONDS, WaitingConfig.timeoutCleanup(), "Cleaning project - " + getNamespace())
+				TimeUnit.MILLISECONDS,
+				WaitingConfig.timeoutCleanup(),
+				"Cleaning project - " + getNamespace())
 				.onTimeout(() -> log.info("Cleaning namespace: " + getNamespace() + " - timed out."))
 				.onFailure(() -> log.info("Cleaning namespace: " + getNamespace() + " - failed."))
 				.onSuccess(() -> log.info("Cleaning namespace: " + getNamespace() + " - finished."))
@@ -332,23 +393,47 @@ public class Kubernetes extends DefaultKubernetesClient {
 
 		// keep the order for deletion to prevent K8s creating resources again
 		List<HasMetadata> removables = new ArrayList<>();
-		removables.addAll(apps().deployments().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(apps().replicaSets().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(batch().jobs().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(apps().statefulSets().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(replicationControllers().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(endpoints().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(services().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				apps().deployments().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				apps().replicaSets().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				batch().jobs().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				apps().statefulSets().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				replicationControllers()
+						.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+						.list()
+						.getItems());
+		removables.addAll(
+				endpoints().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
+		removables.addAll(
+				services().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
 		removables.addAll(pods().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(persistentVolumeClaims().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list().getItems());
-		removables.addAll(autoscaling().v1().horizontalPodAutoscalers().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true").list()
-				.getItems());
+		removables.addAll(
+				persistentVolumeClaims()
+						.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+						.list()
+						.getItems());
+		removables.addAll(
+				autoscaling()
+						.v1()
+						.horizontalPodAutoscalers()
+						.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+						.list()
+						.getItems());
 		removables.addAll(getUserConfigMaps());
 		removables.addAll(getUserSecrets());
 		removables.addAll(getUserServiceAccounts());
 		removables.addAll(getUserRoleBindings());
-		removables.addAll(rbac().roles().withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
-				.withLabelNotIn("olm.owner.kind", "ClusterServiceVersion").list().getItems());
+		removables.addAll(
+				rbac()
+						.roles()
+						.withLabelNotIn(Kubernetes.KEEP_LABEL, "", "true")
+						.withLabelNotIn("olm.owner.kind", "ClusterServiceVersion")
+						.list()
+						.getItems());
 
 		return removables;
 	}
@@ -360,7 +445,8 @@ public class Kubernetes extends DefaultKubernetesClient {
 			try {
 				customResourceDefinitionList = genericKubernetesResources(crdContextProvider.getContext())
 						.inNamespace(getNamespace())
-						.list().getItems();
+						.list()
+						.getItems();
 				crdInstances += customResourceDefinitionList.size();
 			} catch (KubernetesClientException kce) {
 				// CRD might not be installed on the cluster
@@ -373,17 +459,22 @@ public class Kubernetes extends DefaultKubernetesClient {
 			isClean = true;
 		} else {
 			StringBuilder strBuilderResourcesToDelete = new StringBuilder(
-					"Cleaning project - " + getNamespace()
+					"Cleaning project - "
+							+ getNamespace()
 							+ " Waiting for following resources to be deleted: \n");
 			if (customResourceDefinitionList != null && !customResourceDefinitionList.isEmpty()) {
-				customResourceDefinitionList.stream().forEach((r) -> {
-					strBuilderResourcesToDelete.append(r + "\n");
-				});
+				customResourceDefinitionList.stream()
+						.forEach(
+								(r) -> {
+									strBuilderResourcesToDelete.append(r + "\n");
+								});
 			}
 			if (!listRemovableResources.isEmpty()) {
-				listRemovableResources.stream().forEach((r) -> {
-					strBuilderResourcesToDelete.append(r + "\n");
-				});
+				listRemovableResources.stream()
+						.forEach(
+								(r) -> {
+									strBuilderResourcesToDelete.append(r + "\n");
+								});
 			}
 			log.debug(strBuilderResourcesToDelete.toString());
 		}
@@ -399,5 +490,4 @@ public class Kubernetes extends DefaultKubernetesClient {
 			ResourceDefinitionContext rdContext, Class<T> resourceType, Class<L> listClass) {
 		return new HasMetadataOperationsImpl(this, rdContext, resourceType, listClass);
 	}
-
 }

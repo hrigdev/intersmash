@@ -15,9 +15,7 @@
  */
 package org.jboss.intersmash.application.input;
 
-/**
- * {@link BuildInput} represented by Git URI and reference
- */
+/** {@link BuildInput} represented by Git URI and reference */
 public interface GitSource extends BuildInput {
 
 	String getUri();
@@ -25,5 +23,4 @@ public interface GitSource extends BuildInput {
 	String getRef();
 
 	String getContextDir();
-
 }

@@ -73,11 +73,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Test the Keycloak Operator provisioning model and APIs
  *
- * See <br>
- *     - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples
- * <p>
- * Not all examples are actually run, but these tests are more about the framework functionality verification than
- * about the Keycloak operator testing.
+ * <p>See <br>
+ * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples
+ *
+ * <p>Not all examples are actually run, but these tests are more about the framework functionality
+ * verification than about the Keycloak operator testing.
  */
 @Slf4j
 @CleanBeforeAll
@@ -85,7 +85,8 @@ import lombok.extern.slf4j.Slf4j;
 @Deprecated(since = "0.0.2")
 @OpenShiftTest
 public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCapable {
-	// Be aware that since we're using the static mock application, not all provisioner methods will work as expected!
+	// Be aware that since we're using the static mock application, not all provisioner methods will
+	// work as expected!
 	private static final RhSsoOpenShiftOperatorProvisioner KEYCLOAK_OPERATOR_PROVISIONER = initializeOperatorProvisioner();
 
 	private static RhSsoOpenShiftOperatorProvisioner initializeOperatorProvisioner() {
@@ -119,8 +120,9 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		matchLabels.put("app", "sso");
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		KEYCLOAK_OPERATOR_PROVISIONER.unsubscribe();
 	}
@@ -135,34 +137,60 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	public void customResourcesCleanup() {
 		// delete backups
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-						.keycloakBackupClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> KEYCLOAK_OPERATOR_PROVISIONER
+								.keycloakBackupClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// delete clients
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClientClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-						.keycloakClientClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> KEYCLOAK_OPERATOR_PROVISIONER
+								.keycloakClientClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// delete keycloaks
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-						.keycloakClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> KEYCLOAK_OPERATOR_PROVISIONER
+								.keycloakClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// delete realms
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-						.keycloakRealmClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> KEYCLOAK_OPERATOR_PROVISIONER
+								.keycloakRealmClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// delete users
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-						.keycloakUserClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> KEYCLOAK_OPERATOR_PROVISIONER
+								.keycloakUserClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 	}
 
 	/**
 	 * This test case creates and validates a one-time AWS {@link KeycloakBackup} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/OneTimeAwsBackup.yaml
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/OneTimeAwsBackup.yaml
 	 */
 	@Test
 	public void oneTimeAwsBackup() {
@@ -170,10 +198,9 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		try {
 			name = "example-keycloakbackup";
 			KeycloakBackup keycloakBackup = new KeycloakBackupBuilder(name, matchLabels)
-					.aws(new KeycloakAWSSpecBuilder()
-							.credentialsSecretName("s3-backup")
-							.build())
-					//				.instanceSelector(new LabelSelectorBuilder().withMatchLabels(matchLabels).build())
+					.aws(new KeycloakAWSSpecBuilder().credentialsSecretName("s3-backup").build())
+					//				.instanceSelector(new
+					// LabelSelectorBuilder().withMatchLabels(matchLabels).build())
 					.build();
 			verifyBackup(keycloakBackup);
 		} finally {
@@ -184,11 +211,12 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a one-time local {@link KeycloakBackup} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/OneTimeLocalBackup.yaml
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/OneTimeLocalBackup.yaml
 	 */
 	@Test
 	public void oneTimeLocalBackup() {
@@ -196,7 +224,8 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		try {
 			name = "example-keycloakbackup";
 			KeycloakBackup keycloakBackup = new KeycloakBackupBuilder(name, matchLabels)
-					//				.instanceSelector(new LabelSelectorBuilder().withMatchLabels(matchLabels).build())
+					//				.instanceSelector(new
+					// LabelSelectorBuilder().withMatchLabels(matchLabels).build())
 					.build();
 			verifyBackup(keycloakBackup);
 		} finally {
@@ -207,11 +236,12 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a periodic and AWS-specific {@link KeycloakBackup} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/PeriodicAwsBackup.yaml
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/backup/PeriodicAwsBackup.yaml
 	 */
 	@Test
 	public void periodicAwsBackup() {
@@ -219,11 +249,13 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		try {
 			name = "example-keycloakbackup";
 			KeycloakBackup keycloakBackup = new KeycloakBackupBuilder(name, matchLabels)
-					.aws(new KeycloakAWSSpecBuilder()
-							.schedule("*/2 * * * *")
-							.credentialsSecretName("s3-backup")
-							.build())
-					//				.instanceSelector(new LabelSelectorBuilder().withMatchLabels(matchLabels).build())
+					.aws(
+							new KeycloakAWSSpecBuilder()
+									.schedule("*/2 * * * *")
+									.credentialsSecretName("s3-backup")
+									.build())
+					//				.instanceSelector(new
+					// LabelSelectorBuilder().withMatchLabels(matchLabels).build())
 					.build();
 			verifyBackup(keycloakBackup);
 		} finally {
@@ -234,12 +266,14 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a basic {@link KeycloakClient} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/client/client-secret.yaml
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/client
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/client/client-secret.yaml
+	 * <br>
+	 * - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/client
 	 */
 	@Test
 	public void clientSecret() {
@@ -265,7 +299,8 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	}
 
 	//	/**
-	//	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/keycloak/external-keycloak.yaml
+	//	 *
+	// https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/keycloak/external-keycloak.yaml
 	//	 */
 	//	@Test
 	//	public void externalKeycloak() {
@@ -284,11 +319,11 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a basic {@link Keycloak} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
+	 * <p>See <br>
+	 * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
 	 */
 	@Test
 	public void exampleSso() {
@@ -307,7 +342,8 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	}
 
 	//	/**
-	//	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/keycloak/keycloak-with-experimental-settings.yaml
+	//	 *
+	// https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/keycloak/keycloak-with-experimental-settings.yaml
 	//	 */
 	//	@Test
 	//	public void keycloakWithExperimentalSettings() {
@@ -320,7 +356,8 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	//				.keycloakDeploymentSpec(new KeycloakDeploymentSpecBuilder()
 	//						.experimental(new ExperimentalSpecBuilder()
 	//								.args("-Djboss.as.management.blocking.timeout=600")
-	//								.env(new EnvVarBuilder().withName("PROXY_ADDRESS_FORWARDING").withValue("false").build())
+	//								.env(new
+	// EnvVarBuilder().withName("PROXY_ADDRESS_FORWARDING").withValue("false").build())
 	//								.volumes(new VolumesSpecBuilder()
 	//										.defaultMode(0777)
 	//										.items(new VolumeSpecBuilder().configMap(new ConfigMapVolumeSpecBuilder()
@@ -336,13 +373,15 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	//	}
 
 	/**
-	 * This test case creates and validates a {@link KeycloakRealm} CR with related {@link KeycloakUser} instances
+	 * This test case creates and validates a {@link KeycloakRealm} CR with related {@link
+	 * KeycloakUser} instances
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/realm/realm_with_users.yaml
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/realm/realm_with_users.yaml
 	 */
 	@Test
 	public void realmWithUsers() {
@@ -352,32 +391,42 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 			InstanceSelector instanceSelector = new InstanceSelector();
 			instanceSelector.setMatchLabels(matchLabels);
 			KeycloakRealm keycloakRealm = new KeycloakRealmBuilder(name, matchLabels)
-					.realm(new KeycloakAPIRealmBuilder()
-							.id("basic")
-							.realm("basic")
-							.enabled(true)
-							.displayName("Basic Realm")
-							.eventsListeners("metrics-listener")
-							.users(new KeycloakAPIUserBuilder()
-									.username("realm_admin")
-									.firstName("John")
-									.lastName("Doe")
-									.email("jdoe@redhat.com")
+					.realm(
+							new KeycloakAPIRealmBuilder()
+									.id("basic")
+									.realm("basic")
 									.enabled(true)
-									.emailVerified(false)
-									.realmRoles("offline_access")
-									.realmRoles("uma_authorization")
-									.clientRole("account",
-											Stream.of("manage-account", "view-profile").collect(Collectors.toList()))
-									.clientRole("realm-management",
-											Stream.of("manage-users", "view-users", "query-users", "create-client")
-													.collect(Collectors.toList()))
+									.displayName("Basic Realm")
+									.eventsListeners("metrics-listener")
+									.users(
+											new KeycloakAPIUserBuilder()
+													.username("realm_admin")
+													.firstName("John")
+													.lastName("Doe")
+													.email("jdoe@redhat.com")
+													.enabled(true)
+													.emailVerified(false)
+													.realmRoles("offline_access")
+													.realmRoles("uma_authorization")
+													.clientRole(
+															"account",
+															Stream.of("manage-account", "view-profile")
+																	.collect(Collectors.toList()))
+													.clientRole(
+															"realm-management",
+															Stream.of(
+																	"manage-users",
+																	"view-users",
+																	"query-users",
+																	"create-client")
+																	.collect(Collectors.toList()))
+													.build())
 									.build())
-							.build())
-					.realmOverrides(new RedirectorIdentityProviderOverrideBuilder()
-							.forFlow("browser")
-							.identityProvider("openshift-v4")
-							.build())
+					.realmOverrides(
+							new RedirectorIdentityProviderOverrideBuilder()
+									.forFlow("browser")
+									.identityProvider("openshift-v4")
+									.build())
 					.instanceSelector(instanceSelector)
 					.build();
 
@@ -390,11 +439,12 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a basic {@link KeycloakRealm} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/realm/basic_realm.yaml
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/realm/basic_realm.yaml
 	 */
 	@Test
 	public void basicRealm() {
@@ -402,10 +452,7 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		try {
 			name = "example-keycloakrealm";
 			KeycloakRealm keycloakRealm = new KeycloakRealmBuilder(name, matchLabels)
-					.realm(new KeycloakAPIRealmBuilder()
-							.id("user_realm")
-							.realm("user_realm")
-							.build())
+					.realm(new KeycloakAPIRealmBuilder().id("user_realm").realm("user_realm").build())
 					.build();
 
 			verifyRealm(keycloakRealm);
@@ -415,13 +462,14 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	}
 
 	/**
-	 * This test case creates a {@link KeycloakRealm} CR and a {@link KeycloakClient} CR which uses SAML protocol
+	 * This test case creates a {@link KeycloakRealm} CR and a {@link KeycloakClient} CR which uses
+	 * SAML protocol
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak/blob/master/examples/saml/testsaml.json
+	 * <p>See <br>
+	 * - https://github.com/keycloak/keycloak/blob/master/examples/saml/testsaml.json
 	 */
 	@Test
 	public void samlRealm() {
@@ -431,47 +479,58 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 			InstanceSelector instanceSelector = new InstanceSelector();
 			instanceSelector.setMatchLabels(matchLabels);
 			KeycloakRealm keycloakRealm = new KeycloakRealmBuilder(name, matchLabels)
-					.realm(new KeycloakAPIRealmBuilder()
-							.id("saml-demo")
-							.realm("saml-demo")
-							.enabled(true)
-							.displayName("SAML Realm")
-							.users(new KeycloakAPIUserBuilder()
-									.username("saml_user")
-									.firstName("John")
-									.lastName("Doe")
-									.email("jdoe@redhat.com")
+					.realm(
+							new KeycloakAPIRealmBuilder()
+									.id("saml-demo")
+									.realm("saml-demo")
 									.enabled(true)
-									.emailVerified(false)
-									.realmRoles("manager")
-									.credentials(new KeycloakCredentialBuilder()
-											.type("password")
-											.value("password")
-											.build())
+									.displayName("SAML Realm")
+									.users(
+											new KeycloakAPIUserBuilder()
+													.username("saml_user")
+													.firstName("John")
+													.lastName("Doe")
+													.email("jdoe@redhat.com")
+													.enabled(true)
+													.emailVerified(false)
+													.realmRoles("manager")
+													.credentials(
+															new KeycloakCredentialBuilder()
+																	.type("password")
+																	.value("password")
+																	.build())
+													.build())
+									.clients(
+											new KeycloakAPIClientBuilder()
+													.clientId("http://localhost:8080/sales-post-enc/")
+													.enabled(true)
+													.fullScopeAllowed(true)
+													.baseUrl("http://localhost:8080/sales-post-enc/")
+													.adminUrl("http://localhost:8080/sales-post-enc/saml")
+													.redirectUris("http://localhost:8080/sales-post-enc/*")
+													.attributes(
+															Map.of(
+																	"saml.server.signature",
+																	"true",
+																	"saml.signature.algorithm",
+																	"RSA_SHA512",
+																	"saml.client.signature",
+																	"true",
+																	"saml.encrypt",
+																	"true",
+																	"saml.authnstatement",
+																	"true",
+																	"saml.signing.private.key",
+																	"MIICXQIBAAKBgQDb7kwJPkGdU34hicplwfp6/WmNcaLh94TSc7Jyr9Undp5pkyLgb0DE7EIE+6kSs4LsqCb8HDkB0nLD5DXbBJFd8n0WGoKstelvtg6FtVJMnwN7k7yZbfkPECWH9zF70VeOo9vbzrApNRnct8ZhH5fbflRB4JMA9L9R+LbURdoSKQIDAQABAoGBANtbZG9bruoSGp2s5zhzLzd4hczT6Jfk3o9hYjzNb5Z60ymN3Z1omXtQAdEiiNHkRdNxK+EM7TcKBfmoJqcaeTkW8cksVEAW23ip8W9/XsLqmbU2mRrJiKa+KQNDSHqJi1VGyimi4DDApcaqRZcaKDFXg2KDr/Qt5JFD/o9IIIPZAkEA+ZENdBIlpbUfkJh6Ln+bUTss/FZ1FsrcPZWu13rChRMrsmXsfzu9kZUWdUeQ2Dj5AoW2Q7L/cqdGXS7Mm5XhcwJBAOGZq9axJY5YhKrsksvYRLhQbStmGu5LG75suF+rc/44sFq+aQM7+oeRr4VY88Mvz7mk4esdfnk7ae+cCazqJvMCQQCx1L1cZw3yfRSn6S6u8XjQMjWE/WpjulujeoRiwPPY9WcesOgLZZtYIH8nRL6ehEJTnMnahbLmlPFbttxPRUanAkA11MtSIVcKzkhp2KV2ipZrPJWwI18NuVJXb+3WtjypTrGWFZVNNkSjkLnHIeCYlJIGhDd8OL9zAiBXEm6kmgLNAkBWAg0tK2hCjvzsaA505gWQb4X56uKWdb0IzN+fOLB3Qt7+fLqbVQNQoNGzqey6B4MoS1fUKAStqdGTFYPG/+9t",
+																	"saml.signing.certificate",
+																	"MIIB1DCCAT0CBgFJGVacCDANBgkqhkiG9w0BAQsFADAwMS4wLAYDVQQDEyVodHRwOi8vbG9jYWxob3N0OjgwODAvc2FsZXMtcG9zdC1lbmMvMB4XDTE0MTAxNjE0MjA0NloXDTI0MTAxNjE0MjIyNlowMDEuMCwGA1UEAxMlaHR0cDovL2xvY2FsaG9zdDo4MDgwL3NhbGVzLXBvc3QtZW5jLzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2+5MCT5BnVN+IYnKZcH6ev1pjXGi4feE0nOycq/VJ3aeaZMi4G9AxOxCBPupErOC7Kgm/Bw5AdJyw+Q12wSRXfJ9FhqCrLXpb7YOhbVSTJ8De5O8mW35DxAlh/cxe9FXjqPb286wKTUZ3LfGYR+X235UQeCTAPS/Ufi21EXaEikCAwEAATANBgkqhkiG9w0BAQsFAAOBgQBMrfGD9QFfx5v7ld/OAto5rjkTe3R1Qei8XRXfcs83vLaqEzjEtTuLGrJEi55kXuJgBpVmQpnwCCkkjSy0JxbqLDdVi9arfWUxEGmOr01ZHycELhDNaQcFqVMPr5kRHIHgktT8hK2IgCvd3Fy9/JCgUgCPxKfhwecyEOKxUc857g==",
+																	"saml.encryption.private.key",
+																	"MIICXQIBAAKBgQDb7kwJPkGdU34hicplwfp6/WmNcaLh94TSc7Jyr9Undp5pkyLgb0DE7EIE+6kSs4LsqCb8HDkB0nLD5DXbBJFd8n0WGoKstelvtg6FtVJMnwN7k7yZbfkPECWH9zF70VeOo9vbzrApNRnct8ZhH5fbflRB4JMA9L9R+LbURdoSKQIDAQABAoGBANtbZG9bruoSGp2s5zhzLzd4hczT6Jfk3o9hYjzNb5Z60ymN3Z1omXtQAdEiiNHkRdNxK+EM7TcKBfmoJqcaeTkW8cksVEAW23ip8W9/XsLqmbU2mRrJiKa+KQNDSHqJi1VGyimi4DDApcaqRZcaKDFXg2KDr/Qt5JFD/o9IIIPZAkEA+ZENdBIlpbUfkJh6Ln+bUTss/FZ1FsrcPZWu13rChRMrsmXsfzu9kZUWdUeQ2Dj5AoW2Q7L/cqdGXS7Mm5XhcwJBAOGZq9axJY5YhKrsksvYRLhQbStmGu5LG75suF+rc/44sFq+aQM7+oeRr4VY88Mvz7mk4esdfnk7ae+cCazqJvMCQQCx1L1cZw3yfRSn6S6u8XjQMjWE/WpjulujeoRiwPPY9WcesOgLZZtYIH8nRL6ehEJTnMnahbLmlPFbttxPRUanAkA11MtSIVcKzkhp2KV2ipZrPJWwI18NuVJXb+3WtjypTrGWFZVNNkSjkLnHIeCYlJIGhDd8OL9zAiBXEm6kmgLNAkBWAg0tK2hCjvzsaA505gWQb4X56uKWdb0IzN+fOLB3Qt7+fLqbVQNQoNGzqey6B4MoS1fUKAStqdGTFYPG/+9t",
+																	"saml.encryption.certificate",
+																	"MIIB1DCCAT0CBgFJGVacCDANBgkqhkiG9w0BAQsFADAwMS4wLAYDVQQDEyVodHRwOi8vbG9jYWxob3N0OjgwODAvc2FsZXMtcG9zdC1lbmMvMB4XDTE0MTAxNjE0MjA0NloXDTI0MTAxNjE0MjIyNlowMDEuMCwGA1UEAxMlaHR0cDovL2xvY2FsaG9zdDo4MDgwL3NhbGVzLXBvc3QtZW5jLzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2+5MCT5BnVN+IYnKZcH6ev1pjXGi4feE0nOycq/VJ3aeaZMi4G9AxOxCBPupErOC7Kgm/Bw5AdJyw+Q12wSRXfJ9FhqCrLXpb7YOhbVSTJ8De5O8mW35DxAlh/cxe9FXjqPb286wKTUZ3LfGYR+X235UQeCTAPS/Ufi21EXaEikCAwEAATANBgkqhkiG9w0BAQsFAAOBgQBMrfGD9QFfx5v7ld/OAto5rjkTe3R1Qei8XRXfcs83vLaqEzjEtTuLGrJEi55kXuJgBpVmQpnwCCkkjSy0JxbqLDdVi9arfWUxEGmOr01ZHycELhDNaQcFqVMPr5kRHIHgktT8hK2IgCvd3Fy9/JCgUgCPxKfhwecyEOKxUc857g=="))
+													.protocol("saml")
+													.build())
 									.build())
-							.clients(new KeycloakAPIClientBuilder()
-									.clientId("http://localhost:8080/sales-post-enc/")
-									.enabled(true)
-									.fullScopeAllowed(true)
-									.baseUrl("http://localhost:8080/sales-post-enc/")
-									.adminUrl("http://localhost:8080/sales-post-enc/saml")
-									.redirectUris("http://localhost:8080/sales-post-enc/*")
-									.attributes(Map.of("saml.server.signature", "true",
-											"saml.signature.algorithm", "RSA_SHA512",
-											"saml.client.signature", "true",
-											"saml.encrypt", "true",
-											"saml.authnstatement", "true",
-											"saml.signing.private.key",
-											"MIICXQIBAAKBgQDb7kwJPkGdU34hicplwfp6/WmNcaLh94TSc7Jyr9Undp5pkyLgb0DE7EIE+6kSs4LsqCb8HDkB0nLD5DXbBJFd8n0WGoKstelvtg6FtVJMnwN7k7yZbfkPECWH9zF70VeOo9vbzrApNRnct8ZhH5fbflRB4JMA9L9R+LbURdoSKQIDAQABAoGBANtbZG9bruoSGp2s5zhzLzd4hczT6Jfk3o9hYjzNb5Z60ymN3Z1omXtQAdEiiNHkRdNxK+EM7TcKBfmoJqcaeTkW8cksVEAW23ip8W9/XsLqmbU2mRrJiKa+KQNDSHqJi1VGyimi4DDApcaqRZcaKDFXg2KDr/Qt5JFD/o9IIIPZAkEA+ZENdBIlpbUfkJh6Ln+bUTss/FZ1FsrcPZWu13rChRMrsmXsfzu9kZUWdUeQ2Dj5AoW2Q7L/cqdGXS7Mm5XhcwJBAOGZq9axJY5YhKrsksvYRLhQbStmGu5LG75suF+rc/44sFq+aQM7+oeRr4VY88Mvz7mk4esdfnk7ae+cCazqJvMCQQCx1L1cZw3yfRSn6S6u8XjQMjWE/WpjulujeoRiwPPY9WcesOgLZZtYIH8nRL6ehEJTnMnahbLmlPFbttxPRUanAkA11MtSIVcKzkhp2KV2ipZrPJWwI18NuVJXb+3WtjypTrGWFZVNNkSjkLnHIeCYlJIGhDd8OL9zAiBXEm6kmgLNAkBWAg0tK2hCjvzsaA505gWQb4X56uKWdb0IzN+fOLB3Qt7+fLqbVQNQoNGzqey6B4MoS1fUKAStqdGTFYPG/+9t",
-											"saml.signing.certificate",
-											"MIIB1DCCAT0CBgFJGVacCDANBgkqhkiG9w0BAQsFADAwMS4wLAYDVQQDEyVodHRwOi8vbG9jYWxob3N0OjgwODAvc2FsZXMtcG9zdC1lbmMvMB4XDTE0MTAxNjE0MjA0NloXDTI0MTAxNjE0MjIyNlowMDEuMCwGA1UEAxMlaHR0cDovL2xvY2FsaG9zdDo4MDgwL3NhbGVzLXBvc3QtZW5jLzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2+5MCT5BnVN+IYnKZcH6ev1pjXGi4feE0nOycq/VJ3aeaZMi4G9AxOxCBPupErOC7Kgm/Bw5AdJyw+Q12wSRXfJ9FhqCrLXpb7YOhbVSTJ8De5O8mW35DxAlh/cxe9FXjqPb286wKTUZ3LfGYR+X235UQeCTAPS/Ufi21EXaEikCAwEAATANBgkqhkiG9w0BAQsFAAOBgQBMrfGD9QFfx5v7ld/OAto5rjkTe3R1Qei8XRXfcs83vLaqEzjEtTuLGrJEi55kXuJgBpVmQpnwCCkkjSy0JxbqLDdVi9arfWUxEGmOr01ZHycELhDNaQcFqVMPr5kRHIHgktT8hK2IgCvd3Fy9/JCgUgCPxKfhwecyEOKxUc857g==",
-											"saml.encryption.private.key",
-											"MIICXQIBAAKBgQDb7kwJPkGdU34hicplwfp6/WmNcaLh94TSc7Jyr9Undp5pkyLgb0DE7EIE+6kSs4LsqCb8HDkB0nLD5DXbBJFd8n0WGoKstelvtg6FtVJMnwN7k7yZbfkPECWH9zF70VeOo9vbzrApNRnct8ZhH5fbflRB4JMA9L9R+LbURdoSKQIDAQABAoGBANtbZG9bruoSGp2s5zhzLzd4hczT6Jfk3o9hYjzNb5Z60ymN3Z1omXtQAdEiiNHkRdNxK+EM7TcKBfmoJqcaeTkW8cksVEAW23ip8W9/XsLqmbU2mRrJiKa+KQNDSHqJi1VGyimi4DDApcaqRZcaKDFXg2KDr/Qt5JFD/o9IIIPZAkEA+ZENdBIlpbUfkJh6Ln+bUTss/FZ1FsrcPZWu13rChRMrsmXsfzu9kZUWdUeQ2Dj5AoW2Q7L/cqdGXS7Mm5XhcwJBAOGZq9axJY5YhKrsksvYRLhQbStmGu5LG75suF+rc/44sFq+aQM7+oeRr4VY88Mvz7mk4esdfnk7ae+cCazqJvMCQQCx1L1cZw3yfRSn6S6u8XjQMjWE/WpjulujeoRiwPPY9WcesOgLZZtYIH8nRL6ehEJTnMnahbLmlPFbttxPRUanAkA11MtSIVcKzkhp2KV2ipZrPJWwI18NuVJXb+3WtjypTrGWFZVNNkSjkLnHIeCYlJIGhDd8OL9zAiBXEm6kmgLNAkBWAg0tK2hCjvzsaA505gWQb4X56uKWdb0IzN+fOLB3Qt7+fLqbVQNQoNGzqey6B4MoS1fUKAStqdGTFYPG/+9t",
-											"saml.encryption.certificate",
-											"MIIB1DCCAT0CBgFJGVacCDANBgkqhkiG9w0BAQsFADAwMS4wLAYDVQQDEyVodHRwOi8vbG9jYWxob3N0OjgwODAvc2FsZXMtcG9zdC1lbmMvMB4XDTE0MTAxNjE0MjA0NloXDTI0MTAxNjE0MjIyNlowMDEuMCwGA1UEAxMlaHR0cDovL2xvY2FsaG9zdDo4MDgwL3NhbGVzLXBvc3QtZW5jLzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2+5MCT5BnVN+IYnKZcH6ev1pjXGi4feE0nOycq/VJ3aeaZMi4G9AxOxCBPupErOC7Kgm/Bw5AdJyw+Q12wSRXfJ9FhqCrLXpb7YOhbVSTJ8De5O8mW35DxAlh/cxe9FXjqPb286wKTUZ3LfGYR+X235UQeCTAPS/Ufi21EXaEikCAwEAATANBgkqhkiG9w0BAQsFAAOBgQBMrfGD9QFfx5v7ld/OAto5rjkTe3R1Qei8XRXfcs83vLaqEzjEtTuLGrJEi55kXuJgBpVmQpnwCCkkjSy0JxbqLDdVi9arfWUxEGmOr01ZHycELhDNaQcFqVMPr5kRHIHgktT8hK2IgCvd3Fy9/JCgUgCPxKfhwecyEOKxUc857g=="))
-									.protocol("saml")
-									.build())
-							.build())
 					.instanceSelector(instanceSelector)
 					.build();
 
@@ -482,13 +541,16 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	}
 
 	/**
-	 * This test case creates a {@link KeycloakRealm} CR to manage SSO based on the OpenID connect protocol
+	 * This test case creates a {@link KeycloakRealm} CR to manage SSO based on the OpenID connect
+	 * protocol
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See <br>
-	 *     - https://developers.redhat.com/blog/2020/01/29/api-login-and-jwt-token-generation-using-keycloak <br>
+	 * <p>See <br>
+	 * -
+	 * https://developers.redhat.com/blog/2020/01/29/api-login-and-jwt-token-generation-using-keycloak
+	 * <br>
 	 */
 	@Test
 	public void openIdRealm() {
@@ -498,32 +560,36 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 			InstanceSelector instanceSelector = new InstanceSelector();
 			instanceSelector.setMatchLabels(matchLabels);
 			KeycloakRealm keycloakRealm = new KeycloakRealmBuilder(name, matchLabels)
-					.realm(new KeycloakAPIRealmBuilder()
-							.id("openid-demo")
-							.realm("openid-demo")
-							.enabled(true)
-							.displayName("OpenID Realm")
-							.users(new KeycloakAPIUserBuilder()
-									.username("openid_user")
-									.firstName("John")
-									.lastName("Doe")
-									.email("jdoe@redhat.com")
+					.realm(
+							new KeycloakAPIRealmBuilder()
+									.id("openid-demo")
+									.realm("openid-demo")
 									.enabled(true)
-									.emailVerified(false)
-									.realmRoles("manager")
-									.credentials(new KeycloakCredentialBuilder()
-											.type("password")
-											.value("password")
-											.build())
+									.displayName("OpenID Realm")
+									.users(
+											new KeycloakAPIUserBuilder()
+													.username("openid_user")
+													.firstName("John")
+													.lastName("Doe")
+													.email("jdoe@redhat.com")
+													.enabled(true)
+													.emailVerified(false)
+													.realmRoles("manager")
+													.credentials(
+															new KeycloakCredentialBuilder()
+																	.type("password")
+																	.value("password")
+																	.build())
+													.build())
+									.clients(
+											new KeycloakAPIClientBuilder()
+													.clientId("openid-realm-client")
+													.enabled(true)
+													.fullScopeAllowed(true)
+													.redirectUris("http://localhost:8080/sso-openid-mobile-client/*")
+													.protocol("openid-connect")
+													.build())
 									.build())
-							.clients(new KeycloakAPIClientBuilder()
-									.clientId("openid-realm-client")
-									.enabled(true)
-									.fullScopeAllowed(true)
-									.redirectUris("http://localhost:8080/sso-openid-mobile-client/*")
-									.protocol("openid-connect")
-									.build())
-							.build())
 					.instanceSelector(instanceSelector)
 					.build();
 
@@ -536,13 +602,14 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a basic {@link KeycloakUser} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/user/basic_user.yaml
-	 * <br> - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/user
-	 *
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/user/basic_user.yaml
+	 * <br>
+	 * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/user
 	 */
 	@Test
 	public void basicUser() {
@@ -572,12 +639,14 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * This test case creates and validates a {@link KeycloakUser} CR with related credentials
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/user/user_with_credentials.yaml
-	 * <br> - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/user
+	 * <p>See <br>
+	 * -
+	 * https://github.com/keycloak/keycloak-operator/blob/master/deploy/examples/user/user_with_credentials.yaml
+	 * <br>
+	 * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/user
 	 */
 	@Test
 	public void userWithCredentials() {
@@ -615,25 +684,37 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	/**
 	 * Test actual deploy/scale/undeploy workflow by the operator
 	 *
-	 * Does subscribe/unsubscribe on its own, so no need to call explicitly here.
+	 * <p>Does subscribe/unsubscribe on its own, so no need to call explicitly here.
 	 *
-	 * This test adds no further checks after {@link RhSsoOpenShiftOperatorProvisioner#undeploy()} based on
-	 * {@link RhSsoOpenShiftOperatorProvisioner#getPods()}, since it looks for a stateful set which would be null at this point.
-	 * There is room for evaluating whether to revisit {@link RhSsoOpenShiftOperatorProvisioner} with respect to such logic
+	 * <p>This test adds no further checks after {@link RhSsoOpenShiftOperatorProvisioner#undeploy()}
+	 * based on {@link RhSsoOpenShiftOperatorProvisioner#getPods()}, since it looks for a stateful set
+	 * which would be null at this point. There is room for evaluating whether to revisit {@link
+	 * RhSsoOpenShiftOperatorProvisioner} with respect to such logic
 	 */
 	@Test
 	public void basicProvisioningTest() {
 		KEYCLOAK_OPERATOR_PROVISIONER.deploy();
 		try {
-			Assertions.assertEquals(1, KEYCLOAK_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + RhSsoOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					1,
+					KEYCLOAK_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ RhSsoOperatorProvisioner.OPERATOR_ID
 							+ "' after deploy");
 
-			int scaledNum = KEYCLOAK_OPERATOR_PROVISIONER.getApplication().getKeycloak().getSpec().getInstances().intValue()
+			int scaledNum = KEYCLOAK_OPERATOR_PROVISIONER
+					.getApplication()
+					.getKeycloak()
+					.getSpec()
+					.getInstances()
+					.intValue()
 					+ 1;
 			KEYCLOAK_OPERATOR_PROVISIONER.scale(scaledNum, true);
-			Assertions.assertEquals(scaledNum, KEYCLOAK_OPERATOR_PROVISIONER.getPods().size(),
-					"Unexpected number of cluster operator pods for '" + RhSsoOperatorProvisioner.OPERATOR_ID
+			Assertions.assertEquals(
+					scaledNum,
+					KEYCLOAK_OPERATOR_PROVISIONER.getPods().size(),
+					"Unexpected number of cluster operator pods for '"
+							+ RhSsoOperatorProvisioner.OPERATOR_ID
 							+ "' after scaling");
 		} finally {
 			KEYCLOAK_OPERATOR_PROVISIONER.undeploy();
@@ -643,15 +724,21 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	private void verifyUser(KeycloakUser keycloakUser) {
 		// create and verify that object exists
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().createOrReplace(keycloakUser);
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 1)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 1)
 				.level(Level.DEBUG)
 				.waitFor();
-		Assertions.assertEquals(keycloakUser.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakUser(name).get().getSpec());
+		Assertions.assertEquals(
+				keycloakUser.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakUser(name).get().getSpec());
 
 		// delete and verify that object was removed
-		KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
+		KEYCLOAK_OPERATOR_PROVISIONER
+				.keycloakUserClient()
+				.withName(name)
+				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 0)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 0)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -659,16 +746,21 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	private void verifyRealm(KeycloakRealm keycloakRealm) {
 		// create and verify that object exists
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().createOrReplace(keycloakRealm);
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().list().getItems().size() == 1)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().list().getItems().size() == 1)
 				.level(Level.DEBUG)
 				.waitFor();
-		Assertions.assertEquals(keycloakRealm.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealm(name).get().getSpec());
+		Assertions.assertEquals(
+				keycloakRealm.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealm(name).get().getSpec());
 
 		// delete and verify that object was removed
-		KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().withName(name)
+		KEYCLOAK_OPERATOR_PROVISIONER
+				.keycloakRealmClient()
+				.withName(name)
 				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().list().getItems().size() == 0)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmClient().list().getItems().size() == 0)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -677,53 +769,85 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		// create and verify that object exists
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().createOrReplace(keycloak);
 		KEYCLOAK_OPERATOR_PROVISIONER.waitFor(keycloak);
-		// two pods expected keycloak-0 and keycloak-postgresql-*, keycloak-0 won't start unless keycloak-postgresql-* is ready
+		// two pods expected keycloak-0 and keycloak-postgresql-*, keycloak-0 won't start unless
+		// keycloak-postgresql-* is ready
 		if (waitForPods) {
 			OpenShiftWaiters.get(OpenShifts.master(), () -> false)
-					.areExactlyNPodsReady(2, "app", keycloak.getKind().toLowerCase()).level(Level.DEBUG).waitFor();
-			log.debug(KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().withName(name).get().getStatus().toString());
+					.areExactlyNPodsReady(2, "app", keycloak.getKind().toLowerCase())
+					.level(Level.DEBUG)
+					.waitFor();
+			log.debug(
+					KEYCLOAK_OPERATOR_PROVISIONER
+							.keycloakClient()
+							.withName(name)
+							.get()
+							.getStatus()
+							.toString());
 		}
-		Assertions.assertEquals(keycloak.getSpec(),
+		Assertions.assertEquals(
+				keycloak.getSpec(),
 				KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().withName(name).get().getSpec());
 
 		// delete and verify that object was removed
-		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
+		KEYCLOAK_OPERATOR_PROVISIONER
+				.keycloakClient()
+				.withName(name)
+				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().list().getItems().size() == 0).level(Level.DEBUG)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().list().getItems().size() == 0)
+				.level(Level.DEBUG)
 				.waitFor();
 		if (waitForPods) {
 			OpenShiftWaiters.get(OpenShifts.master(), () -> false)
-					.areExactlyNPodsReady(0, "app", keycloak.getKind().toLowerCase()).level(Level.DEBUG).waitFor();
+					.areExactlyNPodsReady(0, "app", keycloak.getKind().toLowerCase())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 
 	private void verifyBackup(KeycloakBackup keycloakBackup) {
 		// create and verify that object exists
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().createOrReplace(keycloakBackup);
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().list().getItems().size() == 1)
-				.level(Level.DEBUG).waitFor();
-		Assertions.assertEquals(keycloakBackup.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackup(name).get().getSpec());
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().list().getItems().size() == 1)
+				.level(Level.DEBUG)
+				.waitFor();
+		Assertions.assertEquals(
+				keycloakBackup.getSpec(),
+				KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackup(name).get().getSpec());
 
 		// delete and verify that object was removed
-		KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().withName(name)
+		KEYCLOAK_OPERATOR_PROVISIONER
+				.keycloakBackupClient()
+				.withName(name)
 				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().list().getItems().size() == 0)
-				.level(Level.DEBUG).waitFor();
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakBackupClient().list().getItems().size() == 0)
+				.level(Level.DEBUG)
+				.waitFor();
 	}
 
 	private void verifyClient(KeycloakClient keycloakClient) {
 		// create and verify that object exists
 		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClientClient().createOrReplace(keycloakClient);
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakClientClient().list().getItems().size() == 1)
-				.level(Level.DEBUG).waitFor();
-		Assertions.assertEquals(keycloakClient.getSpec(), KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient(name).get().getSpec());
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakClientClient().list().getItems().size() == 1)
+				.level(Level.DEBUG)
+				.waitFor();
+		Assertions.assertEquals(
+				keycloakClient.getSpec(),
+				KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient(name).get().getSpec());
 
 		// delete and verify that object was removed
-		KEYCLOAK_OPERATOR_PROVISIONER.keycloakClientClient().withName(name)
+		KEYCLOAK_OPERATOR_PROVISIONER
+				.keycloakClientClient()
+				.withName(name)
 				.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 				.delete();
-		new SimpleWaiter(() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 0)
+		new SimpleWaiter(
+				() -> KEYCLOAK_OPERATOR_PROVISIONER.keycloakUserClient().list().getItems().size() == 0)
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -731,17 +855,25 @@ public class RhSsoOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	private ConfigMap createTestConfigMap() {
 		Map<String, String> data = new HashMap<>();
 		data.put("test.properties", "blah=true");
-		ConfigMap configMap = new ConfigMapBuilder().withNewMetadata().withName("test-config").endMetadata().withData(data)
+		ConfigMap configMap = new ConfigMapBuilder()
+				.withNewMetadata()
+				.withName("test-config")
+				.endMetadata()
+				.withData(data)
 				.build();
 		OpenShifts.master().createConfigMap(configMap);
-		new SimpleWaiter(() -> OpenShifts.master().getConfigMap(configMap.getMetadata().getName()) != null).level(Level.DEBUG)
+		new SimpleWaiter(
+				() -> OpenShifts.master().getConfigMap(configMap.getMetadata().getName()) != null)
+				.level(Level.DEBUG)
 				.waitFor();
 		return configMap;
 	}
 
 	private void deleteTestConfigMap(ConfigMap configMap) {
 		OpenShifts.master().deleteConfigMap(configMap);
-		new SimpleWaiter(() -> OpenShifts.master().getConfigMap(configMap.getMetadata().getName()) == null).level(Level.DEBUG)
+		new SimpleWaiter(
+				() -> OpenShifts.master().getConfigMap(configMap.getMetadata().getName()) == null)
+				.level(Level.DEBUG)
 				.waitFor();
 	}
 }

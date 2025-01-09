@@ -20,8 +20,9 @@ import com.google.common.base.Strings;
 import cz.xtf.core.config.XTFConfig;
 
 /**
- * Defines the contract for WILDFLY application services that expose configuration which should be taken into account
- * by the WILDFLY s2i v2 process, i.e. the WildFly Maven plugin, feature packs and BOMs settings
+ * Defines the contract for WILDFLY application services that expose configuration which should be
+ * taken into account by the WILDFLY s2i v2 process, i.e. the WildFly Maven plugin, feature packs
+ * and BOMs settings
  */
 public interface WildflyDeploymentApplicationConfiguration {
 
@@ -94,15 +95,16 @@ public interface WildflyDeploymentApplicationConfiguration {
 	/**
 	 * Server version property name for BOMs
 	 *
-	 * @return A string that represents the name of a property which could hold a given WILDFLY 8  deployment application
-	 * testable BOMs version
+	 * @return A string that represents the name of a property which could hold a given WILDFLY 8
+	 *     deployment application testable BOMs version
 	 */
 	default String bomsEeServerVersionPropertyName() {
 		return WILDFLY_BOMS_EE_SERVER_VERSION;
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-galleon-pack" feature pack GAV
+	 * This must match the property name in the pom.xml file used to set the "wildfly-galleon-pack"
+	 * feature pack GAV
 	 *
 	 * @return property name in the pom.xml file used to set the feature pack GAV
 	 */
@@ -111,7 +113,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-ee-galleon-pack" feature pack GAV
+	 * This must match the property name in the pom.xml file used to set the "wildfly-ee-galleon-pack"
+	 * feature pack GAV
 	 *
 	 * @return property name in the pom.xml file used to set the feature pack GAV
 	 */
@@ -120,7 +123,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-cloud-galleon-pack" feature pack GAV
+	 * This must match the property name in the pom.xml file used to set the
+	 * "wildfly-cloud-galleon-pack" feature pack GAV
 	 *
 	 * @return property name in the pom.xml file used to set the cloud feature pack GAV
 	 */
@@ -129,7 +133,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-datasources-galleon-pack" feature pack GAV
+	 * This must match the property name in the pom.xml file used to set the
+	 * "wildfly-datasources-galleon-pack" feature pack GAV
 	 *
 	 * @return property name in the pom.xml file used to set the datasources feature pack GAV
 	 */
@@ -141,7 +146,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	 * This must match the property name in the pom.xml file used to set the
 	 * "wildfly.keycloak-saml-adapter-feature-pack.version" feature pack version
 	 *
-	 * @return property name in the pom.xml file used to set the Keycloack SAML Adapter feature pack version
+	 * @return property name in the pom.xml file used to set the Keycloack SAML Adapter feature pack
+	 *     version
 	 */
 	default String keycloakSamlAdapterFeaturePackVersionPropertyName() {
 		return WILDFLY_KEYCLOAK_SAML_ADAPTER_FEATURE_PACK_VERSION;
@@ -184,7 +190,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin" groupId
+	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin"
+	 * groupId
 	 *
 	 * @return property name in the pom.xml file used to set the "wildfly-maven-plugin" groupId
 	 */
@@ -193,7 +200,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin" artifactId
+	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin"
+	 * artifactId
 	 *
 	 * @return property name in the pom.xml file used to set the "wildfly-maven-plugin" artifactId
 	 */
@@ -202,7 +210,8 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	/**
-	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin" version
+	 * This must match the property name in the pom.xml file used to set the "wildfly-maven-plugin"
+	 * version
 	 *
 	 * @return property name in the pom.xml file used to set the "wildfly-maven-plugin" version
 	 */
@@ -211,45 +220,85 @@ public interface WildflyDeploymentApplicationConfiguration {
 	}
 
 	default String generateAdditionalMavenArgs() {
-		String result = "".concat(((Strings.isNullOrEmpty(this.eeFeaturePackLocation()) ? ""
-				: (" -D" + this.eeFeaturePackLocationPropertyName() + "="
-						+ this.eeFeaturePackLocation())))
-				+ ((Strings.isNullOrEmpty(this.featurePackLocation()) ? ""
-						: (" -D" + this.featurePackLocationPropertyName() + "="
-								+ this.featurePackLocation())))
-				+ ((Strings.isNullOrEmpty(this.cloudFeaturePackLocation()) ? ""
-						: (" -D" + this.cloudFeaturePackLocationPropertyName() + "="
-								+ this.cloudFeaturePackLocation())))
-				+ ((Strings.isNullOrEmpty(this.datasourcesFeaturePackLocation()) ? ""
-						: (" -D" + this.datasourcesFeaturePackLocationPropertyName() + "="
-								+ this.datasourcesFeaturePackLocation())))
-				+ ((Strings.isNullOrEmpty(this.keycloakSamlAdapterFeaturePackVersion()) ? ""
-						: (" -D" + this.keycloakSamlAdapterFeaturePackVersionPropertyName() + "="
-								+ this.keycloakSamlAdapterFeaturePackVersion())))
-				+ ((Strings.isNullOrEmpty(this.eeChannelGroupId()) ? ""
-						: (" -D" + this.eeChannelGroupIdPropertyName() + "="
-								+ this.eeChannelGroupId())))
-				+ ((Strings.isNullOrEmpty(this.eeChannelArtifactId()) ? ""
-						: (" -D" + this.eeChannelArtifactIdPropertyName() + "="
-								+ this.eeChannelArtifactId())))
-				+ ((Strings.isNullOrEmpty(this.eeChannelVersion()) ? ""
-						: (" -D" + this.eeChannelVersionPropertyName() + "="
-								+ this.eeChannelVersion())))
-				+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginGroupId()) ? ""
-						: (" -D" + this.wildflyMavenPluginGroupIdPropertyName() + "="
-								+ this.wildflyMavenPluginGroupId())))
-				+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginArtifactId()) ? ""
-						: (" -D" + this.wildflyMavenPluginArtifactIdPropertyName() + "="
-								+ this.wildflyMavenPluginArtifactId())))
-				+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginVersion()) ? ""
-						: (" -D" + this.wildflyMavenPluginVersionPropertyName() + "="
-								+ this.wildflyMavenPluginVersion())))
-				+ ((Strings.isNullOrEmpty(this.bomsEeServerVersion()) ? ""
-						: (" -D" + this.bomsEeServerVersionPropertyName() + "="
-								+ this.bomsEeServerVersion()))));
-		// a maven mirror for internal testable artifacts, i.e. which are not released yet, can be provided
+		String result = ""
+				.concat(
+						((Strings.isNullOrEmpty(this.eeFeaturePackLocation())
+								? ""
+								: (" -D"
+										+ this.eeFeaturePackLocationPropertyName()
+										+ "="
+										+ this.eeFeaturePackLocation())))
+								+ ((Strings.isNullOrEmpty(this.featurePackLocation())
+										? ""
+										: (" -D"
+												+ this.featurePackLocationPropertyName()
+												+ "="
+												+ this.featurePackLocation())))
+								+ ((Strings.isNullOrEmpty(this.cloudFeaturePackLocation())
+										? ""
+										: (" -D"
+												+ this.cloudFeaturePackLocationPropertyName()
+												+ "="
+												+ this.cloudFeaturePackLocation())))
+								+ ((Strings.isNullOrEmpty(this.datasourcesFeaturePackLocation())
+										? ""
+										: (" -D"
+												+ this.datasourcesFeaturePackLocationPropertyName()
+												+ "="
+												+ this.datasourcesFeaturePackLocation())))
+								+ ((Strings.isNullOrEmpty(this.keycloakSamlAdapterFeaturePackVersion())
+										? ""
+										: (" -D"
+												+ this.keycloakSamlAdapterFeaturePackVersionPropertyName()
+												+ "="
+												+ this.keycloakSamlAdapterFeaturePackVersion())))
+								+ ((Strings.isNullOrEmpty(this.eeChannelGroupId())
+										? ""
+										: (" -D"
+												+ this.eeChannelGroupIdPropertyName()
+												+ "="
+												+ this.eeChannelGroupId())))
+								+ ((Strings.isNullOrEmpty(this.eeChannelArtifactId())
+										? ""
+										: (" -D"
+												+ this.eeChannelArtifactIdPropertyName()
+												+ "="
+												+ this.eeChannelArtifactId())))
+								+ ((Strings.isNullOrEmpty(this.eeChannelVersion())
+										? ""
+										: (" -D"
+												+ this.eeChannelVersionPropertyName()
+												+ "="
+												+ this.eeChannelVersion())))
+								+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginGroupId())
+										? ""
+										: (" -D"
+												+ this.wildflyMavenPluginGroupIdPropertyName()
+												+ "="
+												+ this.wildflyMavenPluginGroupId())))
+								+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginArtifactId())
+										? ""
+										: (" -D"
+												+ this.wildflyMavenPluginArtifactIdPropertyName()
+												+ "="
+												+ this.wildflyMavenPluginArtifactId())))
+								+ ((Strings.isNullOrEmpty(this.wildflyMavenPluginVersion())
+										? ""
+										: (" -D"
+												+ this.wildflyMavenPluginVersionPropertyName()
+												+ "="
+												+ this.wildflyMavenPluginVersion())))
+								+ ((Strings.isNullOrEmpty(this.bomsEeServerVersion())
+										? ""
+										: (" -D"
+												+ this.bomsEeServerVersionPropertyName()
+												+ "="
+												+ this.bomsEeServerVersion()))));
+		// a maven mirror for internal testable artifacts, i.e. which are not released yet, can be
+		// provided
 		result += result.concat(
-				(Strings.isNullOrEmpty(this.getMavenMirrorUrl()) ? ""
+				(Strings.isNullOrEmpty(this.getMavenMirrorUrl())
+						? ""
 						: " -Dmaven-mirror.url=" + this.getMavenMirrorUrl()));
 		return result;
 	}

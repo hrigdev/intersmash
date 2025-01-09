@@ -25,7 +25,8 @@ import cz.xtf.builder.builders.pod.ContainerBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PostgreSQLImageOpenShiftProvisioner extends DBImageOpenShiftProvisioner<PostgreSQLImageOpenShiftApplication> {
+public class PostgreSQLImageOpenShiftProvisioner
+		extends DBImageOpenShiftProvisioner<PostgreSQLImageOpenShiftApplication> {
 
 	public PostgreSQLImageOpenShiftProvisioner(PostgreSQLImageOpenShiftApplication pgSQLApplication) {
 		super(pgSQLApplication);
@@ -54,8 +55,14 @@ public class PostgreSQLImageOpenShiftProvisioner extends DBImageOpenShiftProvisi
 	@Override
 	protected void configureContainer(ContainerBuilder containerBuilder) {
 		containerBuilder.addLivenessProbe().setInitialDelay(300).createTcpProbe("5432");
-		containerBuilder.addReadinessProbe().setInitialDelaySeconds(5).createExecProbe("/bin/sh", "-i", "-c",
-				"psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'");
+		containerBuilder
+				.addReadinessProbe()
+				.setInitialDelaySeconds(5)
+				.createExecProbe(
+						"/bin/sh",
+						"-i",
+						"-c",
+						"psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'");
 	}
 
 	@Override
@@ -78,13 +85,18 @@ public class PostgreSQLImageOpenShiftProvisioner extends DBImageOpenShiftProvisi
 
 	@Override
 	public void customizeApplication(ApplicationBuilder appBuilder) {
-		// the application secret is used to configure the PostgreSql container env vars, such as POSTGRESQL_USER,
+		// the application secret is used to configure the PostgreSql container env vars, such as
+		// POSTGRESQL_USER,
 		// POSTGRESQL_PASSWORD, POSTGRESQL_ADMIN_PASSWORD
-		appBuilder.deploymentConfig().podTemplate().container().configFromConfigMap(
-				getApplication().getApplicationSecretName(),
-				(String t) -> t.replace("-", "_").toUpperCase(),
-				PostgreSQLImageOpenShiftApplication.POSTGRESQL_USER_KEY,
-				PostgreSQLImageOpenShiftApplication.POSTGRESQL_PASSWORD_KEY,
-				PostgreSQLImageOpenShiftApplication.POSTGRESQL_ADMIN_PASSWORD_KEY);
+		appBuilder
+				.deploymentConfig()
+				.podTemplate()
+				.container()
+				.configFromConfigMap(
+						getApplication().getApplicationSecretName(),
+						(String t) -> t.replace("-", "_").toUpperCase(),
+						PostgreSQLImageOpenShiftApplication.POSTGRESQL_USER_KEY,
+						PostgreSQLImageOpenShiftApplication.POSTGRESQL_PASSWORD_KEY,
+						PostgreSQLImageOpenShiftApplication.POSTGRESQL_ADMIN_PASSWORD_KEY);
 	}
 }

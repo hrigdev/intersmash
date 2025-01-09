@@ -22,7 +22,8 @@ import org.jboss.intersmash.provision.ProvisionerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Eap7ImageOpenShiftProvisionerFactory implements ProvisionerFactory<Eap7ImageOpenShiftProvisioner> {
+public class Eap7ImageOpenShiftProvisionerFactory
+		implements ProvisionerFactory<Eap7ImageOpenShiftProvisioner> {
 
 	@Override
 	public Eap7ImageOpenShiftProvisioner getProvisioner(Application application) {

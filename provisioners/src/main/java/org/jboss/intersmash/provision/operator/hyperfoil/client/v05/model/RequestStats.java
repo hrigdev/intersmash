@@ -37,32 +37,36 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * RequestStats
- */
+/** RequestStats */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class RequestStats {
 	public static final String SERIALIZED_NAME_PHASE = "phase";
+
 	@SerializedName(SERIALIZED_NAME_PHASE)
 	private String phase;
 
 	public static final String SERIALIZED_NAME_STEP_ID = "stepId";
+
 	@SerializedName(SERIALIZED_NAME_STEP_ID)
 	private Integer stepId = 0;
 
 	public static final String SERIALIZED_NAME_METRIC = "metric";
+
 	@SerializedName(SERIALIZED_NAME_METRIC)
 	private String metric;
 
 	public static final String SERIALIZED_NAME_SUMMARY = "summary";
+
 	@SerializedName(SERIALIZED_NAME_SUMMARY)
 	private Object summary;
 
 	public static final String SERIALIZED_NAME_FAILED_S_L_AS = "failedSLAs";
+
 	@SerializedName(SERIALIZED_NAME_FAILED_S_L_AS)
 	private List<String> failedSLAs = null;
 
 	public static final String SERIALIZED_NAME_IS_WARMUP = "isWarmup";
+
 	@SerializedName(SERIALIZED_NAME_IS_WARMUP)
 	private Boolean isWarmup;
 
@@ -76,12 +80,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get phase
-	* @return phase
-	**/
+	 * Get phase
+	 *
+	 * @return phase
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getPhase() {
 		return phase;
 	}
@@ -97,12 +101,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get stepId
-	* @return stepId
-	**/
+	 * Get stepId
+	 *
+	 * @return stepId
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Integer getStepId() {
 		return stepId;
 	}
@@ -118,12 +122,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get metric
-	* @return metric
-	**/
+	 * Get metric
+	 *
+	 * @return metric
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getMetric() {
 		return metric;
 	}
@@ -139,12 +143,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get summary
-	* @return summary
-	**/
+	 * Get summary
+	 *
+	 * @return summary
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Object getSummary() {
 		return summary;
 	}
@@ -168,12 +172,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get failedSLAs
-	* @return failedSLAs
-	**/
+	 * Get failedSLAs
+	 *
+	 * @return failedSLAs
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public List<String> getFailedSLAs() {
 		return failedSLAs;
 	}
@@ -189,12 +193,12 @@ public class RequestStats {
 	}
 
 	/**
-	* Get isWarmup
-	* @return isWarmup
-	**/
+	 * Get isWarmup
+	 *
+	 * @return isWarmup
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Boolean getIsWarmup() {
 		return isWarmup;
 	}
@@ -212,12 +216,12 @@ public class RequestStats {
 			return false;
 		}
 		RequestStats requestStats = (RequestStats) o;
-		return Objects.equals(this.phase, requestStats.phase) &&
-				Objects.equals(this.stepId, requestStats.stepId) &&
-				Objects.equals(this.metric, requestStats.metric) &&
-				Objects.equals(this.summary, requestStats.summary) &&
-				Objects.equals(this.failedSLAs, requestStats.failedSLAs) &&
-				Objects.equals(this.isWarmup, requestStats.isWarmup);
+		return Objects.equals(this.phase, requestStats.phase)
+				&& Objects.equals(this.stepId, requestStats.stepId)
+				&& Objects.equals(this.metric, requestStats.metric)
+				&& Objects.equals(this.summary, requestStats.summary)
+				&& Objects.equals(this.failedSLAs, requestStats.failedSLAs)
+				&& Objects.equals(this.isWarmup, requestStats.isWarmup);
 	}
 
 	@Override
@@ -240,8 +244,7 @@ public class RequestStats {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -279,7 +282,8 @@ public class RequestStats {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in RequestStats is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in RequestStats is not found in the empty JSON string",
 								RequestStats.openapiRequiredFields.toString()));
 			}
 		}
@@ -288,25 +292,29 @@ public class RequestStats {
 		// check to see if the JSON string contains additional fields
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!RequestStats.openapiFields.contains(entry.getKey())) {
-				throw new IllegalArgumentException(String.format(
-						"The field `%s` in the JSON string is not defined in the `RequestStats` properties. JSON: %s",
-						entry.getKey(), jsonObj.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `RequestStats` properties. JSON: %s",
+								entry.getKey(), jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("phase") != null && !jsonObj.get("phase").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `phase` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `phase` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("phase").toString()));
 		}
 		if (jsonObj.get("metric") != null && !jsonObj.get("metric").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `metric` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `metric` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("metric").toString()));
 		}
 		// ensure the json data is an array
 		if (jsonObj.get("failedSLAs") != null && !jsonObj.get("failedSLAs").isJsonArray()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `failedSLAs` to be an array in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `failedSLAs` to be an array in the JSON string but got `%s`",
 							jsonObj.get("failedSLAs").toString()));
 		}
 	}
@@ -334,7 +342,6 @@ public class RequestStats {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

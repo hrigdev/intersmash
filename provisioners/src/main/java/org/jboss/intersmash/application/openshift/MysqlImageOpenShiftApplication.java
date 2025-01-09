@@ -18,10 +18,12 @@ package org.jboss.intersmash.application.openshift;
 import org.jboss.intersmash.provision.openshift.MysqlImageOpenShiftProvisioner;
 
 /**
- * End user Application interface which presents MYSQL image application on OpenShift Container Platform.
+ * End user Application interface which presents MYSQL image application on OpenShift Container
+ * Platform.
  *
- * MYSQL application that is supposed to run on OpenShift needs to implement this interface.
+ * <p>MYSQL application that is supposed to run on OpenShift needs to implement this interface.
  * Usage:
+ *
  * <pre>
  *     &#064;Intersmash(
  *           &#064;Service(MysqlApp.class)
@@ -29,8 +31,9 @@ import org.jboss.intersmash.provision.openshift.MysqlImageOpenShiftProvisioner;
  * </pre>
  *
  * The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link MysqlImageOpenShiftProvisioner}</li>
+ *   <li>{@link MysqlImageOpenShiftProvisioner}
  * </ul>
  */
 public interface MysqlImageOpenShiftApplication extends DBImageOpenShiftApplication {
@@ -38,5 +41,4 @@ public interface MysqlImageOpenShiftApplication extends DBImageOpenShiftApplicat
 	default String getName() {
 		return "mysql";
 	}
-
 }

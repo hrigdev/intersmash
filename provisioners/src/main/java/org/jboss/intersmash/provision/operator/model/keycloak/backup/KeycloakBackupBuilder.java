@@ -52,14 +52,12 @@ public final class KeycloakBackupBuilder {
 	}
 
 	/**
-	 * Controls automatic restore behavior.
-	 * Currently not implemented.
+	 * Controls automatic restore behavior. Currently not implemented.
 	 *
-	 * In the future this will be used to trigger automatic restore for a given KeycloakBackup.
-	 * Each backup will correspond to a single snapshot of the database (stored either in a
-	 * Persistent Volume or AWS). If a user wants to restore it, all he/she needs to do is to
-	 * change this flag to true.
-	 * Potentially, it will be possible to restore a single backup multiple times.
+	 * <p>In the future this will be used to trigger automatic restore for a given KeycloakBackup.
+	 * Each backup will correspond to a single snapshot of the database (stored either in a Persistent
+	 * Volume or AWS). If a user wants to restore it, all he/she needs to do is to change this flag to
+	 * true. Potentially, it will be possible to restore a single backup multiple times.
 	 *
 	 * @param restore Whether automatic restore for a given {@link KeycloakBackup} should be triggered
 	 * @return this
@@ -70,9 +68,9 @@ public final class KeycloakBackupBuilder {
 	}
 
 	/**
-	 * If provided, an automatic database backup will be created on AWS S3 instead of
-	 * a local Persistent Volume. If this property is not provided - a local
-	 * Persistent Volume backup will be chosen.
+	 * If provided, an automatic database backup will be created on AWS S3 instead of a local
+	 * Persistent Volume. If this property is not provided - a local Persistent Volume backup will be
+	 * chosen.
 	 *
 	 * @param aws A {@link Aws} instance storing configuration for creating a backup on AWS
 	 * @return this

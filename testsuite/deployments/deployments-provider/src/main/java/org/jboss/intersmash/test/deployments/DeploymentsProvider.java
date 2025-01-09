@@ -24,8 +24,8 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.jboss.intersmash.util.maven.ArtifactProvider;
 
 /**
- * A class which is expected to provide access deployment applications. Archive based deployments (e.g.: WAR, JAR) must
- * to be installed in local repository.
+ * A class which is expected to provide access deployment applications. Archive based deployments
+ * (e.g.: WAR, JAR) must to be installed in local repository.
  */
 public class DeploymentsProvider {
 	static final String WILDFLY_BOOTABLE_JAR = "wildfly-bootable-jar";
@@ -40,7 +40,8 @@ public class DeploymentsProvider {
 					WILDFLY_BOOTABLE_JAR,
 					TestDeploymentProperties.version(),
 					BOOTABLE_JAR_ARTIFACT_PACKAGING,
-					"bootable-openshift").toPath();
+					"bootable-openshift")
+					.toPath();
 		} catch (SettingsBuildingException | ArtifactResolutionException e) {
 			throw new RuntimeException("Can not get artifact", e);
 		}
@@ -55,7 +56,8 @@ public class DeploymentsProvider {
 					EAP_7_BOOTABLE_JAR,
 					TestDeploymentProperties.version(),
 					BOOTABLE_JAR_ARTIFACT_PACKAGING,
-					"bootable-openshift").toPath();
+					"bootable-openshift")
+					.toPath();
 		} catch (SettingsBuildingException | ArtifactResolutionException e) {
 			throw new RuntimeException("Can not get artifact", e);
 		}
@@ -63,12 +65,12 @@ public class DeploymentsProvider {
 	}
 
 	public static Path findStandaloneDeploymentPath(String deployment) {
-		File deploymentsBaseDir = new File(TestDeploymentProperties.getDeploymentsProviderPath())
-				.getParentFile();
+		File deploymentsBaseDir = new File(TestDeploymentProperties.getDeploymentsProviderPath()).getParentFile();
 		Path path = Paths.get(deploymentsBaseDir.getAbsolutePath(), deployment);
 		if (path.toFile().exists() && path.toFile().isDirectory()) {
 			return path;
 		}
-		throw new RuntimeException("Cannot find sources root directory: " + path.toFile().getAbsolutePath());
+		throw new RuntimeException(
+				"Cannot find sources root directory: " + path.toFile().getAbsolutePath());
 	}
 }

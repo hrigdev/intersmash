@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.test.deployments;
 
 import org.junit.jupiter.api.Assertions;
@@ -19,42 +34,53 @@ public class WildflyDeploymentApplicationConfigurationTest {
 		properties.set("wildfly-maven-plugin.groupId", "org.wildfly.plugins");
 		properties.set("wildfly-maven-plugin.artifactId", "wildfly-maven-plugin");
 		properties.set("wildfly-maven-plugin.version", "4.2.2.Final");
-		properties.set("wildfly.ee-feature-pack.location", "org.wildfly:wildfly-ee-galleon-pack:30.0.0.Final");
-		properties.set("wildfly.feature-pack.location", "org.wildfly:wildfly-galleon-pack:30.0.0.Final");
-		properties.set("wildfly.cloud-feature-pack.location", "org.wildfly.cloud:wildfly-cloud-galleon-pack:5.0.1.Final");
-		properties.set("wildfly.datasources-feature-pack.location", "org.wildfly:wildfly-datasources-galleon-pack:6.0.0.Final");
+		properties.set(
+				"wildfly.ee-feature-pack.location", "org.wildfly:wildfly-ee-galleon-pack:30.0.0.Final");
+		properties.set(
+				"wildfly.feature-pack.location", "org.wildfly:wildfly-galleon-pack:30.0.0.Final");
+		properties.set(
+				"wildfly.cloud-feature-pack.location",
+				"org.wildfly.cloud:wildfly-cloud-galleon-pack:5.0.1.Final");
+		properties.set(
+				"wildfly.datasources-feature-pack.location",
+				"org.wildfly:wildfly-datasources-galleon-pack:6.0.0.Final");
 		properties.set("wildfly.keycloak-saml-adapter-feature-pack.version", "22.0.3");
 		properties.set("wildfly.ee-channel.groupId", "wildfly.ee-channel.groupId.NONE_FOR_WILDFLY");
-		properties.set("wildfly.ee-channel.artifactId", "wildfly.ee-channel.artifactId.NONE_FOR_WILDFLY");
+		properties.set(
+				"wildfly.ee-channel.artifactId", "wildfly.ee-channel.artifactId.NONE_FOR_WILDFLY");
 		properties.set("wildfly.ee-channel.version", "wildfly.ee-channel.version.NONE_FOR_WILDFLY");
 		properties.set("bom.wildfly-ee.version", "30.0.0.Final");
 
 		WildflyDeploymentApplicationConfiguration app = new WildflyDeploymentApplicationConfiguration() {
 		};
 
-		Assertions.assertTrue(System.getProperty("wildfly-maven-plugin.groupId")
-				.equals(app.wildflyMavenPluginGroupId()));
-		Assertions.assertTrue(System.getProperty("wildfly-maven-plugin.artifactId")
-				.equals(app.wildflyMavenPluginArtifactId()));
-		Assertions.assertTrue(System.getProperty("wildfly-maven-plugin.version")
-				.equals(app.wildflyMavenPluginVersion()));
-		Assertions.assertTrue(System.getProperty("wildfly.ee-feature-pack.location")
-				.equals(app.eeFeaturePackLocation()));
-		Assertions.assertTrue(System.getProperty("wildfly.feature-pack.location")
-				.equals(app.featurePackLocation()));
-		Assertions.assertTrue(System.getProperty("wildfly.cloud-feature-pack.location")
-				.equals(app.cloudFeaturePackLocation()));
-		Assertions.assertTrue(System.getProperty("wildfly.datasources-feature-pack.location")
-				.equals(app.datasourcesFeaturePackLocation()));
-		Assertions.assertTrue(System.getProperty("wildfly.keycloak-saml-adapter-feature-pack.version")
-				.equals(app.keycloakSamlAdapterFeaturePackVersion()));
-		Assertions.assertTrue(System.getProperty("wildfly.ee-channel.groupId")
-				.equals(app.eeChannelGroupId()));
-		Assertions.assertTrue(System.getProperty("wildfly.ee-channel.artifactId")
-				.equals(app.eeChannelArtifactId()));
-		Assertions.assertTrue(System.getProperty("wildfly.ee-channel.version")
-				.equals(app.eeChannelVersion()));
-		Assertions.assertTrue(System.getProperty("bom.wildfly-ee.version")
-				.equals(app.bomsEeServerVersion()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly-maven-plugin.groupId").equals(app.wildflyMavenPluginGroupId()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly-maven-plugin.artifactId")
+						.equals(app.wildflyMavenPluginArtifactId()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly-maven-plugin.version").equals(app.wildflyMavenPluginVersion()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.ee-feature-pack.location").equals(app.eeFeaturePackLocation()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.feature-pack.location").equals(app.featurePackLocation()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.cloud-feature-pack.location")
+						.equals(app.cloudFeaturePackLocation()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.datasources-feature-pack.location")
+						.equals(app.datasourcesFeaturePackLocation()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.keycloak-saml-adapter-feature-pack.version")
+						.equals(app.keycloakSamlAdapterFeaturePackVersion()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.ee-channel.groupId").equals(app.eeChannelGroupId()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.ee-channel.artifactId").equals(app.eeChannelArtifactId()));
+		Assertions.assertTrue(
+				System.getProperty("wildfly.ee-channel.version").equals(app.eeChannelVersion()));
+		Assertions.assertTrue(
+				System.getProperty("bom.wildfly-ee.version").equals(app.bomsEeServerVersion()));
 	}
 }

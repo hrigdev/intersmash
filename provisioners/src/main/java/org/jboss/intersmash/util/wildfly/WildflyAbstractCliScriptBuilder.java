@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Class provide supports for building CLI commands that are used to configure WILDFLY on OpenShift via custom scripts and
- * config map or on Baremetal
+ * Class provide supports for building CLI commands that are used to configure WILDFLY on OpenShift
+ * via custom scripts and config map or on Baremetal
  */
-abstract public class WildflyAbstractCliScriptBuilder {
+public abstract class WildflyAbstractCliScriptBuilder {
 
 	private boolean batch;
 	private List<String> commands;
@@ -75,5 +75,5 @@ abstract public class WildflyAbstractCliScriptBuilder {
 		return Collections.unmodifiableList(commands);
 	}
 
-	abstract public List<String> build();
+	public abstract List<String> build();
 }

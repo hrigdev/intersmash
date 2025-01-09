@@ -26,10 +26,12 @@ import cz.xtf.builder.builders.secret.SecretType;
 import io.fabric8.kubernetes.api.model.Secret;
 
 /**
- * End user Application interface which presents PostgreSQL image application on OpenShift Container Platform.
+ * End user Application interface which presents PostgreSQL image application on OpenShift Container
+ * Platform.
  *
- * PostgreSQL application that is supposed to run on OpenShift needs to implement this interface.
+ * <p>PostgreSQL application that is supposed to run on OpenShift needs to implement this interface.
  * Usage:
+ *
  * <pre>
  *     &#064;Intersmash(
  *     		&#064;Service(PgSQLApp.class)
@@ -37,11 +39,13 @@ import io.fabric8.kubernetes.api.model.Secret;
  * </pre>
  *
  * The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link PostgreSQLImageOpenShiftProvisioner}</li>
+ *   <li>{@link PostgreSQLImageOpenShiftProvisioner}
  * </ul>
  */
-public interface PostgreSQLImageOpenShiftApplication extends DBImageOpenShiftApplication, HasSecrets {
+public interface PostgreSQLImageOpenShiftApplication
+		extends DBImageOpenShiftApplication, HasSecrets {
 
 	String POSTGRESQL_USER = "POSTGRESQL_USER";
 	String POSTGRESQL_PASSWORD = "POSTGRESQL_PASSWORD";
@@ -68,11 +72,12 @@ public interface PostgreSQLImageOpenShiftApplication extends DBImageOpenShiftApp
 
 	@Override
 	default List<Secret> getSecrets() {
-		return Collections.singletonList(new SecretBuilder(getApplicationSecretName())
-				.setType(SecretType.OPAQUE).addData(POSTGRESQL_USER_KEY, getUser().getBytes())
-				.addData(POSTGRESQL_PASSWORD_KEY, getPassword().getBytes())
-				.addData(POSTGRESQL_ADMIN_PASSWORD_KEY,
-						getAdminPassword().getBytes())
-				.build());
+		return Collections.singletonList(
+				new SecretBuilder(getApplicationSecretName())
+						.setType(SecretType.OPAQUE)
+						.addData(POSTGRESQL_USER_KEY, getUser().getBytes())
+						.addData(POSTGRESQL_PASSWORD_KEY, getPassword().getBytes())
+						.addData(POSTGRESQL_ADMIN_PASSWORD_KEY, getAdminPassword().getBytes())
+						.build());
 	}
 }

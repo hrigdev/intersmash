@@ -25,14 +25,14 @@ import io.fabric8.openshift.api.model.operatorhub.v1alpha1.SubscriptionBuilder;
 import io.fabric8.openshift.api.model.operatorhub.v1alpha1.SubscriptionFluent;
 
 /**
- * The Subscription configures when and how to update a ClusterService, binds a ClusterService to a channel in a
- * CatalogSource and configures the update strategy for a ClusterService (automatic, manual approval, etc).
+ * The Subscription configures when and how to update a ClusterService, binds a ClusterService to a
+ * channel in a CatalogSource and configures the update strategy for a ClusterService (automatic,
+ * manual approval, etc).
  *
- * <p>This class is a wrapper for {@link io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription} which
- * adds some capabilities</p>
- * <p>
- * https://medium.com/@luis.ariz/operator-lifecycle-manager-review-f0885f9f3f1f
- * </p>
+ * <p>This class is a wrapper for {@link
+ * io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription} which adds some capabilities
+ *
+ * <p>https://medium.com/@luis.ariz/operator-lifecycle-manager-review-f0885f9f3f1f
  */
 public class Subscription extends io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription
 		implements SerializationCapableResource<Subscription> {
@@ -42,8 +42,12 @@ public class Subscription extends io.fabric8.openshift.api.model.operatorhub.v1a
 	}
 
 	private SubscriptionFluent<SubscriptionBuilder>.SpecNested<SubscriptionBuilder> getConfiguredSubscriptionBuilder(
-			final String sourceNamespace, final String targetNamespace, final String source, final String name,
-			final String channel, final String installPlanApproval) {
+			final String sourceNamespace,
+			final String targetNamespace,
+			final String source,
+			final String name,
+			final String channel,
+			final String installPlanApproval) {
 		return new SubscriptionBuilder()
 				.withNewMetadata()
 				.withName(name)
@@ -54,11 +58,17 @@ public class Subscription extends io.fabric8.openshift.api.model.operatorhub.v1a
 				.withName(name)
 				.withSource(source)
 				.withSourceNamespace(sourceNamespace)
-				.withInstallPlanApproval(Strings.isNullOrEmpty(installPlanApproval) ? "Automatic" : installPlanApproval);
+				.withInstallPlanApproval(
+						Strings.isNullOrEmpty(installPlanApproval) ? "Automatic" : installPlanApproval);
 	}
 
-	public Subscription(final String sourceNamespace, final String targetNamespace, final String source,
-			final String name, final String channel, final String installPlanApproval,
+	public Subscription(
+			final String sourceNamespace,
+			final String targetNamespace,
+			final String source,
+			final String name,
+			final String channel,
+			final String installPlanApproval,
 			final Map<String, String> envVariables) {
 		this();
 		io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription loaded = getConfiguredSubscriptionBuilder(
@@ -75,8 +85,13 @@ public class Subscription extends io.fabric8.openshift.api.model.operatorhub.v1a
 		this.setSpec(loaded.getSpec());
 	}
 
-	public Subscription(final String sourceNamespace, final String targetNamespace, final String source,
-			final String name, final String channel, final String installPlanApproval) {
+	public Subscription(
+			final String sourceNamespace,
+			final String targetNamespace,
+			final String source,
+			final String name,
+			final String channel,
+			final String installPlanApproval) {
 		this();
 		io.fabric8.openshift.api.model.operatorhub.v1alpha1.Subscription loaded = getConfiguredSubscriptionBuilder(
 				sourceNamespace, targetNamespace, source, name, channel, installPlanApproval)

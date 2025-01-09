@@ -47,7 +47,8 @@ public class WildflyHelmChartExistingValuesOpenShiftExampleApplication
 		this.release = loadRelease();
 	}
 
-	WildflyHelmChartExistingValuesOpenShiftExampleApplication addSetOverride(String name, String value) {
+	WildflyHelmChartExistingValuesOpenShiftExampleApplication addSetOverride(
+			String name, String value) {
 		setOverrides.put(name, value);
 		return this;
 	}
@@ -79,10 +80,12 @@ public class WildflyHelmChartExistingValuesOpenShiftExampleApplication
 		mavenAdditionalArgs = mavenAdditionalArgs.concat(generateAdditionalMavenArgs());
 		// let's pass the profile for building the deployment too...
 		mavenAdditionalArgs = mavenAdditionalArgs.concat(
-				(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile()) ? ""
+				(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile())
+						? ""
 						: " -Pts.wildfly.target-distribution."
 								+ TestDeploymentProperties.getWildflyDeploymentsBuildProfile()));
-		wildflyHelmChartRelease.setBuildEnvironmentVariables(Map.of("MAVEN_ARGS_APPEND", mavenAdditionalArgs));
+		wildflyHelmChartRelease.setBuildEnvironmentVariables(
+				Map.of("MAVEN_ARGS_APPEND", mavenAdditionalArgs));
 		return wildflyHelmChartRelease;
 	}
 

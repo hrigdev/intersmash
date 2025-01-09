@@ -36,44 +36,51 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Phase
- */
+/** Phase */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class Phase {
 	public static final String SERIALIZED_NAME_NAME = "name";
+
 	@SerializedName(SERIALIZED_NAME_NAME)
 	private String name;
 
 	public static final String SERIALIZED_NAME_STATUS = "status";
+
 	@SerializedName(SERIALIZED_NAME_STATUS)
 	private String status;
 
 	public static final String SERIALIZED_NAME_TYPE = "type";
+
 	@SerializedName(SERIALIZED_NAME_TYPE)
 	private String type;
 
 	public static final String SERIALIZED_NAME_STARTED = "started";
+
 	@SerializedName(SERIALIZED_NAME_STARTED)
 	private OffsetDateTime started;
 
 	public static final String SERIALIZED_NAME_REMAINING = "remaining";
+
 	@SerializedName(SERIALIZED_NAME_REMAINING)
 	private String remaining;
 
 	public static final String SERIALIZED_NAME_COMPLETED = "completed";
+
 	@SerializedName(SERIALIZED_NAME_COMPLETED)
 	private OffsetDateTime completed;
 
 	public static final String SERIALIZED_NAME_FAILED = "failed";
+
 	@SerializedName(SERIALIZED_NAME_FAILED)
 	private Boolean failed;
 
 	public static final String SERIALIZED_NAME_TOTAL_DURATION = "totalDuration";
+
 	@SerializedName(SERIALIZED_NAME_TOTAL_DURATION)
 	private String totalDuration;
 
 	public static final String SERIALIZED_NAME_DESCRIPTION = "description";
+
 	@SerializedName(SERIALIZED_NAME_DESCRIPTION)
 	private String description;
 
@@ -87,12 +94,12 @@ public class Phase {
 	}
 
 	/**
-	* Get name
-	* @return name
-	**/
+	 * Get name
+	 *
+	 * @return name
+	 */
 	@javax.annotation.Nonnull
 	@ApiModelProperty(required = true, value = "")
-
 	public String getName() {
 		return name;
 	}
@@ -108,12 +115,12 @@ public class Phase {
 	}
 
 	/**
-	* Get status
-	* @return status
-	**/
+	 * Get status
+	 *
+	 * @return status
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getStatus() {
 		return status;
 	}
@@ -129,12 +136,12 @@ public class Phase {
 	}
 
 	/**
-	* Get type
-	* @return type
-	**/
+	 * Get type
+	 *
+	 * @return type
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getType() {
 		return type;
 	}
@@ -150,12 +157,12 @@ public class Phase {
 	}
 
 	/**
-	* Get started
-	* @return started
-	**/
+	 * Get started
+	 *
+	 * @return started
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public OffsetDateTime getStarted() {
 		return started;
 	}
@@ -171,12 +178,12 @@ public class Phase {
 	}
 
 	/**
-	* Get remaining
-	* @return remaining
-	**/
+	 * Get remaining
+	 *
+	 * @return remaining
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getRemaining() {
 		return remaining;
 	}
@@ -192,12 +199,12 @@ public class Phase {
 	}
 
 	/**
-	* Get completed
-	* @return completed
-	**/
+	 * Get completed
+	 *
+	 * @return completed
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public OffsetDateTime getCompleted() {
 		return completed;
 	}
@@ -213,12 +220,12 @@ public class Phase {
 	}
 
 	/**
-	* Get failed
-	* @return failed
-	**/
+	 * Get failed
+	 *
+	 * @return failed
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Boolean getFailed() {
 		return failed;
 	}
@@ -234,12 +241,12 @@ public class Phase {
 	}
 
 	/**
-	* Get totalDuration
-	* @return totalDuration
-	**/
+	 * Get totalDuration
+	 *
+	 * @return totalDuration
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getTotalDuration() {
 		return totalDuration;
 	}
@@ -255,12 +262,12 @@ public class Phase {
 	}
 
 	/**
-	* Get description
-	* @return description
-	**/
+	 * Get description
+	 *
+	 * @return description
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getDescription() {
 		return description;
 	}
@@ -278,20 +285,21 @@ public class Phase {
 			return false;
 		}
 		Phase phase = (Phase) o;
-		return Objects.equals(this.name, phase.name) &&
-				Objects.equals(this.status, phase.status) &&
-				Objects.equals(this.type, phase.type) &&
-				Objects.equals(this.started, phase.started) &&
-				Objects.equals(this.remaining, phase.remaining) &&
-				Objects.equals(this.completed, phase.completed) &&
-				Objects.equals(this.failed, phase.failed) &&
-				Objects.equals(this.totalDuration, phase.totalDuration) &&
-				Objects.equals(this.description, phase.description);
+		return Objects.equals(this.name, phase.name)
+				&& Objects.equals(this.status, phase.status)
+				&& Objects.equals(this.type, phase.type)
+				&& Objects.equals(this.started, phase.started)
+				&& Objects.equals(this.remaining, phase.remaining)
+				&& Objects.equals(this.completed, phase.completed)
+				&& Objects.equals(this.failed, phase.failed)
+				&& Objects.equals(this.totalDuration, phase.totalDuration)
+				&& Objects.equals(this.description, phase.description);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, status, type, started, remaining, completed, failed, totalDuration, description);
+		return Objects.hash(
+				name, status, type, started, remaining, completed, failed, totalDuration, description);
 	}
 
 	@Override
@@ -312,8 +320,7 @@ public class Phase {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -355,7 +362,8 @@ public class Phase {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in Phase is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in Phase is not found in the empty JSON string",
 								Phase.openapiRequiredFields.toString()));
 			}
 		}
@@ -365,7 +373,8 @@ public class Phase {
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!Phase.openapiFields.contains(entry.getKey())) {
 				throw new IllegalArgumentException(
-						String.format("The field `%s` in the JSON string is not defined in the `Phase` properties. JSON: %s",
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `Phase` properties. JSON: %s",
 								entry.getKey(), jsonObj.toString()));
 			}
 		}
@@ -373,41 +382,54 @@ public class Phase {
 		// check to make sure all required properties/fields are present in the JSON string
 		for (String requiredField : Phase.openapiRequiredFields) {
 			if (jsonObj.get(requiredField) == null) {
-				throw new IllegalArgumentException(String.format("The required field `%s` is not found in the JSON string: %s",
-						requiredField, jsonObj.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The required field `%s` is not found in the JSON string: %s",
+								requiredField, jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("name") != null && !jsonObj.get("name").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `name` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `name` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("name").toString()));
 		}
 		if (jsonObj.get("status") != null && !jsonObj.get("status").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `status` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `status` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("status").toString()));
 		}
-		if (jsonObj.get("type") != null && !jsonObj.get("type").isJsonNull() && !jsonObj.get("type").isJsonPrimitive()) {
+		if (jsonObj.get("type") != null
+				&& !jsonObj.get("type").isJsonNull()
+				&& !jsonObj.get("type").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `type` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `type` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("type").toString()));
 		}
-		if (jsonObj.get("remaining") != null && !jsonObj.get("remaining").isJsonNull()
+		if (jsonObj.get("remaining") != null
+				&& !jsonObj.get("remaining").isJsonNull()
 				&& !jsonObj.get("remaining").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `remaining` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `remaining` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("remaining").toString()));
 		}
-		if (jsonObj.get("totalDuration") != null && !jsonObj.get("totalDuration").isJsonNull()
+		if (jsonObj.get("totalDuration") != null
+				&& !jsonObj.get("totalDuration").isJsonNull()
 				&& !jsonObj.get("totalDuration").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `totalDuration` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `totalDuration` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("totalDuration").toString()));
 		}
-		if (jsonObj.get("description") != null && !jsonObj.get("description").isJsonNull()
+		if (jsonObj.get("description") != null
+				&& !jsonObj.get("description").isJsonNull()
 				&& !jsonObj.get("description").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `description` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `description` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("description").toString()));
 		}
 	}
@@ -435,7 +457,6 @@ public class Phase {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

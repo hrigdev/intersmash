@@ -22,12 +22,13 @@ import org.jboss.intersmash.provision.ProvisionerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This factory is responsible for recognizing test classes that use auto (or application dictated, or declarative)
- * provisioning, i.e. classes that implement
- * {@link AutoProvisioningOpenShiftApplication}
+ * This factory is responsible for recognizing test classes that use auto (or application dictated,
+ * or declarative) provisioning, i.e. classes that implement {@link
+ * AutoProvisioningOpenShiftApplication}
  */
 @Slf4j
-public class OpenShiftAutoProvisionerFactory implements ProvisionerFactory<OpenShiftAutoProvisioner> {
+public class OpenShiftAutoProvisionerFactory
+		implements ProvisionerFactory<OpenShiftAutoProvisioner> {
 
 	@Override
 	public OpenShiftAutoProvisioner getProvisioner(Application application) {

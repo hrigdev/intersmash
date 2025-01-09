@@ -22,7 +22,8 @@ import org.jboss.intersmash.provision.ProvisionerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MysqlImageOpenShiftProvisionerFactory implements ProvisionerFactory<MysqlImageOpenShiftProvisioner> {
+public class MysqlImageOpenShiftProvisionerFactory
+		implements ProvisionerFactory<MysqlImageOpenShiftProvisioner> {
 
 	@Override
 	public MysqlImageOpenShiftProvisioner getProvisioner(Application application) {

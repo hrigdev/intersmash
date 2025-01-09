@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.provision.openshift;
 
 import java.io.IOException;
@@ -17,12 +32,14 @@ import io.fabric8.openshift.api.model.Template;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Provisioner used process and deploy eap-s2i-build template to OpenShift Container Platform cluster.
+ * Provisioner used process and deploy eap-s2i-build template to OpenShift Container Platform
+ * cluster.
  *
  * @see Eap7LegacyS2iBuildTemplateApplication
  */
 @Slf4j
-public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvisioner<Eap7LegacyS2iBuildTemplateApplication> {
+public class Eap7LegacyS2iBuildTemplateProvisioner
+		implements OpenShiftProvisioner<Eap7LegacyS2iBuildTemplateApplication> {
 	// we can parametrize this one once required, but its location should be static
 	private String EAP_S2I_BUILD = "https://raw.githubusercontent.com/jboss-container-images/jboss-eap-openshift-templates/master/eap-s2i-build.yaml";
 	private KubernetesList deployedResources;
@@ -41,11 +58,12 @@ public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvision
 
 	@Override
 	public void deploy() {
-		ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				application.getName());
+		ffCheck = FailFastUtils.getFailFastCheck(
+				EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), application.getName());
 
 		if (application.getParameters().getOrDefault("APPLICATION_IMAGE", "null") != application.getName()) {
-			throw new IllegalArgumentException("APPLICATION_IMAGE template parameters has to match the application name!");
+			throw new IllegalArgumentException(
+					"APPLICATION_IMAGE template parameters has to match the application name!");
 		}
 		try {
 			template = openShift.templates().load(new URL(EAP_S2I_BUILD)).item();
@@ -54,8 +72,7 @@ public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvision
 		}
 		template.setApiVersion("template.openshift.io/v1");
 		openShift.createTemplate(template);
-		deployedResources = openShift.processTemplate(template.getMetadata().getName(),
-				application.getParameters());
+		deployedResources = openShift.processTemplate(template.getMetadata().getName(), application.getParameters());
 		// add additional environment variables to the build config resources
 		deployedResources.getItems().stream()
 				.filter(hasMetadata -> hasMetadata.getKind().equals(BuildConfig.class.getSimpleName()))
@@ -72,7 +89,12 @@ public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvision
 			if (buildConfig.getSpec().getStrategy().getSourceStrategy().getEnv() == null) {
 				buildConfig.getSpec().getStrategy().getSourceStrategy().setEnv(application.getEnvVars());
 			} else {
-				buildConfig.getSpec().getStrategy().getSourceStrategy().getEnv().addAll(application.getEnvVars());
+				buildConfig
+						.getSpec()
+						.getStrategy()
+						.getSourceStrategy()
+						.getEnv()
+						.addAll(application.getEnvVars());
 			}
 		}
 		// Update dockerile based build config
@@ -80,16 +102,23 @@ public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvision
 			if (buildConfig.getSpec().getStrategy().getDockerStrategy().getEnv() == null) {
 				buildConfig.getSpec().getStrategy().getDockerStrategy().setEnv(application.getEnvVars());
 			} else {
-				buildConfig.getSpec().getStrategy().getDockerStrategy().getEnv().addAll(application.getEnvVars());
+				buildConfig
+						.getSpec()
+						.getStrategy()
+						.getDockerStrategy()
+						.getEnv()
+						.addAll(application.getEnvVars());
 			}
 		}
 	}
 
 	private void waitForBuilds() {
-		OpenShiftWaiters.get(openShift, ffCheck).hasBuildCompleted(application.getName() + "-build-artifacts")
+		OpenShiftWaiters.get(openShift, ffCheck)
+				.hasBuildCompleted(application.getName() + "-build-artifacts")
 				.level(Level.DEBUG)
 				.waitFor();
-		OpenShiftWaiters.get(openShift, ffCheck).hasBuildCompleted(application.getName())
+		OpenShiftWaiters.get(openShift, ffCheck)
+				.hasBuildCompleted(application.getName())
 				.level(Level.DEBUG)
 				.waitFor();
 	}
@@ -113,6 +142,7 @@ public class Eap7LegacyS2iBuildTemplateProvisioner implements OpenShiftProvision
 
 	@Override
 	public void scale(int replicas, boolean wait) {
-		throw new UnsupportedOperationException("eap-s2i-build template is not suppose to be scaled - no running pods.");
+		throw new UnsupportedOperationException(
+				"eap-s2i-build template is not suppose to be scaled - no running pods.");
 	}
 }

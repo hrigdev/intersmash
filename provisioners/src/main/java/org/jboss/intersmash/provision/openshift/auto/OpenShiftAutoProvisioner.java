@@ -28,11 +28,13 @@ import io.fabric8.kubernetes.api.model.Pod;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Implements an OpenShift provisioner that delegates the real job of any phase in the testing workflow to the
- * {@link Application} class, which must be implement {@link AutoProvisioningOpenShiftApplication}
+ * Implements an OpenShift provisioner that delegates the real job of any phase in the testing
+ * workflow to the {@link Application} class, which must be implement {@link
+ * AutoProvisioningOpenShiftApplication}
  */
 @Slf4j
-public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<AutoProvisioningOpenShiftApplication> {
+public final class OpenShiftAutoProvisioner
+		implements OpenShiftProvisioner<AutoProvisioningOpenShiftApplication> {
 
 	private final AutoProvisioningOpenShiftApplication configuredApplication;
 
@@ -41,16 +43,14 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 	}
 
 	/**
-	 * Access the {@link AutoProvisioningOpenShiftApplication} instance provisioned by this
-	 * {@link OpenShiftAutoProvisioner}.
+	 * Access the {@link AutoProvisioningOpenShiftApplication} instance provisioned by this {@link
+	 * OpenShiftAutoProvisioner}.
 	 */
 	public AutoProvisioningOpenShiftApplication getApplication() {
 		return configuredApplication;
 	}
 
-	/**
-	 * Task which will be performed by a provisioner prior to {@link #deploy()} operation.
-	 */
+	/** Task which will be performed by a provisioner prior to {@link #deploy()} operation. */
 	@Override
 	public void preDeploy() {
 		try {
@@ -61,9 +61,7 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 		}
 	}
 
-	/**
-	 * Deploy the application.
-	 */
+	/** Deploy the application. */
 	public void deploy() {
 		try {
 			configuredApplication.deploy();
@@ -73,9 +71,7 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 		}
 	}
 
-	/**
-	 * Undeploy the application.
-	 */
+	/** Undeploy the application. */
 	public void undeploy() {
 		try {
 			configuredApplication.undeploy();
@@ -85,9 +81,7 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 		}
 	}
 
-	/**
-	 * Task which will be performed by a provisioner after the {@link #undeploy()} operation.
-	 */
+	/** Task which will be performed by a provisioner after the {@link #undeploy()} operation. */
 	public void postUndeploy() {
 		try {
 			configuredApplication.postUndeploy();
@@ -98,10 +92,11 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 	}
 
 	/**
-	 * Get the URL for the application endpoint - depending on the provisioner, this could be BareMetal process,
-	 * OpenShift route, ...
+	 * Get the URL for the application endpoint - depending on the provisioner, this could be
+	 * BareMetal process, OpenShift route, ...
 	 *
-	 * The more specific we go in provisioner hierarchy, the more specific the implementation will be.
+	 * <p>The more specific we go in provisioner hierarchy, the more specific the implementation will
+	 * be.
 	 *
 	 * @return Application endpoint
 	 */
@@ -115,14 +110,14 @@ public final class OpenShiftAutoProvisioner implements OpenShiftProvisioner<Auto
 	}
 
 	/**
-	 * Returns a list of {@link Pod} instances, related to the application service which is being deployed
-	 * <b>Currently, the method is not implemented and will throw {@link UnsupportedOperationException} </b>.
-	 * For this reason it has been marked as {@code Deprecated}, although that is not accurate in this case - so that
-	 * developers are aware of it.
+	 * Returns a list of {@link Pod} instances, related to the application service which is being
+	 * deployed <b>Currently, the method is not implemented and will throw {@link
+	 * UnsupportedOperationException} </b>. For this reason it has been marked as {@code Deprecated},
+	 * although that is not accurate in this case - so that developers are aware of it.
 	 *
-	 * This could change in the future, by hooking somehow to the OpenShiftApplication logic as well.
-	 * Currently, the feature is not affected by any limitation because of it, e.g. the test class could have its own
-	 * methods for retrieving the pods
+	 * <p>This could change in the future, by hooking somehow to the OpenShiftApplication logic as
+	 * well. Currently, the feature is not affected by any limitation because of it, e.g. the test
+	 * class could have its own methods for retrieving the pods
 	 *
 	 * @return {@code List<Pod>} belonging to the application service scope
 	 * @throws UnsupportedOperationException Not implemented yet.

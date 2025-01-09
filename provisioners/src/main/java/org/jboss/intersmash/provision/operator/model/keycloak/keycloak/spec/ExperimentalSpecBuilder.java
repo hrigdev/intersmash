@@ -24,9 +24,8 @@ import org.keycloak.v1alpha1.keycloakspec.keycloakdeploymentspec.experimental.Vo
 import org.keycloak.v1alpha1.keycloakspec.keycloakdeploymentspec.experimental.volumes.Items;
 
 /**
- * Experimental section
- * NOTE: This section might change or get removed without any notice. It may also cause the deployment to behave
- * in an unpredictable fashion. Please use with care.
+ * Experimental section NOTE: This section might change or get removed without any notice. It may
+ * also cause the deployment to behave in an unpredictable fashion. Please use with care.
  */
 public final class ExperimentalSpecBuilder {
 	private List<String> args;

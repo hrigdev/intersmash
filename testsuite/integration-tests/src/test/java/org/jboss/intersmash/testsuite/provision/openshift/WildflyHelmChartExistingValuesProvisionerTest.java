@@ -26,9 +26,8 @@ import org.junit.jupiter.api.Test;
 import cz.xtf.junit5.annotations.CleanBeforeAll;
 
 /**
- * Test case to verify the basic {@link HelmChartOpenShiftProvisioner}
- * life cycle management operations on a WildFly application which provides
- * a Helm values file AND {@code --set} overrides
+ * Test case to verify the basic {@link HelmChartOpenShiftProvisioner} life cycle management
+ * operations on a WildFly application which provides a Helm values file AND {@code --set} overrides
  */
 @CleanBeforeAll
 @OpenShiftTest
@@ -49,22 +48,27 @@ public class WildflyHelmChartExistingValuesProvisionerTest implements ProjectCre
 		try {
 			provisioner.deploy();
 			try {
-				Assertions.assertEquals(1, provisioner.getPods().size(),
+				Assertions.assertEquals(
+						1,
+						provisioner.getPods().size(),
 						"Unexpected number of cluster operator pods for '"
-								+ provisioner.getApplication().getName() + "' after deploy");
+								+ provisioner.getApplication().getName()
+								+ "' after deploy");
 
 				// scale
 				int scaledNum = provisioner.getApplication().getRelease().getReplicas() + 1;
 				provisioner.scale(scaledNum, true);
-				Assertions.assertEquals(scaledNum, provisioner.getPods().size(),
+				Assertions.assertEquals(
+						scaledNum,
+						provisioner.getPods().size(),
 						"Unexpected number of cluster operator pods for '"
 								+ provisioner.getApplication().getName()
 								+ "' after scaling");
 			} finally {
 				// undeploy
 				provisioner.undeploy();
-				Assertions.assertEquals(0, provisioner.getPods().size(),
-						"Unexpected number of pods after undeploy");
+				Assertions.assertEquals(
+						0, provisioner.getPods().size(), "Unexpected number of pods after undeploy");
 			}
 		} finally {
 			provisioner.postUndeploy();

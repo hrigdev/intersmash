@@ -19,17 +19,17 @@ import org.jboss.intersmash.application.openshift.template.Eap7Template;
 import org.jboss.intersmash.provision.openshift.Eap7TemplateOpenShiftProvisioner;
 
 /**
- * End user Application descriptor interface which presents EAP 7 template application on OpenShift Container Platform.
+ * End user Application descriptor interface which presents EAP 7 template application on OpenShift
+ * Container Platform.
  *
- * See {@link Eap7Template} for available templates the
- * application can represent.
+ * <p>See {@link Eap7Template} for available templates the application can represent.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link Eap7TemplateOpenShiftProvisioner}</li>
+ *   <li>{@link Eap7TemplateOpenShiftProvisioner}
  * </ul>
  */
 public interface Eap7TemplateOpenShiftApplication
 		extends WildflyOpenShiftApplication, TemplateApplication<Eap7Template> {
-
 }

@@ -18,9 +18,7 @@ package org.jboss.intersmash.provision.operator.model.keycloak.keycloak.spec;
 import org.keycloak.v1alpha1.keycloakspec.PostgresDeploymentSpec;
 import org.keycloak.v1alpha1.keycloakspec.postgresdeploymentspec.Resources;
 
-/**
- * Resources (Requests and Limits) for PostgresDeployment.
- */
+/** Resources (Requests and Limits) for PostgresDeployment. */
 public final class PostgresqlDeploymentSpecBuilder {
 	private Resources resources;
 

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client.binary;
 
 import java.lang.reflect.Type;
@@ -40,8 +55,8 @@ public class KubernetesClientBinary {
 	}
 
 	/**
-	 * Apply configuration file in the specified namespace.
-	 * Delegates to `oc apply --filename='sourcepath' --namespace='namespace'`
+	 * Apply configuration file in the specified namespace. Delegates to `oc apply
+	 * --filename='sourcepath' --namespace='namespace'`
 	 *
 	 * @param sourcePath path to configration file
 	 * @param namespace namespace
@@ -83,8 +98,10 @@ public class KubernetesClientBinary {
 	}
 
 	public void namespace(String projectName) {
-		// see https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-context-and-configuration
-		this.execute("config", "set-context", "--current", String.format("--namespace=%s", projectName));
+		// see
+		// https://kubernetes.io/docs/reference/kubectl/cheatsheet/#kubectl-context-and-configuration
+		this.execute(
+				"config", "set-context", "--current", String.format("--namespace=%s", projectName));
 	}
 
 	// TODO? check ShipWrigth
@@ -97,27 +114,36 @@ public class KubernetesClientBinary {
 		if (configPath == null) {
 			return CLIUtils.executeCommand(ArrayUtils.addAll(new String[] { path }, args));
 		} else {
-			return CLIUtils.executeCommand(ArrayUtils.addAll(new String[] { path, "--kubeconfig=" + configPath }, args));
+			return CLIUtils.executeCommand(
+					ArrayUtils.addAll(new String[] { path, "--kubeconfig=" + configPath }, args));
 		}
 	}
 
-	public List<PackageManifest> packageManifests(final String operatorName, final String operatorNamespace) {
+	public List<PackageManifest> packageManifests(
+			final String operatorName, final String operatorNamespace) {
 		Type targetClassType = new TypeToken<ArrayList<PackageManifest>>() {
 		}.getType();
-		return new Gson().fromJson(this.execute("get", "packagemanifest", operatorName, "-n", operatorNamespace, "-o", "json"),
-				targetClassType);
+		return new Gson()
+				.fromJson(
+						this.execute(
+								"get", "packagemanifest", operatorName, "-n", operatorNamespace, "-o", "json"),
+						targetClassType);
 	}
 
 	public List<CatalogSource> catalogSources(final String operatorNamespace) {
 		Type targetClassType = new TypeToken<ArrayList<CatalogSource>>() {
 		}.getType();
-		return new Gson().fromJson(this.execute("get", "catsrc", "-n", operatorNamespace, "-o", "json"), targetClassType);
+		return new Gson()
+				.fromJson(
+						this.execute("get", "catsrc", "-n", operatorNamespace, "-o", "json"), targetClassType);
 	}
 
-	public CatalogSource catalogSource(final String operatorNamespace, final String catalogSourceName) {
+	public CatalogSource catalogSource(
+			final String operatorNamespace, final String catalogSourceName) {
 		io.fabric8.openshift.api.model.operatorhub.v1alpha1.CatalogSource loaded = catalogSources(operatorNamespace).stream()
 				.filter(cs -> cs.getMetadata().getName().equalsIgnoreCase(catalogSourceName))
-				.findFirst().orElseThrow(
+				.findFirst()
+				.orElseThrow(
 						() -> new IllegalStateException(
 								"Unable to retrieve CatalogSource " + catalogSourceName));
 		CatalogSource catalogSource = new CatalogSource();

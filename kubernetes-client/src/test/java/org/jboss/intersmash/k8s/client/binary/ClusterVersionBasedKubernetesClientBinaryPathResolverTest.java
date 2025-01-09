@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client.binary;
 
 import java.io.IOException;
@@ -28,14 +43,17 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolverTest {
 		final VersionInfo clusterVersion = new VersionInfo.Builder().withGitVersion("v1.27.3").build();
 		systemProperties.set("intersmash.kubernetes.version", clusterVersion.getGitVersion());
 		XTFConfig.loadConfig();
-		// resolve (which includes the binary client download if it is not cached already) should pass here
+		// resolve (which includes the binary client download if it is not cached already) should pass
+		// here
 		final String resolvedPath = resolver.resolve();
 		try {
 			// make assertions now
 			assertBinaryPathIsProperlyResolved(clusterVersion, resolvedPath);
 		} finally {
-			Files.deleteIfExists(ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl());
-			Files.deleteIfExists(ClusterVersionBasedKubernetesClientBinaryPathResolver.getProjectKubernetesDir());
+			Files.deleteIfExists(
+					ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl());
+			Files.deleteIfExists(
+					ClusterVersionBasedKubernetesClientBinaryPathResolver.getProjectKubernetesDir());
 		}
 	}
 
@@ -51,8 +69,10 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolverTest {
 			try {
 				assertBinaryPathIsProperlyResolved(clusterVersion, resolvedPath);
 			} finally {
-				Files.deleteIfExists(ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl());
-				Files.deleteIfExists(ClusterVersionBasedKubernetesClientBinaryPathResolver.getProjectKubernetesDir());
+				Files.deleteIfExists(
+						ClusterVersionBasedKubernetesClientBinaryPathResolver.getRuntimeKubectl());
+				Files.deleteIfExists(
+						ClusterVersionBasedKubernetesClientBinaryPathResolver.getProjectKubernetesDir());
 			}
 		} finally {
 			systemProperties.set("intersmash.kubernetes.binary.cache.enabled", "true");
@@ -68,7 +88,8 @@ public class ClusterVersionBasedKubernetesClientBinaryPathResolverTest {
 		Assertions.assertThrows(IllegalStateException.class, () -> resolver.resolve());
 	}
 
-	private static void assertBinaryPathIsProperlyResolved(VersionInfo clusterVersion, String resolvedPath) {
+	private static void assertBinaryPathIsProperlyResolved(
+			VersionInfo clusterVersion, String resolvedPath) {
 		// make assertions now
 		SoftAssertions softAssertions = new SoftAssertions();
 		// path is not null

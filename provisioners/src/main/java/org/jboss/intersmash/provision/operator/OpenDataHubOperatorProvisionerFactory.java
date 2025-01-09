@@ -25,8 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * This factory is loaded by the Service loader via SPI and will release a concrete instance of
- * {@link OpenDataHubOperatorProvisioner} that is responsible for deploying an Open Data Hub application service
- * represented by {@link OpenDataHubOperatorApplication} instances.
+ * {@link OpenDataHubOperatorProvisioner} that is responsible for deploying an Open Data Hub
+ * application service represented by {@link OpenDataHubOperatorApplication} instances.
  */
 @Slf4j
 public class OpenDataHubOperatorProvisionerFactory
@@ -36,7 +36,8 @@ public class OpenDataHubOperatorProvisionerFactory
 	public OpenDataHubOperatorProvisioner getProvisioner(Application application) {
 		if (OpenDataHubOperatorApplication.class.isAssignableFrom(application.getClass())) {
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
-				return new OpenDataHubOpenShiftOperatorProvisioner((OpenDataHubOperatorApplication) application);
+				return new OpenDataHubOpenShiftOperatorProvisioner(
+						(OpenDataHubOperatorApplication) application);
 			}
 			throw new UnsupportedOperationException(
 					"Open Data Hub operator based provisioner requires OpenShift");

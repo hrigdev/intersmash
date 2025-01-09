@@ -17,17 +17,16 @@ package org.jboss.intersmash.provision.operator.model.keycloak.keycloak.spec;
 
 import org.keycloak.v1alpha1.keycloakspec.PodDisruptionBudget;
 
-/**
- * Specify PodDisruptionBudget configuration.
- */
+/** Specify PodDisruptionBudget configuration. */
 public final class PodDisruptionBudgetConfigBuilder {
 	private boolean enabled;
 
 	/**
-	 * If set to true, the operator will create a PodDistruptionBudget for the Keycloak deployment and set its
-	 * `maxUnavailable` value to 1.
+	 * If set to true, the operator will create a PodDistruptionBudget for the Keycloak deployment and
+	 * set its `maxUnavailable` value to 1.
 	 *
-	 * @param enabled Whether the operator should create a PodDistruptionBudget for the Keycloak deployment
+	 * @param enabled Whether the operator should create a PodDistruptionBudget for the Keycloak
+	 *     deployment
 	 * @return this
 	 */
 	public PodDisruptionBudgetConfigBuilder enabled(boolean enabled) {

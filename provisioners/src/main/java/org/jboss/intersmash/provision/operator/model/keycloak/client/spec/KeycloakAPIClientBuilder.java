@@ -23,9 +23,7 @@ import java.util.Map;
 import org.keycloak.v1alpha1.keycloakrealmspec.realm.Clients;
 import org.keycloak.v1alpha1.keycloakrealmspec.realm.clients.ProtocolMappers;
 
-/**
- * Keycloak Client REST object.
- */
+/** Keycloak Client REST object. */
 public final class KeycloakAPIClientBuilder {
 	private String id;
 	private String clientId;

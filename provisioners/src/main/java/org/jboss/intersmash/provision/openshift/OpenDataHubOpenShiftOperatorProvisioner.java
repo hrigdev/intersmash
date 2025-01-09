@@ -38,8 +38,9 @@ import io.opendatahub.platform.services.v1alpha1.Monitoring;
 import lombok.NonNull;
 
 /**
- * A {@link org.jboss.intersmash.provision.Provisioner} that extends {@link OpenDataHubOperatorProvisioner} and
- * is able to deploy the Open Data Hub Operator on OpenShift specifically.
+ * A {@link org.jboss.intersmash.provision.Provisioner} that extends {@link
+ * OpenDataHubOperatorProvisioner} and is able to deploy the Open Data Hub Operator on OpenShift
+ * specifically.
  */
 public class OpenDataHubOpenShiftOperatorProvisioner
 		// leverage Open Data Hub common Operator based provisioner behavior
@@ -74,12 +75,19 @@ public class OpenDataHubOpenShiftOperatorProvisioner
 	// =================================================================================================================
 	@Override
 	protected void removeClusterServiceVersion() {
-		this.execute("delete", "csvs", currentCSV, "-n", this.getTargetNamespace(), "--ignore-not-found");
+		this.execute(
+				"delete", "csvs", currentCSV, "-n", this.getTargetNamespace(), "--ignore-not-found");
 	}
 
 	@Override
 	protected void removeSubscription() {
-		this.execute("delete", "subscription", packageManifestName, "-n", this.getTargetNamespace(), "--ignore-not-found");
+		this.execute(
+				"delete",
+				"subscription",
+				packageManifestName,
+				"-n",
+				this.getTargetNamespace(),
+				"--ignore-not-found");
 	}
 
 	// =================================================================================================================
@@ -93,19 +101,22 @@ public class OpenDataHubOpenShiftOperatorProvisioner
 	@Override
 	protected HasMetadataOperationsImpl<DataScienceCluster, DataScienceClusterList> dataScienceClusterCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts.admin().newHasMetadataOperation(crdc, DataScienceCluster.class, DataScienceClusterList.class);
+		return OpenShifts.admin()
+				.newHasMetadataOperation(crdc, DataScienceCluster.class, DataScienceClusterList.class);
 	}
 
 	@Override
 	protected HasMetadataOperationsImpl<DSCInitialization, DSCInitializationList> dscInitializationCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts.admin().newHasMetadataOperation(crdc, DSCInitialization.class, DSCInitializationList.class);
+		return OpenShifts.admin()
+				.newHasMetadataOperation(crdc, DSCInitialization.class, DSCInitializationList.class);
 	}
 
 	@Override
 	protected HasMetadataOperationsImpl<FeatureTracker, FeatureTrackerList> featureTrackerCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts.admin().newHasMetadataOperation(crdc, FeatureTracker.class, FeatureTrackerList.class);
+		return OpenShifts.admin()
+				.newHasMetadataOperation(crdc, FeatureTracker.class, FeatureTrackerList.class);
 	}
 
 	@Override

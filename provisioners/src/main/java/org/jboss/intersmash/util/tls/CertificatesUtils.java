@@ -58,13 +58,20 @@ public class CertificatesUtils {
 	}
 
 	/**
-	 * Generates a key and self-signed certificate for that key; it also generates a truststore containing the certificate;
+	 * Generates a key and self-signed certificate for that key; it also generates a truststore
+	 * containing the certificate;
+	 *
 	 * @param hostname: to be used as Common Name (CN) for the certificate
-	 * @param tlsSecretName: name of the secret to be created in OpenShift containing key and certificate
-	 * @return wrapper object {@link CertificateAndKey} containing details about the newly created key, certificate and secret
+	 * @param tlsSecretName: name of the secret to be created in OpenShift containing key and
+	 *     certificate
+	 * @return wrapper object {@link CertificateAndKey} containing details about the newly created
+	 *     key, certificate and secret
 	 */
-	public static CertificateAndKey generateSelfSignedCertificateAndKey(String hostname, String tlsSecretName,
-			final NamespacedKubernetesClient client, final String namespace) {
+	public static CertificateAndKey generateSelfSignedCertificateAndKey(
+			String hostname,
+			String tlsSecretName,
+			final NamespacedKubernetesClient client,
+			final String namespace) {
 		CertificateAndKey certificateAndKey = new CertificateAndKey();
 
 		String certificate = hostname + "-certificate.pem";
@@ -79,9 +86,9 @@ public class CertificatesUtils {
 		certificateAndKey.truststoreAlias = hostname;
 		certificateAndKey.truststorePassword = truststorePassword;
 
-		if (caDir.resolve(certificate).toFile().exists() &&
-				caDir.resolve(key).toFile().exists() &&
-				caDir.resolve(truststore).toFile().exists()) {
+		if (caDir.resolve(certificate).toFile().exists()
+				&& caDir.resolve(key).toFile().exists()
+				&& caDir.resolve(truststore).toFile().exists()) {
 			certificateAndKey.existing = true;
 			Secret tlsSecret = client.secrets().withName(tlsSecretName).get();
 			if (Objects.isNull(tlsSecret)) {
@@ -91,17 +98,50 @@ public class CertificatesUtils {
 			return certificateAndKey;
 		}
 
-		// create key + self-signed certificate: they are typically used by the server exposing the endpoints over TLS
-		processCall(caDir, "openssl", "req", "-subj", "/CN=" + hostname + "/OU=TF/O=XTF/L=Milan/C=IT",
-				"-newkey", "rsa:2048", "-nodes", "-keyout", key, "-x509", "-days", "365", "-out", certificate);
+		// create key + self-signed certificate: they are typically used by the server exposing the
+		// endpoints over TLS
+		processCall(
+				caDir,
+				"openssl",
+				"req",
+				"-subj",
+				"/CN=" + hostname + "/OU=TF/O=XTF/L=Milan/C=IT",
+				"-newkey",
+				"rsa:2048",
+				"-nodes",
+				"-keyout",
+				key,
+				"-x509",
+				"-days",
+				"365",
+				"-out",
+				certificate);
 
-		// add self-signed certificate to keystore: it's typically used by the clients contacting the endpoints over TLS
-		processCall(caDir, "keytool", "-import", "-noprompt", "-alias", hostname, "-keystore",
-				truststore, "-file", certificate, "-storetype", "JKS", "-storepass", truststorePassword);
+		// add self-signed certificate to keystore: it's typically used by the clients contacting the
+		// endpoints over TLS
+		processCall(
+				caDir,
+				"keytool",
+				"-import",
+				"-noprompt",
+				"-alias",
+				hostname,
+				"-keystore",
+				truststore,
+				"-file",
+				certificate,
+				"-storetype",
+				"JKS",
+				"-storepass",
+				truststorePassword);
 
 		// create secret
 		try {
-			Secret tlsSecret = createTlsSecret(tlsSecretName, certificateAndKey.key, certificateAndKey.certificate, client,
+			Secret tlsSecret = createTlsSecret(
+					tlsSecretName,
+					certificateAndKey.key,
+					certificateAndKey.certificate,
+					client,
 					namespace);
 			if (Objects.isNull(tlsSecret)) {
 				throw new RuntimeException(MessageFormat.format("Secret {} doesn't exist!", tlsSecretName));
@@ -143,15 +183,22 @@ public class CertificatesUtils {
 		}
 	}
 
-	public static Secret createTlsSecret(final String secretName, final Path key, final Path certificate,
-			final NamespacedKubernetesClient client, final String namespace) throws IOException {
+	public static Secret createTlsSecret(
+			final String secretName,
+			final Path key,
+			final Path certificate,
+			final NamespacedKubernetesClient client,
+			final String namespace)
+			throws IOException {
 		Map<String, String> data = new HashMap<>();
 		String keyDerData = Files.readString(key);
 		String crtDerData = Files.readString(certificate);
 		data.put("tls.key", Base64.getEncoder().encodeToString(keyDerData.getBytes()));
 		data.put("tls.crt", Base64.getEncoder().encodeToString(crtDerData.getBytes()));
 		final Secret secret = new SecretBuilder()
-				.withNewMetadata().withName(secretName).endMetadata()
+				.withNewMetadata()
+				.withName(secretName)
+				.endMetadata()
 				.withType("kubernetes.io/tls")
 				.withImmutable(false)
 				.addToData(data)

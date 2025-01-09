@@ -56,7 +56,8 @@ public final class KeycloakRealmBuilder {
 	}
 
 	//	/**
-	//	 * When set to true, this KeycloakRealm will be marked as unmanaged and not be managed by this operator.
+	//	 * When set to true, this KeycloakRealm will be marked as unmanaged and not be managed by this
+	// operator.
 	//	 * It can then be used for targeting purposes.
 	//	 */
 	//	public KeycloakRealmBuilder unmanaged(boolean unmanaged) {
@@ -67,7 +68,8 @@ public final class KeycloakRealmBuilder {
 	/**
 	 * Set a selector for looking up Keycloak Custom Resources.
 	 *
-	 * @param instanceSelector {@link InstanceSelector} instance that should be used for looking up Keycloak Custom Resources.
+	 * @param instanceSelector {@link InstanceSelector} instance that should be used for looking up
+	 *     Keycloak Custom Resources.
 	 * @return this
 	 */
 	public KeycloakRealmBuilder instanceSelector(InstanceSelector instanceSelector) {
@@ -90,7 +92,7 @@ public final class KeycloakRealmBuilder {
 	 * A list of overrides to the default Realm behavior.
 	 *
 	 * @param realmOverrides A list of {@link RealmOverrides} instances that should be used to
-	 *                       override the default realm behavior
+	 *     override the default realm behavior
 	 * @return this
 	 */
 	public KeycloakRealmBuilder realmOverrides(List<RealmOverrides> realmOverrides) {
@@ -101,8 +103,8 @@ public final class KeycloakRealmBuilder {
 	/**
 	 * Add an override to the default Realm behavior.
 	 *
-	 * @param realmOverride A {@link RealmOverrides} instance that should be added to
-	 *                       override the default realm behavior
+	 * @param realmOverride A {@link RealmOverrides} instance that should be added to override the
+	 *     default realm behavior
 	 * @return this
 	 */
 	public KeycloakRealmBuilder realmOverrides(RealmOverrides realmOverride) {

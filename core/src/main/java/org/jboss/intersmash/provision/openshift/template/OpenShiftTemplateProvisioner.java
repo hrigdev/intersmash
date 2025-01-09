@@ -28,7 +28,8 @@ import io.fabric8.openshift.api.model.ImageStream;
 import io.fabric8.openshift.api.model.Template;
 
 /**
- * Provisioner for OpenShift templates. Its goal is to unify the basic operations we need to do with OpenShift templates.
+ * Provisioner for OpenShift templates. Its goal is to unify the basic operations we need to do with
+ * OpenShift templates.
  */
 public interface OpenShiftTemplateProvisioner {
 
@@ -52,16 +53,16 @@ public interface OpenShiftTemplateProvisioner {
 	}
 
 	/**
-	 * Get a product code for given product. Product code is usually used as a prefix in template file name - it's used
-	 * here to construct the filename for {@link OpenShiftTemplate} deployment.
+	 * Get a product code for given product. Product code is usually used as a prefix in template file
+	 * name - it's used here to construct the filename for {@link OpenShiftTemplate} deployment.
 	 *
 	 * @return product code of given product the provisioner is build for
 	 */
 	String getProductCode();
 
 	/**
-	 * Get a template file name format. Having a template name (e.g. "basic") is not sufficient, as the actual template
-	 * file name could differ between products.
+	 * Get a template file name format. Having a template name (e.g. "basic") is not sufficient, as
+	 * the actual template file name could differ between products.
 	 *
 	 * @param openShiftTemplate template
 	 * @return file name of template source file
@@ -71,9 +72,9 @@ public interface OpenShiftTemplateProvisioner {
 	}
 
 	/**
-	 * Deploy image streams for product the provisioner is build for. Use the image urls set by configuration mechanism -
-	 * do not use the template defaults, but update to the configured images in order to run the tests against the
-	 * tested images as required.
+	 * Deploy image streams for product the provisioner is build for. Use the image urls set by
+	 * configuration mechanism - do not use the template defaults, but update to the configured images
+	 * in order to run the tests against the tested images as required.
 	 *
 	 * @return deployed image stream instances
 	 */
@@ -89,14 +90,17 @@ public interface OpenShiftTemplateProvisioner {
 		Template template;
 		String url = getTemplateFileUrl(openShiftTemplate);
 		try (InputStream is = new URL(url).openStream()) {
-			// workaround for the API version in the data (v1) does not match the expected API version (image.template.io/v1)
+			// workaround for the API version in the data (v1) does not match the expected API version
+			// (image.template.io/v1)
 			template = openShift.templates().load(is).item();
 			template.setApiVersion("template.openshift.io/v1");
 			if (openShift.getTemplate(template.getMetadata().getName()) == null) {
 				openShift.createTemplate(template);
 			} else {
-				LoggerFactory.getLogger(OpenShiftTemplateProvisioner.class).warn(
-						"Template \"{}\" creation skipped: template already exists", template.getMetadata().getName());
+				LoggerFactory.getLogger(OpenShiftTemplateProvisioner.class)
+						.warn(
+								"Template \"{}\" creation skipped: template already exists",
+								template.getMetadata().getName());
 			}
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to deploy openshift template from " + url, e);

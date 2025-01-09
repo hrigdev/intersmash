@@ -30,7 +30,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * <a href="https://github.com/wildfly/wildfly-operator/blob/master/doc/apis.adoc#wildflyserverlist">WildFlyServerList</a>
+ * <a
+ * href="https://github.com/wildfly/wildfly-operator/blob/master/doc/apis.adoc#wildflyserverlist">WildFlyServerList</a>
  * defines a list of WildFly deployments.
  */
 @Getter
@@ -39,15 +40,11 @@ import lombok.ToString;
 @ToString
 public class WildFlyServerList extends CustomResourceList<WildFlyServer> {
 
-	/**
-	 * Standard list’s metadata.
-	 */
+	/** Standard list’s metadata. */
 	@JsonProperty("metadata")
 	private ListMeta metadata;
 
-	/**
-	 * List of {@link WildFlyServer}
-	 */
+	/** List of {@link WildFlyServer} */
 	@JsonProperty("items")
 	private List<WildFlyServer> items = new ArrayList<>();
 }

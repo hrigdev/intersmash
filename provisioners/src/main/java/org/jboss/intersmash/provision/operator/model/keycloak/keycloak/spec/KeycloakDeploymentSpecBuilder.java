@@ -19,9 +19,7 @@ import org.keycloak.v1alpha1.keycloakspec.KeycloakDeploymentSpec;
 import org.keycloak.v1alpha1.keycloakspec.keycloakdeploymentspec.Experimental;
 import org.keycloak.v1alpha1.keycloakspec.keycloakdeploymentspec.Resources;
 
-/**
- * Resources (Requests and Limits) for KeycloakDeployment.
- */
+/** Resources (Requests and Limits) for KeycloakDeployment. */
 public final class KeycloakDeploymentSpecBuilder {
 	private Resources resources;
 	private Experimental experimental;
@@ -38,9 +36,8 @@ public final class KeycloakDeploymentSpecBuilder {
 	}
 
 	/**
-	 * Experimental section
-	 * NOTE: This section might change or get removed without any notice. It may also cause the deployment to behave
-	 * in an unpredictable fashion. Please use with care.
+	 * Experimental section NOTE: This section might change or get removed without any notice. It may
+	 * also cause the deployment to behave in an unpredictable fashion. Please use with care.
 	 *
 	 * @param experimental The experimental section definition
 	 * @return this

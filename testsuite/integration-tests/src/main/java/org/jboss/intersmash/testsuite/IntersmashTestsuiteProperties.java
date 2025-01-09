@@ -27,8 +27,9 @@ public class IntersmashTestsuiteProperties {
 	static {
 		properties = new Properties();
 		try {
-			properties
-					.load(IntersmashTestsuiteProperties.class.getClassLoader()
+			properties.load(
+					IntersmashTestsuiteProperties.class
+							.getClassLoader()
 							.getResourceAsStream("intersmash-testsuite.properties"));
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -66,11 +66,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Test the Keycloak Operator provisioning model and APIs
  *
- * See <br>
- *     - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples
- * <p>
- * Not all examples are actually run, but these tests are more about the framework functionality verification than
- * about the Keycloak operator testing.
+ * <p>See <br>
+ * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples
+ *
+ * <p>Not all examples are actually run, but these tests are more about the framework functionality
+ * verification than about the Keycloak operator testing.
  */
 @Slf4j
 @CleanBeforeAll
@@ -105,8 +105,8 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 	private static final PostgreSQLImageOpenShiftProvisioner POSTGRESQL_IMAGE_PROVISIONER = new PostgreSQLImageOpenShiftProvisioner(
 			pgSQLApplication);
 
-	private static KeycloakOpenShiftOperatorProvisioner initializeOperatorProvisioner(final Keycloak keycloak,
-			final String appName) {
+	private static KeycloakOpenShiftOperatorProvisioner initializeOperatorProvisioner(
+			final Keycloak keycloak, final String appName) {
 		KeycloakOpenShiftOperatorProvisioner operatorProvisioner = new KeycloakOpenShiftOperatorProvisioner(
 				new KeycloakOperatorApplication() {
 
@@ -133,8 +133,9 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 		matchLabels.put("app", "sso");
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 	}
 
 	@AfterAll
@@ -149,25 +150,33 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 		if (!Objects.isNull(KEYCLOAK_OPERATOR_PROVISIONER)) {
 			// delete keycloaks
 			KEYCLOAK_OPERATOR_PROVISIONER.keycloakClient().list().getItems().stream()
-					.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-							.keycloakClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+					.map(resource -> resource.getMetadata().getName())
+					.forEach(
+							name -> KEYCLOAK_OPERATOR_PROVISIONER
+									.keycloakClient()
+									.withName(name)
+									.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+									.delete());
 			// delete realms
-			KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmImportClient().list().getItems()
-					.stream()
-					.map(resource -> resource.getMetadata().getName()).forEach(name -> KEYCLOAK_OPERATOR_PROVISIONER
-							.keycloakRealmImportClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
-							.delete());
+			KEYCLOAK_OPERATOR_PROVISIONER.keycloakRealmImportClient().list().getItems().stream()
+					.map(resource -> resource.getMetadata().getName())
+					.forEach(
+							name -> KEYCLOAK_OPERATOR_PROVISIONER
+									.keycloakRealmImportClient()
+									.withName(name)
+									.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+									.delete());
 		}
 	}
 
 	/**
 	 * This test case creates and validates a basic {@link Keycloak} CR
 	 *
-	 * This is not an integration test, the goal here is to assess that the created CRs are configured as per the
-	 * model specification.
+	 * <p>This is not an integration test, the goal here is to assess that the created CRs are
+	 * configured as per the model specification.
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
+	 * <p>See <br>
+	 * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
 	 */
 	@Test
 	public void exampleKeycloakTest() {
@@ -185,9 +194,11 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 		hostname.setHostname(OpenShifts.master().generateHostname(name));
 		// create key, certificate and tls secret: Keycloak expects the secret to be created beforehand
 		String tlsSecretName = name + "-tls-secret";
-		CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils
-				.generateSelfSignedCertificateAndKey(hostname.getHostname().replaceFirst("[.].*$", ""), tlsSecretName,
-						OpenShifts.master().getClient(), OpenShifts.master().getNamespace());
+		CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils.generateSelfSignedCertificateAndKey(
+				hostname.getHostname().replaceFirst("[.].*$", ""),
+				tlsSecretName,
+				OpenShifts.master().getClient(),
+				OpenShifts.master().getNamespace());
 		// add TLS config to keycloak using the secret we just created
 		Http http = new Http();
 		http.setTlsSecret(certificateAndKey.tlsSecret.getMetadata().getName());
@@ -212,12 +223,12 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 	/**
 	 * This test case creates and validates a {@link Keycloak} CR which uses a PostgreSQL database
 	 *
-	 * Using a database is needed if you want to perform any {@link KeycloakRealmImport} import: after the import is
-	 * completed, Keycloak is automatically restarted by the operator and, unless connected to a database, Keycloak
-	 * would lose all the information just imported!
+	 * <p>Using a database is needed if you want to perform any {@link KeycloakRealmImport} import:
+	 * after the import is completed, Keycloak is automatically restarted by the operator and, unless
+	 * connected to a database, Keycloak would lose all the information just imported!
 	 *
-	 * See
-	 * <br> - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
+	 * <p>See <br>
+	 * - https://github.com/keycloak/keycloak-operator/tree/master/deploy/examples/keycloak
 	 */
 	@Test
 	public void exampleKeycloakWithDatabaseTest() {
@@ -239,11 +250,15 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 					spec.setIngress(ingress);
 					Hostname hostname = new Hostname();
 					hostname.setHostname(OpenShifts.master().generateHostname(name));
-					// create key, certificate and tls secret: Keycloak expects the secret to be created beforehand
+					// create key, certificate and tls secret: Keycloak expects the secret to be created
+					// beforehand
 					String tlsSecretName = name + "-tls-secret";
 					CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils
-							.generateSelfSignedCertificateAndKey(hostname.getHostname().replaceFirst("[.].*$", ""),
-									tlsSecretName, OpenShifts.master().getClient(), OpenShifts.master().getNamespace());
+							.generateSelfSignedCertificateAndKey(
+									hostname.getHostname().replaceFirst("[.].*$", ""),
+									tlsSecretName,
+									OpenShifts.master().getClient(),
+									OpenShifts.master().getNamespace());
 					// add TLS config to keycloak using the secret we just created
 					Http http = new Http();
 					http.setTlsSecret(certificateAndKey.tlsSecret.getMetadata().getName());
@@ -317,7 +332,8 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 		verifyKeycloak(keycloak, null, waitForPods);
 	}
 
-	private void verifyKeycloak(Keycloak keycloak, KeycloakRealmImport realmImport, boolean waitForPods) {
+	private void verifyKeycloak(
+			Keycloak keycloak, KeycloakRealmImport realmImport, boolean waitForPods) {
 		NonNamespaceOperation<Keycloak, KeycloakOperatorKeycloakList, Resource<Keycloak>> keycloakClient = KEYCLOAK_OPERATOR_PROVISIONER
 				.keycloakClient();
 		NonNamespaceOperation<KeycloakRealmImport, KeycloakOperatorRealmImportList, Resource<KeycloakRealmImport>> keycloakRealmImportClient = KEYCLOAK_OPERATOR_PROVISIONER
@@ -325,31 +341,37 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 		// create and verify that object exists
 		keycloakClient.createOrReplace(keycloak);
 		KEYCLOAK_OPERATOR_PROVISIONER.waitFor(keycloak);
-		// two pods expected keycloak-0 and keycloak-postgresql-*, keycloak-0 won't start unless keycloak-postgresql-* is ready
+		// two pods expected keycloak-0 and keycloak-postgresql-*, keycloak-0 won't start unless
+		// keycloak-postgresql-* is ready
 		if (waitForPods) {
 			OpenShiftWaiters.get(OpenShifts.master(), () -> false)
-					.areExactlyNPodsReady(keycloak.getSpec().getInstances().intValue(), "app", keycloak.getKind().toLowerCase())
-					.level(Level.DEBUG).waitFor();
+					.areExactlyNPodsReady(
+							keycloak.getSpec().getInstances().intValue(), "app", keycloak.getKind().toLowerCase())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
-		Assertions.assertEquals(keycloak.getSpec().getHostname().getHostname(),
+		Assertions.assertEquals(
+				keycloak.getSpec().getHostname().getHostname(),
 				keycloakClient.withName(name).get().getSpec().getHostname().getHostname());
 		if (!Objects.isNull(keycloak.getSpec().getDb())) {
-			Assertions.assertEquals(keycloak.getSpec().getDb().getHost(),
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getHost(),
 					keycloakClient.withName(name).get().getSpec().getDb().getHost());
-			Assertions.assertEquals(keycloak.getSpec().getDb().getDatabase(),
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getDatabase(),
 					keycloakClient.withName(name).get().getSpec().getDb().getDatabase());
-			Assertions.assertEquals(keycloak.getSpec().getDb().getUsernameSecret().getName(),
-					keycloakClient.withName(name).get().getSpec().getDb().getUsernameSecret()
-							.getName());
-			Assertions.assertEquals(keycloak.getSpec().getDb().getUsernameSecret().getKey(),
-					keycloakClient.withName(name).get().getSpec().getDb().getUsernameSecret()
-							.getKey());
-			Assertions.assertEquals(keycloak.getSpec().getDb().getPasswordSecret().getName(),
-					keycloakClient.withName(name).get().getSpec().getDb().getPasswordSecret()
-							.getName());
-			Assertions.assertEquals(keycloak.getSpec().getDb().getPasswordSecret().getKey(),
-					keycloakClient.withName(name).get().getSpec().getDb().getPasswordSecret()
-							.getKey());
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getUsernameSecret().getName(),
+					keycloakClient.withName(name).get().getSpec().getDb().getUsernameSecret().getName());
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getUsernameSecret().getKey(),
+					keycloakClient.withName(name).get().getSpec().getDb().getUsernameSecret().getKey());
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getPasswordSecret().getName(),
+					keycloakClient.withName(name).get().getSpec().getDb().getPasswordSecret().getName());
+			Assertions.assertEquals(
+					keycloak.getSpec().getDb().getPasswordSecret().getKey(),
+					keycloakClient.withName(name).get().getSpec().getDb().getPasswordSecret().getKey());
 		}
 
 		// import new realm
@@ -359,26 +381,37 @@ public class KeycloakOperatorProvisionerTest implements ProjectCreationCapable {
 			KEYCLOAK_OPERATOR_PROVISIONER.waitFor(keycloak);
 
 			Assertions.assertEquals(
-					keycloakRealmImportClient.withName(realmImport.getMetadata().getName())
-							.get().getSpec().getRealm().getRealm(),
+					keycloakRealmImportClient
+							.withName(realmImport.getMetadata().getName())
+							.get()
+							.getSpec()
+							.getRealm()
+							.getRealm(),
 					realmName);
 
-			keycloakRealmImportClient.withName(realmImport.getMetadata().getName())
+			keycloakRealmImportClient
+					.withName(realmImport.getMetadata().getName())
 					.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 					.delete();
-			new SimpleWaiter(() -> keycloakRealmImportClient.list().getItems()
-					.stream()
-					.noneMatch(ri -> realmImport.getMetadata().getName().equalsIgnoreCase(ri.getMetadata().getName())));
+			new SimpleWaiter(
+					() -> keycloakRealmImportClient.list().getItems().stream()
+							.noneMatch(
+									ri -> realmImport
+											.getMetadata()
+											.getName()
+											.equalsIgnoreCase(ri.getMetadata().getName())));
 		}
 
 		// delete and verify that object was removed
-		keycloakClient.withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
-				.delete();
-		new SimpleWaiter(() -> keycloakClient.list().getItems().size() == 0).level(Level.DEBUG)
+		keycloakClient.withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
+		new SimpleWaiter(() -> keycloakClient.list().getItems().size() == 0)
+				.level(Level.DEBUG)
 				.waitFor();
 		if (waitForPods) {
 			OpenShiftWaiters.get(OpenShifts.master(), () -> false)
-					.areExactlyNPodsReady(0, "app", keycloak.getKind().toLowerCase()).level(Level.DEBUG).waitFor();
+					.areExactlyNPodsReady(0, "app", keycloak.getKind().toLowerCase())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 }

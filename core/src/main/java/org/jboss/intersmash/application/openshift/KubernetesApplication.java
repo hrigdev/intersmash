@@ -20,8 +20,9 @@ import org.jboss.intersmash.application.Application;
 /**
  * Interface representing the Application on Kubernetes.
  *
- * This interface is not supposed to be implemented by user Applications. See the "Mapping of implemented provisioners"
- * section of Intersmash README.md file for the up-to-date list of supported end users Applications.
+ * <p>This interface is not supposed to be implemented by user Applications. See the "Mapping of
+ * implemented provisioners" section of Intersmash README.md file for the up-to-date list of
+ * supported end users Applications.
  */
 public interface KubernetesApplication extends Application {
 }

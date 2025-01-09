@@ -25,15 +25,18 @@ import org.jboss.intersmash.provision.openshift.HyperfoilOpenShiftOperatorProvis
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class HyperfoilOperatorProvisionerFactory implements ProvisionerFactory<HyperfoilOperatorProvisioner> {
+public class HyperfoilOperatorProvisionerFactory
+		implements ProvisionerFactory<HyperfoilOperatorProvisioner> {
 
 	@Override
 	public HyperfoilOperatorProvisioner getProvisioner(Application application) {
 		if (HyperfoilOperatorApplication.class.isAssignableFrom(application.getClass())) {
 			if (OpenShiftApplication.class.isAssignableFrom(application.getClass())) {
-				return new HyperfoilOpenShiftOperatorProvisioner((HyperfoilOperatorApplication) application);
+				return new HyperfoilOpenShiftOperatorProvisioner(
+						(HyperfoilOperatorApplication) application);
 			} else {
-				return new HyperfoilKubernetesOperatorProvisioner((HyperfoilOperatorApplication) application);
+				return new HyperfoilKubernetesOperatorProvisioner(
+						(HyperfoilOperatorApplication) application);
 			}
 		}
 		return null;

@@ -43,9 +43,7 @@ import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
 import lombok.NonNull;
 
-/**
- * Keycloak operator provisioner
- */
+/** Keycloak operator provisioner */
 @Deprecated(since = "0.0.2")
 public class RhSsoOpenShiftOperatorProvisioner
 		// leverage Red Hat SSO common Operator based provisioner behavior
@@ -75,12 +73,11 @@ public class RhSsoOpenShiftOperatorProvisioner
 		if (Strings.isNullOrEmpty(IntersmashConfig.rhSsoImageURL())) {
 			super.subscribe();
 		} else {
-			// RELATED_IMAGE_RHSSO_OPENJ9 and RELATED_IMAGE_RHSSO_OPENJDK, determine the final value for RELATED_IMAGE_RHSSO
+			// RELATED_IMAGE_RHSSO_OPENJ9 and RELATED_IMAGE_RHSSO_OPENJDK, determine the final value for
+			// RELATED_IMAGE_RHSSO
 			subscribe(
 					INSTALLPLAN_APPROVAL_MANUAL,
-					Map.of(
-							"RELATED_IMAGE_RHSSO", IntersmashConfig.rhSsoImageURL(),
-							"PROFILE", "RHSSO"));
+					Map.of("RELATED_IMAGE_RHSSO", IntersmashConfig.rhSsoImageURL(), "PROFILE", "RHSSO"));
 		}
 	}
 
@@ -95,35 +92,34 @@ public class RhSsoOpenShiftOperatorProvisioner
 	@Override
 	public HasMetadataOperationsImpl<Keycloak, KeycloakList> keycloakCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, Keycloak.class, KeycloakList.class);
+		return OpenShifts.master().newHasMetadataOperation(crdc, Keycloak.class, KeycloakList.class);
 	}
 
 	@Override
 	public HasMetadataOperationsImpl<KeycloakRealm, KeycloakRealmList> keycloakRealmCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, KeycloakRealm.class, KeycloakRealmList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, KeycloakRealm.class, KeycloakRealmList.class);
 	}
 
 	@Override
 	public HasMetadataOperationsImpl<KeycloakClient, KeycloakClientList> keycloakClientCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, KeycloakClient.class, KeycloakClientList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, KeycloakClient.class, KeycloakClientList.class);
 	}
 
 	@Override
 	public HasMetadataOperationsImpl<KeycloakBackup, KeycloakBackupList> keycloakBackupCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, KeycloakBackup.class, KeycloakBackupList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, KeycloakBackup.class, KeycloakBackupList.class);
 	}
 
 	@Override
 	public HasMetadataOperationsImpl<KeycloakUser, KeycloakUserList> keycloakUserCustomResourcesClient(
 			CustomResourceDefinitionContext crdc) {
-		return OpenShifts
-				.master().newHasMetadataOperation(crdc, KeycloakUser.class, KeycloakUserList.class);
+		return OpenShifts.master()
+				.newHasMetadataOperation(crdc, KeycloakUser.class, KeycloakUserList.class);
 	}
 }

@@ -23,11 +23,11 @@ public final class KeycloakCredentialBuilder {
 	private boolean temporary;
 
 	/**
-	* Credential Type.
+	 * Credential Type.
 	 *
 	 * @param type The credential type
 	 * @return this
-	*/
+	 */
 	public KeycloakCredentialBuilder type(String type) {
 		this.type = type;
 		return this;

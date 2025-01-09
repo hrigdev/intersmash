@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 import org.junit.jupiter.api.Tag;
 
 /**
- * Mark a test that requires a WildFly Bootable JAR capable distribution, i.e. either WildFly itself or JBoss EAP XP.
- * Used per class.
+ * Mark a test that requires a WildFly Bootable JAR capable distribution, i.e. either WildFly itself
+ * or JBoss EAP XP. Used per class.
  */
 @Tag("ts.wildfly.requires-bootable-jar")
 @Retention(RetentionPolicy.RUNTIME)

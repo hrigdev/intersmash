@@ -22,100 +22,60 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-		"phase",
-		"metric",
-		"message",
-		"start",
-		"end",
-		"percentileResponseTime"
-})
+@JsonPropertyOrder({ "phase", "metric", "message", "start", "end", "percentileResponseTime" })
 @Generated("jsonschema2pojo")
 public class Failure {
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("phase")
 	private String phase;
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("metric")
 	private String metric;
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("message")
 	private String message;
+
 	@JsonProperty("start")
 	private Long start;
+
 	@JsonProperty("end")
 	private Long end;
+
 	@JsonProperty("percentileResponseTime")
 	private Percentiles__1 percentileResponseTime;
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("phase")
 	public String getPhase() {
 		return phase;
 	}
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("phase")
 	public void setPhase(String phase) {
 		this.phase = phase;
 	}
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("metric")
 	public String getMetric() {
 		return metric;
 	}
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("metric")
 	public void setMetric(String metric) {
 		this.metric = metric;
 	}
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("message")
 	public String getMessage() {
 		return message;
 	}
 
-	/**
-	 *
-	 * (Required)
-	 *
-	 */
+	/** (Required) */
 	@JsonProperty("message")
 	public void setMessage(String message) {
 		this.message = message;
@@ -150,5 +110,4 @@ public class Failure {
 	public void setPercentileResponseTime(Percentiles__1 percentileResponseTime) {
 		this.percentileResponseTime = percentileResponseTime;
 	}
-
 }

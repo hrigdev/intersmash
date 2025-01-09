@@ -21,7 +21,7 @@ public final class HyperfoilBuilder {
 	private final String name;
 	private final String version;
 
-	//TODO: complete with all hyperfoil ino
+	// TODO: complete with all hyperfoil ino
 
 	/**
 	 * Initialize the {@link HyperfoilBuilder} with given resource name.

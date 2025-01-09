@@ -24,5 +24,4 @@ public interface GitSourceBuilder {
 	GitSourceBuilder contextDir(String contextDir);
 
 	BuildInput build();
-
 }

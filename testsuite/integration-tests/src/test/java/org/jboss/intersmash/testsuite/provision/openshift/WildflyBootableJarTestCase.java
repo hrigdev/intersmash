@@ -56,18 +56,23 @@ public class WildflyBootableJarTestCase implements ProjectCreationCapable {
 	@Test
 	public void verifyOpenShiftConfiguration() {
 		// environmentVariables
-		Assertions
-				.assertThat(BuildManagers.get().openShift().getBuildConfig(application.getName()).getSpec().getStrategy()
-						.getSourceStrategy().getEnv())
-				.as("Environment variable test").contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
+		Assertions.assertThat(
+				BuildManagers.get()
+						.openShift()
+						.getBuildConfig(application.getName())
+						.getSpec()
+						.getStrategy()
+						.getSourceStrategy()
+						.getEnv())
+				.as("Environment variable test")
+				.contains(OpenShiftProvisionerTestBase.TEST_ENV_VAR);
 	}
 
-	/**
-	 * Secret resource should be created as a preDeploy() operation by a provisioner.
-	 */
+	/** Secret resource should be created as a preDeploy() operation by a provisioner. */
 	@Test
 	public void verifyDeployHooks() {
-		Assertions.assertThat(openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
+		Assertions.assertThat(
+				openShift.getSecret(OpenShiftProvisionerTestBase.TEST_SECRET.getMetadata().getName()))
 				.isNotNull();
 	}
 

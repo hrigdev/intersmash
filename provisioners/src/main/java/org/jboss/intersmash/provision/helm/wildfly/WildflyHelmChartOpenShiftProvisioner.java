@@ -25,24 +25,28 @@ import cz.xtf.core.image.Image;
 import cz.xtf.core.openshift.OpenShifts;
 import lombok.NonNull;
 
-/**
- * An OpenShift provisioner that can provision WildFly applications through Wildfly Helm Charts.
- */
-public class WildflyHelmChartOpenShiftProvisioner extends HelmChartOpenShiftProvisioner<WildflyHelmChartOpenShiftApplication> {
+/** An OpenShift provisioner that can provision WildFly applications through Wildfly Helm Charts. */
+public class WildflyHelmChartOpenShiftProvisioner
+		extends HelmChartOpenShiftProvisioner<WildflyHelmChartOpenShiftApplication> {
 
 	private static final String RUNTIME_IMAGE_STREAM_TAG = "latest";
 	private static final String BUILDER_IMAGE_STREAM_TAG = "latest";
 
-	public WildflyHelmChartOpenShiftProvisioner(@NonNull WildflyHelmChartOpenShiftApplication application) {
+	public WildflyHelmChartOpenShiftProvisioner(
+			@NonNull WildflyHelmChartOpenShiftApplication application) {
 		super(application);
 	}
 
 	@Override
 	public void preDeploy() {
 		super.preDeploy();
-		WildflyOpenShiftUtils.createImageStream(this.getApplication().getBuilderImage(), computeBuilderImageStreamName(),
+		WildflyOpenShiftUtils.createImageStream(
+				this.getApplication().getBuilderImage(),
+				computeBuilderImageStreamName(),
 				BUILDER_IMAGE_STREAM_TAG);
-		WildflyOpenShiftUtils.createImageStream(this.getApplication().getRuntimeImage(), computeRuntimeImageStreamName(),
+		WildflyOpenShiftUtils.createImageStream(
+				this.getApplication().getRuntimeImage(),
+				computeRuntimeImageStreamName(),
 				RUNTIME_IMAGE_STREAM_TAG);
 	}
 
@@ -56,12 +60,14 @@ public class WildflyHelmChartOpenShiftProvisioner extends HelmChartOpenShiftProv
 
 	@Override
 	public void postUndeploy() {
-		OpenShifts.master().deleteImageStream(
-				Image.from(this.getApplication().getRuntimeImage()).getImageStream(computeRuntimeImageStreamName(),
-						RUNTIME_IMAGE_STREAM_TAG));
-		OpenShifts.master().deleteImageStream(
-				Image.from(this.getApplication().getBuilderImage()).getImageStream(computeBuilderImageStreamName(),
-						BUILDER_IMAGE_STREAM_TAG));
+		OpenShifts.master()
+				.deleteImageStream(
+						Image.from(this.getApplication().getRuntimeImage())
+								.getImageStream(computeRuntimeImageStreamName(), RUNTIME_IMAGE_STREAM_TAG));
+		OpenShifts.master()
+				.deleteImageStream(
+						Image.from(this.getApplication().getBuilderImage())
+								.getImageStream(computeBuilderImageStreamName(), BUILDER_IMAGE_STREAM_TAG));
 		super.postUndeploy();
 	}
 
@@ -72,9 +78,7 @@ public class WildflyHelmChartOpenShiftProvisioner extends HelmChartOpenShiftProv
 				.level(Level.DEBUG)
 				.waitFor();
 		if (replicas > 0) {
-			WaitersUtil.routeIsUp(getUrl(application.getName(), false))
-					.level(Level.DEBUG)
-					.waitFor();
+			WaitersUtil.routeIsUp(getUrl(application.getName(), false)).level(Level.DEBUG).waitFor();
 		}
 	}
 }

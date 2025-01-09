@@ -16,14 +16,23 @@
 package io.hyperfoil.v1alpha2;
 
 @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({ "agentDeployTimeout", "auth", "image", "log", "persistentVolumeClaim",
-		"postHooks", "preHooks", "route", "secretEnvVars", "triggerUrl", "version" })
+@com.fasterxml.jackson.annotation.JsonPropertyOrder({
+		"agentDeployTimeout",
+		"auth",
+		"image",
+		"log",
+		"persistentVolumeClaim",
+		"postHooks",
+		"preHooks",
+		"route",
+		"secretEnvVars",
+		"triggerUrl",
+		"version"
+})
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
-	/**
-	 * Deploy timeout for agents, in milliseconds.
-	 */
+	/** Deploy timeout for agents, in milliseconds. */
 	@com.fasterxml.jackson.annotation.JsonProperty("agentDeployTimeout")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Deploy timeout for agents, in milliseconds.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -37,9 +46,7 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 		this.agentDeployTimeout = agentDeployTimeout;
 	}
 
-	/**
-	 * Authentication/authorization settings.
-	 */
+	/** Authentication/authorization settings. */
 	@com.fasterxml.jackson.annotation.JsonProperty("auth")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Authentication/authorization settings.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -54,7 +61,8 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 	}
 
 	/**
-	 * Controller image. If 'version' is defined, too, the tag is replaced (or appended). Defaults to 'quay.io/hyperfoil/hyperfoil'
+	 * Controller image. If 'version' is defined, too, the tag is replaced (or appended). Defaults to
+	 * 'quay.io/hyperfoil/hyperfoil'
 	 */
 	@com.fasterxml.jackson.annotation.JsonProperty("image")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Controller image. If 'version' is defined, too, the tag is replaced (or appended). Defaults to 'quay.io/hyperfoil/hyperfoil'")
@@ -70,7 +78,9 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 	}
 
 	/**
-	 * Name of the config map and optionally its entry (separated by '/': e.g myconfigmap/log4j2-superverbose.xml) storing Log4j2 configuration file. By default the Controller uses its embedded configuration.
+	 * Name of the config map and optionally its entry (separated by '/': e.g
+	 * myconfigmap/log4j2-superverbose.xml) storing Log4j2 configuration file. By default the
+	 * Controller uses its embedded configuration.
 	 */
 	@com.fasterxml.jackson.annotation.JsonProperty("log")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Name of the config map and optionally its entry (separated by '/': e.g myconfigmap/log4j2-superverbose.xml) storing Log4j2 configuration file. By default the Controller uses its embedded configuration.")
@@ -85,9 +95,7 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 		this.log = log;
 	}
 
-	/**
-	 * Name of the PVC hyperfoil should mount for its workdir.
-	 */
+	/** Name of the PVC hyperfoil should mount for its workdir. */
 	@com.fasterxml.jackson.annotation.JsonProperty("persistentVolumeClaim")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Name of the PVC hyperfoil should mount for its workdir.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -102,7 +110,8 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 	}
 
 	/**
-	 * Names of config maps and optionally keys (separated by '/') holding hooks that run after the run finishes.
+	 * Names of config maps and optionally keys (separated by '/') holding hooks that run after the
+	 * run finishes.
 	 */
 	@com.fasterxml.jackson.annotation.JsonProperty("postHooks")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Names of config maps and optionally keys (separated by '/') holding hooks that run after the run finishes.")
@@ -118,7 +127,8 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 	}
 
 	/**
-	 * Names of config maps and optionally keys (separated by '/') holding hooks that run before the run starts.
+	 * Names of config maps and optionally keys (separated by '/') holding hooks that run before the
+	 * run starts.
 	 */
 	@com.fasterxml.jackson.annotation.JsonProperty("preHooks")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Names of config maps and optionally keys (separated by '/') holding hooks that run before the run starts.")
@@ -133,9 +143,7 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 		this.preHooks = preHooks;
 	}
 
-	/**
-	 * Specification of the exposed route.
-	 */
+	/** Specification of the exposed route. */
 	@com.fasterxml.jackson.annotation.JsonProperty("route")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Specification of the exposed route.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -150,7 +158,8 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 	}
 
 	/**
-	 * List of secrets in this namespace; each entry from those secrets will be mapped as environment variable, using the key as variable name.
+	 * List of secrets in this namespace; each entry from those secrets will be mapped as environment
+	 * variable, using the key as variable name.
 	 */
 	@com.fasterxml.jackson.annotation.JsonProperty("secretEnvVars")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("List of secrets in this namespace; each entry from those secrets will be mapped as environment variable, using the key as variable name.")
@@ -178,9 +187,7 @@ public class HyperfoilSpec implements io.fabric8.kubernetes.api.model.Kubernetes
 		this.triggerUrl = triggerUrl;
 	}
 
-	/**
-	 * Tag for controller image. Defaults to version matching the operator version.
-	 */
+	/** Tag for controller image. Defaults to version matching the operator version. */
 	@com.fasterxml.jackson.annotation.JsonProperty("version")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Tag for controller image. Defaults to version matching the operator version.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)

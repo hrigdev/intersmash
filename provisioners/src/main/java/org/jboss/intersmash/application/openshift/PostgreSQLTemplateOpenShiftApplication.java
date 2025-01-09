@@ -1,23 +1,39 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.application.openshift;
 
 import org.jboss.intersmash.application.openshift.template.PostgreSQLTemplate;
 import org.jboss.intersmash.provision.openshift.PostgreSQLTemplateOpenShiftProvisioner;
 
 /**
- * End user Application interface which presents PostgreSQL template application on OpenShift Container Platform.
+ * End user Application interface which presents PostgreSQL template application on OpenShift
+ * Container Platform.
  *
- * See {@link PostgreSQLTemplate} for available templates the
- * application can represent.
+ * <p>See {@link PostgreSQLTemplate} for available templates the application can represent.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link PostgreSQLTemplateOpenShiftProvisioner}</li>
+ *   <li>{@link PostgreSQLTemplateOpenShiftProvisioner}
  * </ul>
  */
-public interface PostgreSQLTemplateOpenShiftApplication extends DBTemplateOpenShiftApplication<PostgreSQLTemplate> {
+public interface PostgreSQLTemplateOpenShiftApplication
+		extends DBTemplateOpenShiftApplication<PostgreSQLTemplate> {
 
 	default String getName() {
 		return "postgresql";
 	}
-
 }

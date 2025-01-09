@@ -43,8 +43,9 @@ import io.fabric8.kubernetes.client.dsl.base.CustomResourceDefinitionContext;
 import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 import lombok.NonNull;
 
-public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<WildflyOperatorApplication, C> implements Provisioner<WildflyOperatorApplication> {
+public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<WildflyOperatorApplication, C>
+		implements Provisioner<WildflyOperatorApplication> {
 
 	public WildflyOperatorProvisioner(@NonNull WildflyOperatorApplication application) {
 		super(application, OPERATOR_ID);
@@ -59,22 +60,27 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 	public List<Pod> getPods() {
 		final List<Pod> pods = super.getPods();
 		final WildFlyServer wildFlyServer = wildFlyServer().get();
-		final List<String> activeOperatorPodNames = wildFlyServer == null ? List.of()
+		final List<String> activeOperatorPodNames = wildFlyServer == null
+				? List.of()
 				: wildFlyServer().get().getStatus().getPods().stream()
 						.filter(podStatus -> podStatus.getState().equals(Pods.State.ACTIVE))
 						.map(Pods::getName)
 						.collect(Collectors.toList());
 		return pods.stream()
 				.filter(pod -> activeOperatorPodNames.contains(pod.getMetadata().getName()))
-				.filter(pod -> pod.getStatus().getContainerStatuses().size() > 0
-						&& pod.getStatus().getContainerStatuses().get(0).getReady())
+				.filter(
+						pod -> pod.getStatus().getContainerStatuses().size() > 0
+								&& pod.getStatus().getContainerStatuses().get(0).getReady())
 				.collect(Collectors.toList());
-
 	}
 
-	protected void waitForExactNumberOfLabeledPodsToBeReady(final String labelName, final String labelValue, int replicas) {
+	protected void waitForExactNumberOfLabeledPodsToBeReady(
+			final String labelName, final String labelValue, int replicas) {
 		BooleanSupplier bs = () -> getLabeledPods(labelName, labelValue).size() == replicas;
-		new SimpleWaiter(bs, TimeUnit.MINUTES, 2,
+		new SimpleWaiter(
+				bs,
+				TimeUnit.MINUTES,
+				2,
 				"Waiting for pods with label \"" + labelName + "\"=" + labelValue + " to be ready")
 				.waitFor();
 	}
@@ -103,7 +109,8 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 		try {
 			return new URL(url);
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(String.format("WILDFLY operator route \"%s\"is malformed.", url), e);
+			throw new RuntimeException(
+					String.format("WILDFLY operator route \"%s\"is malformed.", url), e);
 		}
 	}
 
@@ -123,8 +130,7 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 				.level(Level.DEBUG)
 				.waitFor();
 		if (getApplication().getWildflyServer().getSpec().getReplicas() > 0) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
@@ -140,12 +146,10 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 		tmpServer.getSpec().setReplicas(replicas);
 		wildFlyServer().replace(tmpServer);
 		if (wait) {
-			new SimpleWaiter(() -> this.getPods().size() == replicas)
-					.level(Level.DEBUG).waitFor();
+			new SimpleWaiter(() -> this.getPods().size() == replicas).level(Level.DEBUG).waitFor();
 		}
 		if (originalReplicas == 0 && replicas > 0) {
-			new SimpleWaiter(
-					() -> Https.getCode(getURL().toExternalForm()) != 503)
+			new SimpleWaiter(() -> Https.getCode(getURL().toExternalForm()) != 503)
 					.reason("Wait until the route is ready to serve.");
 		}
 	}
@@ -153,7 +157,8 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 	@Override
 	public void undeploy() {
 		wildFlyServer().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
-		waitForExactNumberOfLabeledPodsToBeReady("app.kubernetes.io/name", getApplication().getName(), 0);
+		waitForExactNumberOfLabeledPodsToBeReady(
+				"app.kubernetes.io/name", getApplication().getName(), 0);
 		unsubscribe();
 	}
 
@@ -172,7 +177,8 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 	private static NonNamespaceOperation<WildFlyServer, WildFlyServerList, Resource<WildFlyServer>> WILDFLY_SERVERS_CLIENT;
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -189,11 +195,12 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 	 */
 	public NonNamespaceOperation<WildFlyServer, WildFlyServerList, Resource<WildFlyServer>> wildflyServerClient() {
 		if (WILDFLY_SERVERS_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(WILDFLY_SERVER_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(WILDFLY_SERVER_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						WILDFLY_SERVER_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								WILDFLY_SERVER_CRD_NAME, OPERATOR_ID));
 			}
 			WILDFLY_SERVERS_CLIENT = wildflyCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -201,9 +208,11 @@ public abstract class WildflyOperatorProvisioner<C extends NamespacedKubernetesC
 	}
 
 	/**
-	 * Get a reference to wildFlyServer object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
-	 * @return A concrete {@link Resource} instance representing the {@link WildFlyServer} resource definition
+	 * Get a reference to wildFlyServer object. Use get() to get the actual object, or null in case it
+	 * does not exist on tested cluster.
+	 *
+	 * @return A concrete {@link Resource} instance representing the {@link WildFlyServer} resource
+	 *     definition
 	 */
 	public Resource<WildFlyServer> wildFlyServer() {
 		return wildflyServerClient().withName(getApplication().getName());

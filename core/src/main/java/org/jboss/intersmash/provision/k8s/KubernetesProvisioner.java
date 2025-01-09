@@ -31,10 +31,9 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClient;
 import io.fabric8.kubernetes.client.NamespacedKubernetesClientAdapter;
 
-/**
- * Provisioner that is supposed to deploy an application on Kubernetes.
- */
-public interface KubernetesProvisioner<T extends Application> extends Provisioner<T>, Scalable, HasPods {
+/** Provisioner that is supposed to deploy an application on Kubernetes. */
+public interface KubernetesProvisioner<T extends Application>
+		extends Provisioner<T>, Scalable, HasPods {
 
 	Kubernetes kubernetes = Kuberneteses.master();
 
@@ -54,7 +53,9 @@ public interface KubernetesProvisioner<T extends Application> extends Provisione
 		}
 		// create configMaps
 		if (HasConfigMaps.class.isAssignableFrom(getApplication().getClass())) {
-			((HasConfigMaps) getApplication()).getConfigMaps().forEach(c -> kubernetes.configMaps().create(c));
+			((HasConfigMaps) getApplication())
+					.getConfigMaps()
+					.forEach(c -> kubernetes.configMaps().create(c));
 		}
 	}
 
@@ -66,14 +67,21 @@ public interface KubernetesProvisioner<T extends Application> extends Provisione
 		}
 		// delete configMaps
 		if (HasConfigMaps.class.isAssignableFrom(getApplication().getClass())) {
-			((HasConfigMaps) getApplication()).getConfigMaps().forEach(c -> kubernetes.configMaps().delete(c));
+			((HasConfigMaps) getApplication())
+					.getConfigMaps()
+					.forEach(c -> kubernetes.configMaps().delete(c));
 		}
 	}
 
 	// TODO - check (use a static class method like XTF OpenShift::generateHostName ?)
 	default String getUrl(String routeName, boolean secure) {
 		String protocol = secure ? "https" : "http";
-		return protocol + "://" + kubernetes.getMasterUrl() + "-" + routeName + "-"
+		return protocol
+				+ "://"
+				+ kubernetes.getMasterUrl()
+				+ "-"
+				+ routeName
+				+ "-"
 				+ kubernetes.getConfiguration().getNamespace();
 	}
 
@@ -83,13 +91,18 @@ public interface KubernetesProvisioner<T extends Application> extends Provisione
 			return new URL(getUrl(getApplication().getName(), false));
 		} catch (MalformedURLException ex) {
 			throw new RuntimeException(
-					String.format("Failed to get an URL for the \"%s\" route", this.getClass().getSimpleName()), ex);
+					String.format(
+							"Failed to get an URL for the \"%s\" route", this.getClass().getSimpleName()),
+					ex);
 		}
 	}
 
 	@Override
 	default List<Pod> getPods() {
-		return KubernetesProvisioner.kubernetes.pods().inNamespace(KubernetesProvisioner.kubernetes.getNamespace()).list()
+		return KubernetesProvisioner.kubernetes
+				.pods()
+				.inNamespace(KubernetesProvisioner.kubernetes.getNamespace())
+				.list()
 				.getItems();
 	}
 }

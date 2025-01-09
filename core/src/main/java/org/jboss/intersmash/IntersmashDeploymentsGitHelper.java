@@ -37,23 +37,26 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Use the JGit to read the current remote and branch so we can set it dynamically in the test job without need to
- * explicitly change to test remote/branch via additional parameters (this might be required once we split everything
- * into a multiple git repositories, but we can utilize that for now).
+ * Use the JGit to read the current remote and branch so we can set it dynamically in the test job
+ * without need to explicitly change to test remote/branch via additional parameters (this might be
+ * required once we split everything into a multiple git repositories, but we can utilize that for
+ * now).
  *
- * The class is not supposed to be used outside the {@link IntersmashConfig#deploymentsRepositoryUrl()} and
- * {@link IntersmashConfig#deploymentsRepositoryRef()} methods!
+ * <p>The class is not supposed to be used outside the {@link
+ * IntersmashConfig#deploymentsRepositoryUrl()} and {@link
+ * IntersmashConfig#deploymentsRepositoryRef()} methods!
  *
- * WARNING: This one becomes obsolete once we split the current repository structure (move the deployments into different repository).
+ * <p>WARNING: This one becomes obsolete once we split the current repository structure (move the
+ * deployments into different repository).
  *
- * See https://www.vogella.com/tutorials/JGit/article.html for more examples with JGit.
+ * <p>See https://www.vogella.com/tutorials/JGit/article.html for more examples with JGit.
  */
 @Slf4j
 class IntersmashDeploymentsGitHelper {
 	private static final String URL_TEMPLATE = "https://%s/%s/%s";
-	private final static String DEFAULT_HOST = "github.com";
+	private static final String DEFAULT_HOST = "github.com";
 	private static final String DEFAULT_REMOTE = "Intersmash";
-	private final static String DEFAULT_REPOSITORY = "intersmash.git";
+	private static final String DEFAULT_REPOSITORY = "intersmash.git";
 	private static final String DEFAULT_URL = getRepositoryUrl(DEFAULT_HOST, DEFAULT_REMOTE, DEFAULT_REPOSITORY);
 	private static final String DEFAULT_BRANCH = "main";
 	private static String reference;
@@ -64,7 +67,8 @@ class IntersmashDeploymentsGitHelper {
 	}
 
 	// TODO
-	// WARNING: This one becomes obsolete once we split the current repository structure (move the deployments into different repository).
+	// WARNING: This one becomes obsolete once we split the current repository structure (move the
+	// deployments into different repository).
 	static {
 		// Try to find a git repository located in Intersmash root folder
 		Optional<File> gitDir = findGit();
@@ -86,7 +90,9 @@ class IntersmashDeploymentsGitHelper {
 				log.debug("Failed to dynamically set the tested repository url and reference", e);
 				setDefaults();
 			} catch (URISyntaxException e) {
-				log.debug("Failed to dynamically set the tested repository url and reference: invalid remote URI", e);
+				log.debug(
+						"Failed to dynamically set the tested repository url and reference: invalid remote URI",
+						e);
 				setDefaults();
 			}
 		} else {
@@ -98,20 +104,22 @@ class IntersmashDeploymentsGitHelper {
 	// Jenkins git plugin creates a detached state, try to read the remote from FETCH_HEAD file
 	private static void getRepoFromFetchHeadFile(File gitDir, String branch) throws IOException {
 		File fetchHeadFile = new File(gitDir, "FETCH_HEAD");
-		Optional<String> fetchHead = Arrays
-				.stream(FileUtils.readFileToString(fetchHeadFile, Charset.defaultCharset())
+		Optional<String> fetchHead = Arrays.stream(
+				FileUtils.readFileToString(fetchHeadFile, Charset.defaultCharset())
 						.split(System.lineSeparator()))
-				.filter(s -> s.startsWith(branch)).findFirst();
+				.filter(s -> s.startsWith(branch))
+				.findFirst();
 		if (fetchHead.isPresent()) {
-			// fetchHead example: "10d5068820c8ee2fc4eb51fa72b31a641cf1d6c0		branch 'xtf-0.18' of github.com:Intersmash/intersmash"
+			// fetchHead example: "10d5068820c8ee2fc4eb51fa72b31a641cf1d6c0		branch 'xtf-0.18' of
+			// github.com:Intersmash/intersmash"
 			String regex = "'(.+)' of .+:(.+)/intersmash";
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(fetchHead.get());
 			if (matcher.find() && matcher.groupCount() == 2) {
 				reference = matcher.group(1);
 				url = getRepositoryUrl(DEFAULT_HOST, matcher.group(2), DEFAULT_REPOSITORY);
-				log.debug("Dynamic deployments repository setup from FETCH_HEAD file: {} at {}", reference,
-						url);
+				log.debug(
+						"Dynamic deployments repository setup from FETCH_HEAD file: {} at {}", reference, url);
 			} else {
 				log.debug("Failed to parse the FETCH_HEAD file");
 				setDefaults();
@@ -139,20 +147,23 @@ class IntersmashDeploymentsGitHelper {
 	}
 
 	private static void setDefaults() {
-		log.warn("Fallback to default deployments repository configuration: {} at {}", DEFAULT_BRANCH,
+		log.warn(
+				"Fallback to default deployments repository configuration: {} at {}",
+				DEFAULT_BRANCH,
 				DEFAULT_URL);
 		reference = DEFAULT_BRANCH;
 		url = DEFAULT_URL;
 	}
 
 	/**
-	 * Look for a remote branch reference. These should not be a problem for CI, but users could use have some crazy
-	 * stuff locally, lets try to handle that as well.
+	 * Look for a remote branch reference. These should not be a problem for CI, but users could use
+	 * have some crazy stuff locally, lets try to handle that as well.
 	 *
-	 * @return {@code null} in case we cannot determine a unambiguous remote reference for the current local repository
-	 * state (current branch).
+	 * @return {@code null} in case we cannot determine a unambiguous remote reference for the current
+	 *     local repository state (current branch).
 	 */
-	private static String getRepositoryUrl(Repository repository) throws IOException, URISyntaxException {
+	private static String getRepositoryUrl(Repository repository)
+			throws IOException, URISyntaxException {
 		String branch = repository.getBranch();
 		List<String> references = repository.getRefDatabase().getRefs().stream()
 				.map(Ref::getName)
@@ -161,18 +172,24 @@ class IntersmashDeploymentsGitHelper {
 				.collect(Collectors.toList());
 		// current branch exist only locally, now way templates can use it
 		if (references.size() == 0) {
-			log.warn("Cannot find a remote branch references for the current branch \"{}\". You need to push it " +
-					"to remote otherwise it cannot be used with templates.", branch);
+			log.warn(
+					"Cannot find a remote branch references for the current branch \"{}\". You need to push it "
+							+ "to remote otherwise it cannot be used with templates.",
+					branch);
 			return null;
-			// multiple remote references for the current branch (e.g. origin/main, user/main), cannot decide, fallback
+			// multiple remote references for the current branch (e.g. origin/main, user/main), cannot
+			// decide, fallback
 		} else if (references.size() > 1) {
-			log.warn("More than one remote branch references exist ({}) for the current branch \"{}\". Intersmash cannot " +
-					"determine which one to use. See intersmash.deployments.repository.* configuration properties to set " +
-					"the deployments repository manually.",
-					references.toString(), branch);
+			log.warn(
+					"More than one remote branch references exist ({}) for the current branch \"{}\". Intersmash cannot "
+							+ "determine which one to use. See intersmash.deployments.repository.* configuration properties to set "
+							+ "the deployments repository manually.",
+					references.toString(),
+					branch);
 			if (branch.equals("main")) {
-				log.info("Please do not use the main branch for extensive development. See set of " +
-						"intersmash.deployments.repository.* configuration properties in case you need to.");
+				log.info(
+						"Please do not use the main branch for extensive development. See set of "
+								+ "intersmash.deployments.repository.* configuration properties in case you need to.");
 			}
 			return null;
 		} else {
@@ -185,8 +202,10 @@ class IntersmashDeploymentsGitHelper {
 			// we expect a single URI
 			String[] pathTokens = remoteConfig.getURIs().get(0).getPath().split("/");
 			if (pathTokens.length != 2) {
-				throw new RuntimeException(String.format("Unexpected path '%s' in URI '%s' of git remote ref '%s'",
-						remoteConfig.getURIs().get(0).getPath(), remoteConfig.getURIs().get(0), remote));
+				throw new RuntimeException(
+						String.format(
+								"Unexpected path '%s' in URI '%s' of git remote ref '%s'",
+								remoteConfig.getURIs().get(0).getPath(), remoteConfig.getURIs().get(0), remote));
 			}
 			// the URI must be converted in the HTTPS format
 			String repositoryUrl = getRepositoryUrl(remoteConfig.getURIs().get(0).getHost(), pathTokens[0], pathTokens[1]);

@@ -26,14 +26,17 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 import io.fabric8.kubernetes.api.model.Secret;
 
 /**
- * End user Application interface which presents WILDFLY bootable jar application on OpenShift Container Platform.
+ * End user Application interface which presents WILDFLY bootable jar application on OpenShift
+ * Container Platform.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link WildflyBootableJarImageOpenShiftProvisioner}</li>
+ *   <li>{@link WildflyBootableJarImageOpenShiftProvisioner}
  * </ul>
  */
-public interface BootableJarOpenShiftApplication extends OpenShiftApplication, HasSecrets, HasEnvVars {
+public interface BootableJarOpenShiftApplication
+		extends OpenShiftApplication, HasSecrets, HasEnvVars {
 
 	BinarySource getBuildInput();
 

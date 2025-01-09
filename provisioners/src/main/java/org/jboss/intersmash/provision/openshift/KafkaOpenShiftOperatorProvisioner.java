@@ -29,8 +29,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Deploys an application that implements {@link KafkaOperatorApplication} interface and which is extended by this
- * class.
+ * Deploys an application that implements {@link KafkaOperatorApplication} interface and which is
+ * extended by this class.
  */
 @Slf4j
 public class KafkaOpenShiftOperatorProvisioner

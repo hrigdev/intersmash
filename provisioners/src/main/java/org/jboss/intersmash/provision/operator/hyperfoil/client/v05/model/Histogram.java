@@ -35,28 +35,31 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Histogram
- */
+/** Histogram */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class Histogram {
 	public static final String SERIALIZED_NAME_PHASE = "phase";
+
 	@SerializedName(SERIALIZED_NAME_PHASE)
 	private String phase;
 
 	public static final String SERIALIZED_NAME_METRIC = "metric";
+
 	@SerializedName(SERIALIZED_NAME_METRIC)
 	private String metric;
 
 	public static final String SERIALIZED_NAME_START_TIME = "startTime";
+
 	@SerializedName(SERIALIZED_NAME_START_TIME)
 	private Integer startTime;
 
 	public static final String SERIALIZED_NAME_END_TIME = "endTime";
+
 	@SerializedName(SERIALIZED_NAME_END_TIME)
 	private Integer endTime;
 
 	public static final String SERIALIZED_NAME_DATA = "data";
+
 	@SerializedName(SERIALIZED_NAME_DATA)
 	private String data;
 
@@ -70,12 +73,12 @@ public class Histogram {
 	}
 
 	/**
-	* Get phase
-	* @return phase
-	**/
+	 * Get phase
+	 *
+	 * @return phase
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getPhase() {
 		return phase;
 	}
@@ -91,12 +94,12 @@ public class Histogram {
 	}
 
 	/**
-	* Get metric
-	* @return metric
-	**/
+	 * Get metric
+	 *
+	 * @return metric
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getMetric() {
 		return metric;
 	}
@@ -112,12 +115,12 @@ public class Histogram {
 	}
 
 	/**
-	* Get startTime
-	* @return startTime
-	**/
+	 * Get startTime
+	 *
+	 * @return startTime
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Integer getStartTime() {
 		return startTime;
 	}
@@ -133,12 +136,12 @@ public class Histogram {
 	}
 
 	/**
-	* Get endTime
-	* @return endTime
-	**/
+	 * Get endTime
+	 *
+	 * @return endTime
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public Integer getEndTime() {
 		return endTime;
 	}
@@ -154,12 +157,12 @@ public class Histogram {
 	}
 
 	/**
-	* Get data
-	* @return data
-	**/
+	 * Get data
+	 *
+	 * @return data
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getData() {
 		return data;
 	}
@@ -177,11 +180,11 @@ public class Histogram {
 			return false;
 		}
 		Histogram histogram = (Histogram) o;
-		return Objects.equals(this.phase, histogram.phase) &&
-				Objects.equals(this.metric, histogram.metric) &&
-				Objects.equals(this.startTime, histogram.startTime) &&
-				Objects.equals(this.endTime, histogram.endTime) &&
-				Objects.equals(this.data, histogram.data);
+		return Objects.equals(this.phase, histogram.phase)
+				&& Objects.equals(this.metric, histogram.metric)
+				&& Objects.equals(this.startTime, histogram.startTime)
+				&& Objects.equals(this.endTime, histogram.endTime)
+				&& Objects.equals(this.data, histogram.data);
 	}
 
 	@Override
@@ -203,8 +206,7 @@ public class Histogram {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -241,7 +243,8 @@ public class Histogram {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in Histogram is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in Histogram is not found in the empty JSON string",
 								Histogram.openapiRequiredFields.toString()));
 			}
 		}
@@ -250,24 +253,34 @@ public class Histogram {
 		// check to see if the JSON string contains additional fields
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!Histogram.openapiFields.contains(entry.getKey())) {
-				throw new IllegalArgumentException(String.format(
-						"The field `%s` in the JSON string is not defined in the `Histogram` properties. JSON: %s",
-						entry.getKey(), jsonObj.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `Histogram` properties. JSON: %s",
+								entry.getKey(), jsonObj.toString()));
 			}
 		}
-		if (jsonObj.get("phase") != null && !jsonObj.get("phase").isJsonNull() && !jsonObj.get("phase").isJsonPrimitive()) {
+		if (jsonObj.get("phase") != null
+				&& !jsonObj.get("phase").isJsonNull()
+				&& !jsonObj.get("phase").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `phase` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `phase` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("phase").toString()));
 		}
-		if (jsonObj.get("metric") != null && !jsonObj.get("metric").isJsonNull() && !jsonObj.get("metric").isJsonPrimitive()) {
+		if (jsonObj.get("metric") != null
+				&& !jsonObj.get("metric").isJsonNull()
+				&& !jsonObj.get("metric").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `metric` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `metric` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("metric").toString()));
 		}
-		if (jsonObj.get("data") != null && !jsonObj.get("data").isJsonNull() && !jsonObj.get("data").isJsonPrimitive()) {
+		if (jsonObj.get("data") != null
+				&& !jsonObj.get("data").isJsonNull()
+				&& !jsonObj.get("data").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `data` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `data` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("data").toString()));
 		}
 	}
@@ -295,7 +308,6 @@ public class Histogram {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

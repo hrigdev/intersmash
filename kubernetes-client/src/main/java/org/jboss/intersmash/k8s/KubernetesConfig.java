@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s;
 
 import java.nio.file.Paths;
@@ -29,15 +44,15 @@ public final class KubernetesConfig {
 	public static final String KUBERNETES_NAMESPACE_PER_TESTCASE = "intersmash.kubernetes.namespace.per.testcase";
 
 	/**
-	 * Used only if intersmash.kubernetes.namespace.per.testcase=true - this property can configure its maximum length. This is useful
-	 * in case
-	 * where namespace is used in first part of URL of route which must have <64 chars length.
+	 * Used only if intersmash.kubernetes.namespace.per.testcase=true - this property can configure
+	 * its maximum length. This is useful in case where namespace is used in first part of URL of
+	 * route which must have <64 chars length.
 	 */
 	public static final String KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT = "intersmash.kubernetes.namespace.per.testcase.length.limit";
 
 	/**
-	 * Used only if intersmash.kubernetes.namespace.per.testcase=true - this property configures default maximum length of namespace
-	 * name.
+	 * Used only if intersmash.kubernetes.namespace.per.testcase=true - this property configures
+	 * default maximum length of namespace name.
 	 */
 	private static final String DEFAULT_KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT = "25";
 
@@ -54,11 +69,14 @@ public final class KubernetesConfig {
 	/**
 	 * Used only if intersmash.kubernetes.namespace.per.testcase=true
 	 *
-	 * @return limit on namespace if it's set by -Dintersmash.kubernetes.namespace.per.testcase.length.limit property
+	 * @return limit on namespace if it's set by
+	 *     -Dintersmash.kubernetes.namespace.per.testcase.length.limit property
 	 */
 	public static int getNamespaceLengthLimitForUniqueNamespacePerTest() {
-		return Integer.parseInt(XTFConfig.get(KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT,
-				DEFAULT_KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT));
+		return Integer.parseInt(
+				XTFConfig.get(
+						KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT,
+						DEFAULT_KUBERNETES_NAMESPACE_NAME_LENGTH_LIMIT));
 	}
 
 	public static boolean cleanKubernetes() {
@@ -66,7 +84,8 @@ public final class KubernetesConfig {
 	}
 
 	/**
-	 * @return if property xtf.openshift.namespace.per.testcase is empty or true then returns true otherwise false
+	 * @return if property xtf.openshift.namespace.per.testcase is empty or true then returns true
+	 *     otherwise false
 	 */
 	public static boolean useNamespacePerTestCase() {
 		return XTFConfig.get(KUBERNETES_NAMESPACE_PER_TESTCASE) != null
@@ -113,8 +132,12 @@ public final class KubernetesConfig {
 	}
 
 	public static String binaryCachePath() {
-		return XTFConfig.get(KUBERNETES_BINARY_CACHE_PATH, Paths.get(System.getProperty("java.io.tmpdir"),
-				KUBERNETES_BINARY_CACHE_DEFAULT_FOLDER).toAbsolutePath().normalize().toString());
+		return XTFConfig.get(
+				KUBERNETES_BINARY_CACHE_PATH,
+				Paths.get(System.getProperty("java.io.tmpdir"), KUBERNETES_BINARY_CACHE_DEFAULT_FOLDER)
+						.toAbsolutePath()
+						.normalize()
+						.toString());
 	}
 
 	public static String adminUsername() {
@@ -146,8 +169,8 @@ public final class KubernetesConfig {
 	}
 
 	/**
-	 * @return For backwards-compatibility reasons, also returns the value of intersmash.kubernetes.token if
-	 * intersmash.kubernetes.master.token not specified
+	 * @return For backwards-compatibility reasons, also returns the value of
+	 *     intersmash.kubernetes.token if intersmash.kubernetes.master.token not specified
 	 */
 	public static String masterToken() {
 		String masterToken = XTFConfig.get(KUBERNETES_MASTER_TOKEN);

@@ -26,5 +26,4 @@ public interface BinarySourceBuilder {
 	BinarySourceBuilder archive(WebArchive archive);
 
 	BuildInput build();
-
 }

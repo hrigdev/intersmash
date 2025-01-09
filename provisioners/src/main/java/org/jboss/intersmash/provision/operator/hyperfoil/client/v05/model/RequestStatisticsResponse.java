@@ -38,16 +38,16 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * RequestStatisticsResponse
- */
+/** RequestStatisticsResponse */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class RequestStatisticsResponse {
 	public static final String SERIALIZED_NAME_STATUS = "status";
+
 	@SerializedName(SERIALIZED_NAME_STATUS)
 	private String status;
 
 	public static final String SERIALIZED_NAME_STATISTICS = "statistics";
+
 	@SerializedName(SERIALIZED_NAME_STATISTICS)
 	private List<RequestStats> statistics = null;
 
@@ -61,12 +61,12 @@ public class RequestStatisticsResponse {
 	}
 
 	/**
-	* Get status
-	* @return status
-	**/
+	 * Get status
+	 *
+	 * @return status
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getStatus() {
 		return status;
 	}
@@ -90,12 +90,12 @@ public class RequestStatisticsResponse {
 	}
 
 	/**
-	* Get statistics
-	* @return statistics
-	**/
+	 * Get statistics
+	 *
+	 * @return statistics
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public List<RequestStats> getStatistics() {
 		return statistics;
 	}
@@ -113,8 +113,8 @@ public class RequestStatisticsResponse {
 			return false;
 		}
 		RequestStatisticsResponse requestStatisticsResponse = (RequestStatisticsResponse) o;
-		return Objects.equals(this.status, requestStatisticsResponse.status) &&
-				Objects.equals(this.statistics, requestStatisticsResponse.statistics);
+		return Objects.equals(this.status, requestStatisticsResponse.status)
+				&& Objects.equals(this.statistics, requestStatisticsResponse.statistics);
 	}
 
 	@Override
@@ -133,8 +133,7 @@ public class RequestStatisticsResponse {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -167,9 +166,10 @@ public class RequestStatisticsResponse {
 			if (RequestStatisticsResponse.openapiRequiredFields.isEmpty()) {
 				return;
 			} else { // has required fields
-				throw new IllegalArgumentException(String.format(
-						"The required field(s) %s in RequestStatisticsResponse is not found in the empty JSON string",
-						RequestStatisticsResponse.openapiRequiredFields.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The required field(s) %s in RequestStatisticsResponse is not found in the empty JSON string",
+								RequestStatisticsResponse.openapiRequiredFields.toString()));
 			}
 		}
 
@@ -177,14 +177,16 @@ public class RequestStatisticsResponse {
 		// check to see if the JSON string contains additional fields
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!RequestStatisticsResponse.openapiFields.contains(entry.getKey())) {
-				throw new IllegalArgumentException(String.format(
-						"The field `%s` in the JSON string is not defined in the `RequestStatisticsResponse` properties. JSON: %s",
-						entry.getKey(), jsonObj.toString()));
+				throw new IllegalArgumentException(
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `RequestStatisticsResponse` properties. JSON: %s",
+								entry.getKey(), jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("status") != null && !jsonObj.get("status").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `status` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `status` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("status").toString()));
 		}
 		JsonArray jsonArraystatistics = jsonObj.getAsJsonArray("statistics");
@@ -192,7 +194,8 @@ public class RequestStatisticsResponse {
 			// ensure the json data is an array
 			if (!jsonObj.get("statistics").isJsonArray()) {
 				throw new IllegalArgumentException(
-						String.format("Expected the field `statistics` to be an array in the JSON string but got `%s`",
+						String.format(
+								"Expected the field `statistics` to be an array in the JSON string but got `%s`",
 								jsonObj.get("statistics").toString()));
 			}
 
@@ -228,7 +231,6 @@ public class RequestStatisticsResponse {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

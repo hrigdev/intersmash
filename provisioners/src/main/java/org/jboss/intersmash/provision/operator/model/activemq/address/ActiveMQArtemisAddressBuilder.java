@@ -84,11 +84,12 @@ public class ActiveMQArtemisAddressBuilder {
 	}
 
 	/**
-	 * Specify whether the Operator removes existing addresses for all brokers in a deployment when you remove the
-	 * address CR instance for that deployment. The default value is false, which means the Operator does not delete
-	 * existing addresses when you remove the CR.
+	 * Specify whether the Operator removes existing addresses for all brokers in a deployment when
+	 * you remove the address CR instance for that deployment. The default value is false, which means
+	 * the Operator does not delete existing addresses when you remove the CR.
 	 *
-	 * @param removeFromBrokerOnDelete Boolean to state whether addresses should be removed when deleting the broker
+	 * @param removeFromBrokerOnDelete Boolean to state whether addresses should be removed when
+	 *     deleting the broker
 	 * @return this
 	 */
 	private ActiveMQArtemisAddressBuilder removeFromBrokerOnDelete(boolean removeFromBrokerOnDelete) {

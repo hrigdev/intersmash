@@ -20,9 +20,7 @@ package io.hyperfoil.v1alpha2;
 @com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.fasterxml.jackson.databind.JsonDeserializer.None.class)
 public class HyperfoilStatus implements io.fabric8.kubernetes.api.model.KubernetesResource {
 
-	/**
-	 * RFC 3339 date and time of the last update.
-	 */
+	/** RFC 3339 date and time of the last update. */
 	@com.fasterxml.jackson.annotation.JsonProperty("lastUpdate")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("RFC 3339 date and time of the last update.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -36,9 +34,7 @@ public class HyperfoilStatus implements io.fabric8.kubernetes.api.model.Kubernet
 		this.lastUpdate = lastUpdate;
 	}
 
-	/**
-	 * Human readable explanation for the status.
-	 */
+	/** Human readable explanation for the status. */
 	@com.fasterxml.jackson.annotation.JsonProperty("reason")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("Human readable explanation for the status.")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)
@@ -52,9 +48,7 @@ public class HyperfoilStatus implements io.fabric8.kubernetes.api.model.Kubernet
 		this.reason = reason;
 	}
 
-	/**
-	 * "One of: 'Ready', 'Pending' or 'Error'"
-	 */
+	/** "One of: 'Ready', 'Pending' or 'Error'" */
 	@com.fasterxml.jackson.annotation.JsonProperty("status")
 	@com.fasterxml.jackson.annotation.JsonPropertyDescription("\"One of: 'Ready', 'Pending' or 'Error'\"")
 	@com.fasterxml.jackson.annotation.JsonSetter(nulls = com.fasterxml.jackson.annotation.Nulls.SKIP)

@@ -36,9 +36,7 @@ import cz.xtf.junit5.annotations.CleanBeforeAll;
 import io.fabric8.kubernetes.api.model.DeletionPropagation;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Simple class that tests basic features of {@link KafkaOpenShiftOperatorProvisioner}.
- */
+/** Simple class that tests basic features of {@link KafkaOpenShiftOperatorProvisioner}. */
 @Slf4j
 @CleanBeforeAll
 @OpenShiftTest
@@ -56,11 +54,13 @@ public class KafkaOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 		operatorProvisioner.configure();
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		operatorProvisioner.unsubscribe();
-		// Let's skip subscribe operation here since we use regular deploy/undeploy where subscribe is called anyway.
+		// Let's skip subscribe operation here since we use regular deploy/undeploy where subscribe is
+		// called anyway.
 	}
 
 	@AfterAll
@@ -74,20 +74,35 @@ public class KafkaOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	@AfterEach
 	public void customResourcesCleanup() {
 		operatorProvisioner.kafkasClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> operatorProvisioner
-						.kafkasClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> operatorProvisioner
+								.kafkasClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		operatorProvisioner.kafkasTopicClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> operatorProvisioner
-						.kafkasTopicClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> operatorProvisioner
+								.kafkasTopicClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		operatorProvisioner.kafkasUserClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> operatorProvisioner
-						.kafkasUserClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> operatorProvisioner
+								.kafkasUserClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 	}
 
 	/**
 	 * Test actual deploy/scale/undeploy workflow by the operator
 	 *
-	 * Does subscribe/unsubscribe on its own, so no need to call explicitly here
+	 * <p>Does subscribe/unsubscribe on its own, so no need to call explicitly here
 	 */
 	@Test
 	public void basicProvisioningTest() {
@@ -105,61 +120,106 @@ public class KafkaOpenShiftOperatorProvisionerTest implements ProjectCreationCap
 	}
 
 	private void verifyDeployed() {
-		Assertions.assertEquals(1, operatorProvisioner.getClusterOperatorPods().size(),
-				"Unexpected number of cluster operator pods for '" + KafkaOperatorProvisioner.OPERATOR_ID + "'");
+		Assertions.assertEquals(
+				1,
+				operatorProvisioner.getClusterOperatorPods().size(),
+				"Unexpected number of cluster operator pods for '"
+						+ KafkaOperatorProvisioner.OPERATOR_ID
+						+ "'");
 
 		int kafkaReplicas = operatorProvisioner.getApplication().getKafka().getSpec().getKafka().getReplicas();
 		int zookeeperReplicas = operatorProvisioner.getApplication().getKafka().getSpec().getZookeeper().getReplicas();
 
-		Assertions.assertEquals(kafkaReplicas, operatorProvisioner.getKafkaPods().size(),
-				"Unexpected number of Kafka pods for '" + operatorProvisioner.getApplication().getName() + "'");
-		Assertions.assertEquals(zookeeperReplicas, operatorProvisioner.getZookeeperPods().size(),
-				"Unexpected number of Zookeeper pods for '" + operatorProvisioner.getApplication().getName() + "'");
-		Assertions.assertEquals(1 + kafkaReplicas + zookeeperReplicas, operatorProvisioner.getPods().size(),
+		Assertions.assertEquals(
+				kafkaReplicas,
+				operatorProvisioner.getKafkaPods().size(),
+				"Unexpected number of Kafka pods for '"
+						+ operatorProvisioner.getApplication().getName()
+						+ "'");
+		Assertions.assertEquals(
+				zookeeperReplicas,
+				operatorProvisioner.getZookeeperPods().size(),
+				"Unexpected number of Zookeeper pods for '"
+						+ operatorProvisioner.getApplication().getName()
+						+ "'");
+		Assertions.assertEquals(
+				1 + kafkaReplicas + zookeeperReplicas,
+				operatorProvisioner.getPods().size(),
 				"Unexpected number of pods for '" + operatorProvisioner.getApplication().getName() + "'");
 
 		String testTopicName = operatorProvisioner.getApplication().getTopics().get(0).getMetadata().getName();
-		Assertions.assertEquals(1, operatorProvisioner.kafkasTopicClient().list().getItems().stream().filter(
-				t -> testTopicName.equals(t.getMetadata().getName())).count(),
+		Assertions.assertEquals(
+				1,
+				operatorProvisioner.kafkasTopicClient().list().getItems().stream()
+						.filter(t -> testTopicName.equals(t.getMetadata().getName()))
+						.count(),
 				"Unexpected number of topics named '" + testTopicName + "'");
-		Assertions.assertTrue(operatorProvisioner.kafkasTopicClient().list().getItems().stream().filter(
-				t -> testTopicName.equals(t.getMetadata().getName())).allMatch(
-						t -> "Ready".equals(t.getStatus().getConditions().get(0).getType())),
+		Assertions.assertTrue(
+				operatorProvisioner.kafkasTopicClient().list().getItems().stream()
+						.filter(t -> testTopicName.equals(t.getMetadata().getName()))
+						.allMatch(t -> "Ready".equals(t.getStatus().getConditions().get(0).getType())),
 				"Test topic '" + testTopicName + "' is not ready for use");
 
 		String testUserName = operatorProvisioner.getApplication().getUsers().get(0).getMetadata().getName();
-		Assertions.assertEquals(1, operatorProvisioner.kafkasUserClient().list().getItems().stream().filter(
-				u -> testUserName.equals(u.getMetadata().getName())).count(),
+		Assertions.assertEquals(
+				1,
+				operatorProvisioner.kafkasUserClient().list().getItems().stream()
+						.filter(u -> testUserName.equals(u.getMetadata().getName()))
+						.count(),
 				"Unexpected number of users named '" + testUserName + "'");
-		Assertions.assertTrue(operatorProvisioner.kafkasUserClient().list().getItems().stream().filter(
-				u -> testUserName.equals(u.getMetadata().getName())).allMatch(
-						u -> "Ready".equals(u.getStatus().getConditions().get(0).getType())),
+		Assertions.assertTrue(
+				operatorProvisioner.kafkasUserClient().list().getItems().stream()
+						.filter(u -> testUserName.equals(u.getMetadata().getName()))
+						.allMatch(u -> "Ready".equals(u.getStatus().getConditions().get(0).getType())),
 				"Test user '" + testUserName + "' is not ready for use");
 	}
 
 	private void verifyScaledDeployed(int scaledNum) {
-		Assertions.assertEquals(1, operatorProvisioner.getClusterOperatorPods().size(),
-				"Unexpected number of cluster operator pods for '" + KafkaOperatorProvisioner.OPERATOR_ID + "'");
+		Assertions.assertEquals(
+				1,
+				operatorProvisioner.getClusterOperatorPods().size(),
+				"Unexpected number of cluster operator pods for '"
+						+ KafkaOperatorProvisioner.OPERATOR_ID
+						+ "'");
 
 		int zookeeperReplicas = operatorProvisioner.getApplication().getKafka().getSpec().getZookeeper().getReplicas();
 
-		Assertions.assertEquals(scaledNum, operatorProvisioner.getKafkaPods().size(),
-				"Unexpected number of Kafka pods for '" + operatorProvisioner.getApplication().getName() + "'");
-		Assertions.assertEquals(zookeeperReplicas, operatorProvisioner.getZookeeperPods().size(),
-				"Unexpected number of Zookeeper pods for '" + operatorProvisioner.getApplication().getName() + "'");
-		Assertions.assertEquals(1 + scaledNum + zookeeperReplicas, operatorProvisioner.getPods().size(),
+		Assertions.assertEquals(
+				scaledNum,
+				operatorProvisioner.getKafkaPods().size(),
+				"Unexpected number of Kafka pods for '"
+						+ operatorProvisioner.getApplication().getName()
+						+ "'");
+		Assertions.assertEquals(
+				zookeeperReplicas,
+				operatorProvisioner.getZookeeperPods().size(),
+				"Unexpected number of Zookeeper pods for '"
+						+ operatorProvisioner.getApplication().getName()
+						+ "'");
+		Assertions.assertEquals(
+				1 + scaledNum + zookeeperReplicas,
+				operatorProvisioner.getPods().size(),
 				"Unexpected number of pods for '" + operatorProvisioner.getApplication().getName() + "'");
 	}
 
 	private void verifyUndeployed() {
-		Assertions.assertEquals(0, operatorProvisioner.getKafkaPods().size(),
-				"Looks like there are some leftover Kafka pods after '" + operatorProvisioner.getApplication().getName()
+		Assertions.assertEquals(
+				0,
+				operatorProvisioner.getKafkaPods().size(),
+				"Looks like there are some leftover Kafka pods after '"
+						+ operatorProvisioner.getApplication().getName()
 						+ "' application deletion.");
-		Assertions.assertEquals(0, operatorProvisioner.getZookeeperPods().size(),
-				"Looks like there are some leftover Zookeeper pods after '" + operatorProvisioner.getApplication().getName()
+		Assertions.assertEquals(
+				0,
+				operatorProvisioner.getZookeeperPods().size(),
+				"Looks like there are some leftover Zookeeper pods after '"
+						+ operatorProvisioner.getApplication().getName()
 						+ "' application deletion.");
-		Assertions.assertEquals(0, operatorProvisioner.getPods().size(),
-				"Looks like there are some leftover pods after '" + operatorProvisioner.getApplication().getName()
+		Assertions.assertEquals(
+				0,
+				operatorProvisioner.getPods().size(),
+				"Looks like there are some leftover pods after '"
+						+ operatorProvisioner.getApplication().getName()
 						+ "' application deletion.");
 	}
 }

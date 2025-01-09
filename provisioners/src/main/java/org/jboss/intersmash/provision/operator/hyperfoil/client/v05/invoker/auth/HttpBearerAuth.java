@@ -32,7 +32,8 @@ public class HttpBearerAuth implements Authentication {
 	}
 
 	/**
-	 * Gets the token, which together with the scheme, will be sent as the value of the Authorization header.
+	 * Gets the token, which together with the scheme, will be sent as the value of the Authorization
+	 * header.
 	 *
 	 * @return The bearer token
 	 */
@@ -41,7 +42,8 @@ public class HttpBearerAuth implements Authentication {
 	}
 
 	/**
-	 * Sets the token, which together with the scheme, will be sent as the value of the Authorization header.
+	 * Sets the token, which together with the scheme, will be sent as the value of the Authorization
+	 * header.
 	 *
 	 * @param bearerToken The bearer token to send in the Authorization header
 	 */
@@ -50,13 +52,20 @@ public class HttpBearerAuth implements Authentication {
 	}
 
 	@Override
-	public void applyToParams(List<Pair> queryParams, Map<String, String> headerParams, Map<String, String> cookieParams,
-			String payload, String method, URI uri) throws ApiException {
+	public void applyToParams(
+			List<Pair> queryParams,
+			Map<String, String> headerParams,
+			Map<String, String> cookieParams,
+			String payload,
+			String method,
+			URI uri)
+			throws ApiException {
 		if (bearerToken == null) {
 			return;
 		}
 
-		headerParams.put("Authorization", (scheme != null ? upperCaseBearer(scheme) + " " : "") + bearerToken);
+		headerParams.put(
+				"Authorization", (scheme != null ? upperCaseBearer(scheme) + " " : "") + bearerToken);
 	}
 
 	private static String upperCaseBearer(String scheme) {

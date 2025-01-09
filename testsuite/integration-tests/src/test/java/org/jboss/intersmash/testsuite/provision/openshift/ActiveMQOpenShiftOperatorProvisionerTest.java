@@ -82,8 +82,9 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 		activeMQOperatorProvisioner.configure();
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		// clean any leftovers
 		activeMQOperatorProvisioner.unsubscribe();
 		// let's configure the provisioner
@@ -100,14 +101,22 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 	public void customResourcesCleanup() {
 		// delete addresses
 		activeMQOperatorProvisioner.activeMQArtemisAddressesClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> activeMQOperatorProvisioner
-						.activeMQArtemisAddressesClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
-						.delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> activeMQOperatorProvisioner
+								.activeMQArtemisAddressesClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 		// delete artemises
 		activeMQOperatorProvisioner.activeMQArtemisesClient().list().getItems().stream()
-				.map(resource -> resource.getMetadata().getName()).forEach(name -> activeMQOperatorProvisioner
-						.activeMQArtemisesClient().withName(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
-						.delete());
+				.map(resource -> resource.getMetadata().getName())
+				.forEach(
+						name -> activeMQOperatorProvisioner
+								.activeMQArtemisesClient()
+								.withName(name)
+								.withPropagationPolicy(DeletionPropagation.FOREGROUND)
+								.delete());
 	}
 
 	/**
@@ -128,13 +137,22 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 
 			// create and verify that object exists
 			activeMQOperatorProvisioner.activeMQArtemisAddressesClient().createOrReplace(address);
-			Assertions.assertEquals(1, activeMQOperatorProvisioner.activeMQArtemisAddressesClient().list().getItems().size());
-			log.debug(activeMQOperatorProvisioner.activeMQArtemisAddress(name).get().getSpec().toString());
+			Assertions.assertEquals(
+					1, activeMQOperatorProvisioner.activeMQArtemisAddressesClient().list().getItems().size());
+			log.debug(
+					activeMQOperatorProvisioner.activeMQArtemisAddress(name).get().getSpec().toString());
 
 			// delete and verify that object was removed
-			activeMQOperatorProvisioner.activeMQArtemisAddress(name).withPropagationPolicy(DeletionPropagation.FOREGROUND)
+			activeMQOperatorProvisioner
+					.activeMQArtemisAddress(name)
+					.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 					.delete();
-			new SimpleWaiter(() -> activeMQOperatorProvisioner.activeMQArtemisAddressesClient().list().getItems().size() == 0)
+			new SimpleWaiter(
+					() -> activeMQOperatorProvisioner
+							.activeMQArtemisAddressesClient()
+							.list()
+							.getItems()
+							.size() == 0)
 					.waitFor();
 		} finally {
 			activeMQOperatorProvisioner.unsubscribe();
@@ -142,7 +160,8 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 	}
 
 	/**
-	 * Test the ActiveMQ Operator based provisioning model by validating the creation of a {@link ActiveMQArtemis} CR.
+	 * Test the ActiveMQ Operator based provisioning model by validating the creation of a {@link
+	 * ActiveMQArtemis} CR.
 	 */
 	@Test
 	public void basicBrokerTest() {
@@ -156,19 +175,25 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 
 			// create and verify that object exists
 			activeMQOperatorProvisioner.activeMQArtemisesClient().createOrReplace(amq);
-			Assertions.assertEquals(1, activeMQOperatorProvisioner.activeMQArtemisesClient().list().getItems().size());
+			Assertions.assertEquals(
+					1, activeMQOperatorProvisioner.activeMQArtemisesClient().list().getItems().size());
 			OpenShifts.master().waiters().areExactlyNPodsReady(1, amq.getKind(), name).waitFor();
 
 			// scaling down to 0 (graceful shutdown)
 			amq.getSpec().getDeploymentPlan().setSize(0);
 			activeMQOperatorProvisioner.activeMQArtemisesClient().replace(amq);
-			new SimpleWaiter(() -> OpenShifts.master().getLabeledPods("application", name + "-app").size() == 0).waitFor();
+			new SimpleWaiter(
+					() -> OpenShifts.master().getLabeledPods("application", name + "-app").size() == 0)
+					.waitFor();
 
 			// delete and verify that object was removed
-			activeMQOperatorProvisioner.activeMQArtemisesClient().withName(name)
+			activeMQOperatorProvisioner
+					.activeMQArtemisesClient()
+					.withName(name)
 					.withPropagationPolicy(DeletionPropagation.FOREGROUND)
 					.delete();
-			new SimpleWaiter(() -> activeMQOperatorProvisioner.activeMQArtemisesClient().list().getItems().size() == 0)
+			new SimpleWaiter(
+					() -> activeMQOperatorProvisioner.activeMQArtemisesClient().list().getItems().size() == 0)
 					.waitFor();
 		} finally {
 			activeMQOperatorProvisioner.unsubscribe();
@@ -178,14 +203,18 @@ public class ActiveMQOpenShiftOperatorProvisionerTest implements ProjectCreation
 	/**
 	 * Test actual deploy/scale/undeploy workflow by the operator
 	 *
-	 * Does subscribe/unsubscribe on its own, so no need to call explicitly here
+	 * <p>Does subscribe/unsubscribe on its own, so no need to call explicitly here
 	 */
 	@Test
 	public void basicProvisioningTest() {
 		try {
 			activeMQOperatorProvisioner.deploy();
 
-			int scaledNum = activeMQOperatorProvisioner.getApplication().getActiveMQArtemis().getSpec().getDeploymentPlan()
+			int scaledNum = activeMQOperatorProvisioner
+					.getApplication()
+					.getActiveMQArtemis()
+					.getSpec()
+					.getDeploymentPlan()
 					.getSize()
 					+ 1;
 			activeMQOperatorProvisioner.scale(scaledNum, true);

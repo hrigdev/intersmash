@@ -36,7 +36,8 @@ public final class InfinispanSecurityBuilder {
 	/**
 	 * Specify how traffic to and from Data Grid endpoints is encrypted
 	 *
-	 * @param endpointEncryption {@link EndpointEncryption} instance storing configuration for the endpoint encryption
+	 * @param endpointEncryption {@link EndpointEncryption} instance storing configuration for the
+	 *     endpoint encryption
 	 * @return this
 	 */
 	public InfinispanSecurityBuilder endpointEncryption(EndpointEncryption endpointEncryption) {

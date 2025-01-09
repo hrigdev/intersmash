@@ -29,7 +29,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * CL based implementation of a class for generating keystores signed by one common generated Certification Authority
+ * CL based implementation of a class for generating keystores signed by one common generated
+ * Certification Authority
  */
 @Slf4j
 public class CommandLineBasedKeystoreGenerator {
@@ -45,15 +46,15 @@ public class CommandLineBasedKeystoreGenerator {
 	private static final String TRUSTSTORE_FILE_NAME = "truststore";
 	public static final String CA_CERTIFICATE_PEM_FILE_NAME = "ca-certificate.pem";
 
-	/**
-	 * Statically set everything up in order to have private key, certificate and truststore ready
-	 */
+	/** Statically set everything up in order to have private key, certificate and truststore ready */
 	static {
 		try {
 			TMP_DIRECTORY.toFile().mkdirs();
 			caDir = Files.createTempDirectory(TMP_DIRECTORY, "ca");
 			// Generate key and cert
-			processCall(caDir, "openssl",
+			processCall(
+					caDir,
+					"openssl",
 					"req",
 					"-new",
 					"-newkey",
@@ -70,7 +71,9 @@ public class CommandLineBasedKeystoreGenerator {
 					"-subj",
 					"/C=CZ/ST=CZ/L=Brno/O=QE/CN=" + INTERSMASH_CA);
 			// Generate truststore that includes the generated CA cert
-			processCall(caDir, "keytool",
+			processCall(
+					caDir,
+					"keytool",
 					"-import",
 					"-noprompt",
 					"-keystore",
@@ -82,20 +85,32 @@ public class CommandLineBasedKeystoreGenerator {
 					"-storepass",
 					password);
 			// Download and import the openshift server certs into the generated truststore
-			processCall(caDir, "/bin/sh",
+			processCall(
+					caDir,
+					"/bin/sh",
 					"-c",
-					"echo \"Q\" | openssl s_client -connect " + getOpenShiftHostAndPort()
+					"echo \"Q\" | openssl s_client -connect "
+							+ getOpenShiftHostAndPort()
 							+ " -showcerts 2>/dev/null > serversOpenSslResponse");
-			processCall(caDir, "/bin/sh",
+			processCall(
+					caDir,
+					"/bin/sh",
 					"-c",
 					"csplit -f serverCert -s serversOpenSslResponse '/^-----BEGIN CERTIFICATE-----$/' '{*}'");
-			processCall(caDir, "/bin/sh",
+			processCall(
+					caDir,
+					"/bin/sh",
 					"-c",
 					"find . -type f -not -name \"serverCert00\" -name \"serverCert[0-9][0-9]\" -exec openssl x509 -in {} -out {}.pem \\;");
-			processCall(caDir, "/bin/sh",
+			processCall(
+					caDir,
+					"/bin/sh",
 					"-c",
 					"find . -type f -name \"serverCert[0-9][0-9].pem\" -exec keytool -import -noprompt -keystore "
-							+ TRUSTSTORE_FILE_NAME + " -file {} -alias {} -storepass " + password + " \\;");
+							+ TRUSTSTORE_FILE_NAME
+							+ " -file {} -alias {} -storepass "
+							+ password
+							+ " \\;");
 			truststore = caDir.resolve(TRUSTSTORE_FILE_NAME);
 		} catch (IOException e) {
 			throw new IllegalStateException("Failed to initialize Intersmash CA", e);
@@ -110,7 +125,8 @@ public class CommandLineBasedKeystoreGenerator {
 		return generateKeystore(hostname, null, keyAlias, false);
 	}
 
-	public static Path generateKeystore(String hostname, String keyAlias, boolean deleteCaFromKeyStore) {
+	public static Path generateKeystore(
+			String hostname, String keyAlias, boolean deleteCaFromKeyStore) {
 		return generateKeystore(hostname, null, keyAlias, deleteCaFromKeyStore);
 	}
 
@@ -118,13 +134,18 @@ public class CommandLineBasedKeystoreGenerator {
 		return generateKeystore(hostname, alternativeHostnames, hostname, false);
 	}
 
-	public static Path generateKeystore(String hostname, String[] alternativeHostnames, String keyAlias,
+	public static Path generateKeystore(
+			String hostname,
+			String[] alternativeHostnames,
+			String keyAlias,
 			boolean deleteCaFromKeyStore) {
 		final String keystore = hostname + KEYSTORE_FILE_EXTENSION;
 		if (caDir.resolve(keystore).toFile().exists()) {
 			return caDir.resolve(keystore);
 		}
-		processCall(caDir, "keytool",
+		processCall(
+				caDir,
+				"keytool",
 				"-genkeypair",
 				"-keyalg",
 				"RSA",
@@ -141,7 +162,9 @@ public class CommandLineBasedKeystoreGenerator {
 				password,
 				"-deststoretype",
 				"pkcs12");
-		processCall(caDir, "keytool",
+		processCall(
+				caDir,
+				"keytool",
 				"-keystore",
 				keystore,
 				"-certreq",
@@ -168,7 +191,9 @@ public class CommandLineBasedKeystoreGenerator {
 				}
 				writer.flush();
 				writer.close();
-				processCall(caDir, "openssl",
+				processCall(
+						caDir,
+						"openssl",
 						"x509",
 						"-req",
 						"-CA",
@@ -177,8 +202,10 @@ public class CommandLineBasedKeystoreGenerator {
 						"ca-key.pem",
 						"-in",
 						hostname + ".csr",
-						"-out", hostname + ".cer",
-						"-days", "365",
+						"-out",
+						hostname + ".cer",
+						"-days",
+						"365",
 						"-CAcreateserial",
 						"-passin",
 						"pass:" + password,
@@ -190,7 +217,9 @@ public class CommandLineBasedKeystoreGenerator {
 				throw new RuntimeException(e);
 			}
 		} else {
-			processCall(caDir, "openssl",
+			processCall(
+					caDir,
+					"openssl",
 					"x509",
 					"-req",
 					"-CA",
@@ -207,7 +236,9 @@ public class CommandLineBasedKeystoreGenerator {
 					"-passin",
 					"pass:" + password);
 		}
-		processCall(caDir, "keytool",
+		processCall(
+				caDir,
+				"keytool",
 				"-import",
 				"-noprompt",
 				"-keystore",
@@ -218,7 +249,9 @@ public class CommandLineBasedKeystoreGenerator {
 				INTERSMASH_CA,
 				"-storepass",
 				password);
-		processCall(caDir, "keytool",
+		processCall(
+				caDir,
+				"keytool",
 				"-import",
 				"-keystore",
 				keystore,
@@ -226,12 +259,16 @@ public class CommandLineBasedKeystoreGenerator {
 				hostname + ".cer",
 				"-alias",
 				keyAlias,
-				"-storepass", password);
+				"-storepass",
+				password);
 		if (deleteCaFromKeyStore) {
-			processCall(caDir, "keytool",
+			processCall(
+					caDir,
+					"keytool",
 					"-delete",
 					"-noprompt",
-					"-alias", INTERSMASH_CA,
+					"-alias",
+					INTERSMASH_CA,
 					"-keystore",
 					keystore,
 					"-storepass",
@@ -248,7 +285,9 @@ public class CommandLineBasedKeystoreGenerator {
 		final String keystore = hostname + KEYSTORE_FILE_EXTENSION;
 		generateKeystore(hostname, alternativeHostnames);
 		// export cert as CN.keystore.pem
-		processCall(caDir, "keytool",
+		processCall(
+				caDir,
+				"keytool",
 				"-exportcert",
 				"-rfc",
 				"-keystore",
@@ -260,7 +299,9 @@ public class CommandLineBasedKeystoreGenerator {
 				"-file",
 				keystore + ".pem");
 		// convert to CN.keystore.keywithattrs.pem
-		processCall(caDir, "openssl",
+		processCall(
+				caDir,
+				"openssl",
 				"pkcs12",
 				"-in",
 				keystore,
@@ -271,7 +312,9 @@ public class CommandLineBasedKeystoreGenerator {
 				"-passin",
 				"pass:" + password);
 		// Remove the Bag attributes to CN.keystore.key.pem
-		processCall(caDir, "openssl",
+		processCall(
+				caDir,
+				"openssl",
 				"rsa",
 				"-in",
 				keystore + ".keywithattrs.pem",
@@ -320,9 +363,7 @@ public class CommandLineBasedKeystoreGenerator {
 		}
 	}
 
-	/**
-	 * POJO to hold the path of the generated certs and stores
-	 */
+	/** POJO to hold the path of the generated certs and stores */
 	public static class GeneratedPaths {
 		public Path caPem;
 		public Path truststore;
@@ -330,7 +371,11 @@ public class CommandLineBasedKeystoreGenerator {
 		public Path keyPem;
 		public Path certPem;
 
-		public GeneratedPaths(final Path caPem, final Path truststore, final Path keystore, final Path keyPem,
+		public GeneratedPaths(
+				final Path caPem,
+				final Path truststore,
+				final Path keystore,
+				final Path keyPem,
 				final Path certPem) {
 			this.caPem = caPem;
 			this.truststore = truststore;

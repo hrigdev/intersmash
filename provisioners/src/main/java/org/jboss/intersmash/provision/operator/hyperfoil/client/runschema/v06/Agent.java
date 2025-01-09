@@ -26,14 +26,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-/**
- * Per-agent statistics
- *
- */
+/** Per-agent statistics */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-
-})
+@JsonPropertyOrder({})
 @Generated("jsonschema2pojo")
 public class Agent {
 
@@ -49,5 +44,4 @@ public class Agent {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
-
 }

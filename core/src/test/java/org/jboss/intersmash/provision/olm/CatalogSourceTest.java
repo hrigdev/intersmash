@@ -23,9 +23,7 @@ import org.junit.jupiter.api.Test;
 
 public class CatalogSourceTest {
 
-	/**
-	 * Verifies serialization/deserialization preserve variables
-	 */
+	/** Verifies serialization/deserialization preserve variables */
 	@Test
 	public void testSerialization() throws IOException {
 		String name = "redhat-operator-index-alias";
@@ -34,13 +32,7 @@ public class CatalogSourceTest {
 		String indexImage = "some.registry/some-user/some-index:v4.9";
 		String displayName = "Dummy alias";
 		String publisher = "jboss-tests@redhat.com";
-		CatalogSource catalogSource = new CatalogSource(
-				name,
-				namespace,
-				sourceType,
-				indexImage,
-				displayName,
-				publisher);
+		CatalogSource catalogSource = new CatalogSource(name, namespace, sourceType, indexImage, displayName, publisher);
 		File catalogSourceFile = catalogSource.save();
 		CatalogSource catalogSourceLoaded = new CatalogSource();
 		catalogSourceLoaded.load(catalogSourceFile);

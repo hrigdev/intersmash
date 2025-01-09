@@ -23,11 +23,13 @@ import org.keycloak.k8s.v2alpha1.Keycloak;
 import org.keycloak.k8s.v2alpha1.KeycloakRealmImport;
 
 /**
- * End user Application interface which presents Keycloak operator application on OpenShift Container Platform.
+ * End user Application interface which presents Keycloak operator application on OpenShift
+ * Container Platform.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link KeycloakOperatorProvisioner}</li>
+ *   <li>{@link KeycloakOperatorProvisioner}
  * </ul>
  */
 public interface KeycloakOperatorApplication extends OperatorApplication {

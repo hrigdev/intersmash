@@ -17,9 +17,7 @@ package org.jboss.intersmash.provision.operator.model.keycloak.keycloak.spec;
 
 import org.keycloak.v1alpha1.keycloakspec.ExternalAccess;
 
-/**
- * Controls external Ingress/Route settings.
- */
+/** Controls external Ingress/Route settings. */
 public final class KeycloakExternalAccessBuilder {
 	private boolean enabled;
 	//	private String tlsTermination;
@@ -53,7 +51,8 @@ public final class KeycloakExternalAccessBuilder {
 	//	}
 	//
 	//	/**
-	//	 * If set, the Operator will use value of host for Ingress/Route host instead of default value keycloak.local for
+	//	 * If set, the Operator will use value of host for Ingress/Route host instead of default value
+	// keycloak.local for
 	//	 * ingress and automatically chosen name for Route.
 	//	 */
 	//	public KeycloakExternalAccessBuilder host(String host) {

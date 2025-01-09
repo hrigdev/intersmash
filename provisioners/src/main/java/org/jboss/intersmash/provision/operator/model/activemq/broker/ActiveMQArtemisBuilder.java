@@ -66,7 +66,9 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Configuration of all acceptors.
-	 * @param acceptors List of {@link Acceptors} instances to define the desired configuration for all acceptors
+	 *
+	 * @param acceptors List of {@link Acceptors} instances to define the desired configuration for
+	 *     all acceptors
 	 * @return this
 	 */
 	public ActiveMQArtemisBuilder acceptors(List<Acceptors> acceptors) {
@@ -76,6 +78,7 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Configuration of an acceptor.
+	 *
 	 * @param acceptor {@link Acceptors} instance to define the desired acceptor configuration
 	 * @return this
 	 */
@@ -88,7 +91,9 @@ public class ActiveMQArtemisBuilder {
 	}
 
 	/**
-	 * Password for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.
+	 * Password for standard broker user. It is required for connecting to the broker. If left empty,
+	 * it will be generated.
+	 *
 	 * @return this
 	 * @param adminPassword A desired password for the broker standard user
 	 */
@@ -98,7 +103,9 @@ public class ActiveMQArtemisBuilder {
 	}
 
 	/**
-	 * User name for standard broker user. It is required for connecting to the broker. If left empty, it will be generated.
+	 * User name for standard broker user. It is required for connecting to the broker. If left empty,
+	 * it will be generated.
+	 *
 	 * @param adminUser A desired username for the broker standard user
 	 * @return this
 	 */
@@ -109,7 +116,9 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Configuration of all connectors.
-	 * @param connectors List of {@link Connectors} instances to define the desired configuration for all connectors
+	 *
+	 * @param connectors List of {@link Connectors} instances to define the desired configuration for
+	 *     all connectors
 	 * @return this
 	 */
 	public ActiveMQArtemisBuilder connectors(List<Connectors> connectors) {
@@ -119,6 +128,7 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Configuration of a connector.
+	 *
 	 * @param connector {@link Connectors} instance to define the desired connector configuration
 	 * @return this
 	 */
@@ -132,6 +142,7 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Configuration for the embedded web console.
+	 *
 	 * @param console {@link Console} instance to define the desired console configuration
 	 * @return this
 	 */
@@ -142,7 +153,9 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Broker deployment configuration.
-	 * @param deploymentPlan {@link DeploymentPlan} instance to define the desired deployment configuration
+	 *
+	 * @param deploymentPlan {@link DeploymentPlan} instance to define the desired deployment
+	 *     configuration
 	 * @return this
 	 */
 	public ActiveMQArtemisBuilder deploymentPlan(DeploymentPlan deploymentPlan) {
@@ -152,6 +165,7 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * Specify the level of upgrade that should be allowed when an older product version is detected.
+	 *
 	 * @param upgrades {@link Upgrades} instance to set the level of upgrade
 	 * @return this
 	 */
@@ -162,6 +176,7 @@ public class ActiveMQArtemisBuilder {
 
 	/**
 	 * The version of the application deployment.
+	 *
 	 * @param version Value for the desired application deployment version
 	 * @return this
 	 */

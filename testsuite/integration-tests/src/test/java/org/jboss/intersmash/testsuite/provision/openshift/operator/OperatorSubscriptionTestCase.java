@@ -47,9 +47,7 @@ import cz.xtf.junit5.annotations.CleanBeforeAll;
 import io.fabric8.kubernetes.api.model.Pod;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Verify the {@link OperatorProvisioner} subscription process.
- */
+/** Verify the {@link OperatorProvisioner} subscription process. */
 @Slf4j
 @CleanBeforeAll
 @OpenShiftTest
@@ -64,8 +62,8 @@ public class OperatorSubscriptionTestCase {
 			new HyperfoilOpenShiftOperatorProvisioner(mock(HyperfoilOperatorApplication.class)),
 			new KeycloakOpenShiftOperatorProvisioner(mock(KeycloakOperatorApplication.class)));
 
-	private static final Stream<OperatorProvisioner> PRODUCT_ONLY_PROVISIONERS = Stream.of(
-			new RhSsoOpenShiftOperatorProvisioner(mock(RhSsoOperatorApplication.class)));
+	private static final Stream<OperatorProvisioner> PRODUCT_ONLY_PROVISIONERS = Stream
+			.of(new RhSsoOpenShiftOperatorProvisioner(mock(RhSsoOperatorApplication.class)));
 
 	private static Stream<OperatorProvisioner> provisionerProvider() {
 		if (IntersmashTestsuiteProperties.isCommunityTestExecutionProfileEnabled()) {
@@ -80,8 +78,9 @@ public class OperatorSubscriptionTestCase {
 	public static void createOperatorGroup() throws IOException {
 		IntersmashExtension.operatorCleanup(false, true);
 		// create operator group - this should be done by InteropExtension
-		OpenShifts.adminBinary().execute("apply", "-f",
-				new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+		OpenShifts.adminBinary()
+				.execute(
+						"apply", "-f", new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 	}
 
 	@AfterAll
@@ -102,8 +101,10 @@ public class OperatorSubscriptionTestCase {
 			try {
 				log.debug("Pods:");
 				OpenShifts.master().getPods().forEach(this::introducePod);
-				Assertions.assertTrue(operatorProvisioner.getCustomResourceDefinitions().size() > 0,
-						String.format("List of CRDs provided by operator [%s] should not be empty.",
+				Assertions.assertTrue(
+						operatorProvisioner.getCustomResourceDefinitions().size() > 0,
+						String.format(
+								"List of CRDs provided by operator [%s] should not be empty.",
 								operatorProvisioner.getPackageManifestName()));
 			} finally {
 				operatorProvisioner.unsubscribe();

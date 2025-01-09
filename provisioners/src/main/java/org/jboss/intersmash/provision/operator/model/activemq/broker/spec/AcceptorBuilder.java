@@ -46,6 +46,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Port number.
+	 *
 	 * @param port Desired port number
 	 * @return this
 	 */
@@ -55,8 +56,9 @@ public class AcceptorBuilder {
 	}
 
 	/**
-	 * The CN of the connecting client's SSL certificate will be compared to its hostname to verify they match.
-	 * This is useful only for 2-way SSL.
+	 * The CN of the connecting client's SSL certificate will be compared to its hostname to verify
+	 * they match. This is useful only for 2-way SSL.
+	 *
 	 * @param verifyHost Whether host verification will be performed
 	 * @return this
 	 */
@@ -66,7 +68,9 @@ public class AcceptorBuilder {
 	}
 
 	/**
-	 * Tells a client connecting to this acceptor that 2-way SSL is requested but not required. Overridden by needClientAuth.
+	 * Tells a client connecting to this acceptor that 2-way SSL is requested but not required.
+	 * Overridden by needClientAuth.
+	 *
 	 * @param wantClientAuth Whether client is requested to authenticate
 	 * @return this
 	 */
@@ -77,6 +81,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Whether or not to expose this acceptor.
+	 *
 	 * @param expose Whether or not to expose this acceptor
 	 * @return this
 	 */
@@ -87,6 +92,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Comma separated list of cipher suites used for SSL communication.
+	 *
 	 * @param enabledCipherSuites A comma separated list of cipher suites to be used
 	 * @return this
 	 */
@@ -96,8 +102,9 @@ public class AcceptorBuilder {
 	}
 
 	/**
-	 * Tells a client connecting to this acceptor that 2-way SSL is required.
-	 * This property takes precedence over {@link #wantClientAuth}.
+	 * Tells a client connecting to this acceptor that 2-way SSL is required. This property takes
+	 * precedence over {@link #wantClientAuth}.
+	 *
 	 * @param needClientAuth Whether client is required to authenticate
 	 * @return this
 	 */
@@ -108,6 +115,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * To indicate which kind of routing type to use..
+	 *
 	 * @param multicastPrefix Prefix for the multicast routing type
 	 * @return this
 	 */
@@ -117,8 +125,9 @@ public class AcceptorBuilder {
 	}
 
 	/**
-	 * Limits the number of connections which the acceptor will allow. When this limit is reached a DEBUG level
-	 * message is issued to the log, and the connection is refused.
+	 * Limits the number of connections which the acceptor will allow. When this limit is reached a
+	 * DEBUG level message is issued to the log, and the connection is refused.
+	 *
 	 * @param connectionsAllowed Maximum number of allowed connections
 	 * @return this
 	 */
@@ -129,6 +138,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Whether or not to enable SSL on this port.
+	 *
 	 * @param sslEnabled Whether SSL is enabled
 	 * @return this
 	 */
@@ -138,8 +148,9 @@ public class AcceptorBuilder {
 	}
 
 	/**
-	 * A regular expression used to match the server_name extension on incoming SSL connections. If the name doesn't
-	 * match then the connection to the acceptor will be rejected.
+	 * A regular expression used to match the server_name extension on incoming SSL connections. If
+	 * the name doesn't match then the connection to the acceptor will be rejected.
+	 *
 	 * @param sniHost Regex that should match a SNI host name
 	 * @return this
 	 */
@@ -150,6 +161,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Comma separated list of protocols used for SSL communication.
+	 *
 	 * @param enabledProtocols Comma separated list of SSL protocols to be used
 	 * @return this
 	 */
@@ -160,6 +172,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * The protocols to enable for this acceptor.
+	 *
 	 * @param protocols Protocols to be used
 	 * @return this
 	 */
@@ -170,6 +183,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Name of the secret to use for ssl information.
+	 *
 	 * @param sslSecret Name of the desired secret that should be used for SSL
 	 * @return this
 	 */
@@ -180,6 +194,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * Used to change the SSL Provider between JDK and OPENSSL. The default is JDK.
+	 *
 	 * @param sslProvider Name of the desired provider for SSL
 	 * @return this
 	 */
@@ -190,6 +205,7 @@ public class AcceptorBuilder {
 
 	/**
 	 * To indicate which kind of routing type to use.
+	 *
 	 * @param anycastPrefix Prefix for the desired routing type
 	 * @return this
 	 */

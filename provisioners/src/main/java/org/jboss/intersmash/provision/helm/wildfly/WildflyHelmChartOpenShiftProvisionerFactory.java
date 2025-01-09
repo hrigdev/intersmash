@@ -23,16 +23,18 @@ import org.jboss.intersmash.provision.helm.HelmChartOpenShiftProvisioner;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A provisioner factory that will return a Helm Charts based provisioner for Wildfly, see
- * {@link WildflyHelmChartOpenShiftProvisioner}
+ * A provisioner factory that will return a Helm Charts based provisioner for Wildfly, see {@link
+ * WildflyHelmChartOpenShiftProvisioner}
  */
 @Slf4j
-public class WildflyHelmChartOpenShiftProvisionerFactory implements ProvisionerFactory<HelmChartOpenShiftProvisioner> {
+public class WildflyHelmChartOpenShiftProvisionerFactory
+		implements ProvisionerFactory<HelmChartOpenShiftProvisioner> {
 
 	@Override
 	public HelmChartOpenShiftProvisioner getProvisioner(Application application) {
 		if (WildflyHelmChartOpenShiftApplication.class.isAssignableFrom(application.getClass())) {
-			return new WildflyHelmChartOpenShiftProvisioner((WildflyHelmChartOpenShiftApplication) application);
+			return new WildflyHelmChartOpenShiftProvisioner(
+					(WildflyHelmChartOpenShiftApplication) application);
 		}
 		return null;
 	}

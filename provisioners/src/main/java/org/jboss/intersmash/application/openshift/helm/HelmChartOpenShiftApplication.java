@@ -23,37 +23,43 @@ import org.jboss.intersmash.application.openshift.OpenShiftApplication;
 import org.jboss.intersmash.provision.helm.HelmChartOpenShiftProvisioner;
 
 /**
- * Contract to implement descriptors for any application services that will be provisioned through Helm Charts by
- * {@link HelmChartOpenShiftProvisioner}
+ * Contract to implement descriptors for any application services that will be provisioned through
+ * Helm Charts by {@link HelmChartOpenShiftProvisioner}
  */
 public interface HelmChartOpenShiftApplication extends OpenShiftApplication, HasSecrets {
 
 	/**
 	 * Instance of {@link HelmChartRelease} that defines the actual release
+	 *
 	 * @return Instance of {@link HelmChartRelease} that defines the actual release
 	 */
 	HelmChartRelease getRelease();
 
 	/**
 	 * The Helm Charts repo URL
+	 *
 	 * @return A string that identifies the used Helm Charts repository URL
 	 */
 	String getHelmChartsRepositoryUrl();
 
 	/**
 	 * The Helm Charts repo URL
+	 *
 	 * @return A string that identifies the used Helm Charts repository branch
 	 */
 	String getHelmChartsRepositoryRef();
 
 	/**
 	 * The Helm Charts repo URL
+	 *
 	 * @return A string that identifies the used Helm Charts repository name
 	 */
 	String getHelmChartsRepositoryName();
 
 	/**
-	 * Get values that should be overridden via {@code --set} parameters when running {@code helm install}
+	 * Get values that should be overridden via {@code --set} parameters when running {@code helm
+	 * install}
+	 *
 	 * @return A map of name/value pairs to override. May not be {@code null}
 	 */
 	default Map<String, String> getSetOverrides() {

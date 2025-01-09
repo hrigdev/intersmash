@@ -27,9 +27,7 @@ import io.fabric8.kubernetes.api.model.EnvVar;
 
 public class SubscriptionTest {
 
-	/**
-	 * Verifies serialization/deserialization preserve environment variables
-	 */
+	/** Verifies serialization/deserialization preserve environment variables */
 	@Test
 	public void testEnv() throws IOException {
 		final String propertyValue = "dummy-prop-value";
@@ -48,7 +46,8 @@ public class SubscriptionTest {
 		File subscriptionFile = subscription.save();
 		Subscription loadedSubscription = new Subscription();
 		loadedSubscription.load(subscriptionFile);
-		Assertions.assertEquals(loadedSubscription.getSpec().getInstallPlanApproval(),
+		Assertions.assertEquals(
+				loadedSubscription.getSpec().getInstallPlanApproval(),
 				OperatorProvisioner.INSTALLPLAN_APPROVAL_MANUAL);
 		for (EnvVar envVar : loadedSubscription.getSpec().getConfig().getEnv()) {
 			switch (envVar.getName()) {

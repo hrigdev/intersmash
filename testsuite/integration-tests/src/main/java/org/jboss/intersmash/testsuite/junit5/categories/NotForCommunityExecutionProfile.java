@@ -22,10 +22,7 @@ import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.Tag;
 
-/**
- * Mark a test that does not support community deliverables.
- * Used per class.
- */
+/** Mark a test that does not support community deliverables. Used per class. */
 @Tag("ts.not-for-community")
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ java.lang.annotation.ElementType.TYPE, ElementType.METHOD })

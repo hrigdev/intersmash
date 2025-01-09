@@ -30,8 +30,8 @@ import cz.xtf.core.openshift.OpenShifts;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Implements a JUnit {@link ExecutionCondition} that is used to control whether a test class workflow can be managed by
- * {@link IntersmashExtension}
+ * Implements a JUnit {@link ExecutionCondition} that is used to control whether a test class
+ * workflow can be managed by {@link IntersmashExtension}
  */
 @Slf4j
 public class IntersmashExecutionCondition implements ExecutionCondition {
@@ -49,8 +49,9 @@ public class IntersmashExecutionCondition implements ExecutionCondition {
 			// evaluate peculiar OpenShift/Kubernetes requirements
 			if (IntersmashConfig.isOcp3x(OpenShifts.admin())
 					&& Arrays.stream(intersmash.value()).anyMatch(isOperatorApplication)) {
-				return ConditionEvaluationResult.disabled("OLM is not available on OCP 3.x clusters, " +
-						"skip the tests due to OperatorApplication(s) involvement.");
+				return ConditionEvaluationResult.disabled(
+						"OLM is not available on OCP 3.x clusters, "
+								+ "skip the tests due to OperatorApplication(s) involvement.");
 			}
 			log.debug("Test enabled.");
 			return ConditionEvaluationResult.enabled("@Intersmash present.");

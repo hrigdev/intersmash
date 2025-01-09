@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.provision.openshift;
 
 import java.io.IOException;
@@ -34,7 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Deprecated(since = "0.0.2")
-public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<RhSsoTemplateOpenShiftApplication> {
+public class RhSsoTemplateOpenShiftProvisioner
+		implements OpenShiftProvisioner<RhSsoTemplateOpenShiftApplication> {
 
 	// TODO: what if only OpenShiftApplication is implemented
 	private final RhSsoTemplateOpenShiftApplication rhSsoApplication;
@@ -42,7 +58,8 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 	private List<ImageStream> deployedImageStreams;
 	private Template deployedTemplate;
 
-	public RhSsoTemplateOpenShiftProvisioner(@NonNull RhSsoTemplateOpenShiftApplication rhSsoApplication) {
+	public RhSsoTemplateOpenShiftProvisioner(
+			@NonNull RhSsoTemplateOpenShiftApplication rhSsoApplication) {
 		this.rhSsoApplication = rhSsoApplication;
 		this.rhSsoTemplate = rhSsoApplication.getTemplate();
 	}
@@ -67,12 +84,10 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 		labels.put(APP_LABEL_KEY, rhSsoApplication.getName());
 		OpenShiftUtils.deleteResourcesWithLabels(openShift, labels);
 		// when using geit repo S2I create soe custom maps and buil pods
-		openShift.getConfigMaps()
-				.stream()
+		openShift.getConfigMaps().stream()
 				.filter(cfMap -> cfMap.getMetadata().getName().startsWith(rhSsoApplication.getName()))
 				.forEach(openShift::deleteConfigMap);
-		openShift.getPods()
-				.stream()
+		openShift.getPods().stream()
 				.filter(pod -> pod.getMetadata().getName().startsWith(rhSsoApplication.getName()))
 				.forEach(openShift::deletePod);
 		deployedImageStreams.forEach(openShift::deleteImageStream);
@@ -80,42 +95,49 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 	}
 
 	private void deployTemplate() {
-		FailFastCheck failFastCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				rhSsoApplication.getName());
+		FailFastCheck failFastCheck = FailFastUtils.getFailFastCheck(
+				EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), rhSsoApplication.getName());
 		OpenShiftTemplateProvisioner templateProvisioner = new RhSsoTemplateProvisioner();
 		deployedImageStreams = templateProvisioner.deployImageStreams();
 		deployedTemplate = templateProvisioner.deployTemplate(rhSsoTemplate);
 
-		openShift.processAndDeployTemplate(deployedTemplate.getMetadata().getName(),
-				rhSsoApplication.getParameters());
-		// run post deploy scripts before waiting, there is a plenty of time (app building) for openshift to deal with it
+		openShift.processAndDeployTemplate(
+				deployedTemplate.getMetadata().getName(), rhSsoApplication.getParameters());
+		// run post deploy scripts before waiting, there is a plenty of time (app building) for
+		// openshift to deal with it
 		postDeploy(rhSsoApplication);
 
 		// Equivalent of oc get route sso-app -o template --template "{{.spec.host}}"
 		Route route = openShift.getRoute(rhSsoApplication.getHttpsRouteName());
 		if (route == null) {
-			throw new RuntimeException(String.format("RH-SSO Template \"%s\" doesn't provide an HTTPS Route!",
-					rhSsoApplication.getTemplate().getLabel()));
+			throw new RuntimeException(
+					String.format(
+							"RH-SSO Template \"%s\" doesn't provide an HTTPS Route!",
+							rhSsoApplication.getTemplate().getLabel()));
 		}
 		String url = "https://" + route.getSpec().getHost() + "/auth/";
 		try {
-			Http.get(url)
-					.trustAll()
-					.waiters()
-					.ok()
-					.failFast(failFastCheck)
-					.level(Level.DEBUG)
-					.waitFor();
+			Http.get(url).trustAll().waiters().ok().failFast(failFastCheck).level(Level.DEBUG).waitFor();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(String.format("RH-SSO secure host name url \"%s\" is malformed", url), e);
+			throw new RuntimeException(
+					String.format("RH-SSO secure host name url \"%s\" is malformed", url), e);
 		}
 	}
 
 	private void postDeploy(RhSsoTemplateOpenShiftApplication rhSsoApplication) {
 		if (IntersmashConfig.scriptDebug() != null) {
 			DeploymentConfig dc = openShift.getDeploymentConfig(rhSsoApplication.getName());
-			dc.getSpec().getTemplate().getSpec().getContainers().get(0).getEnv()
-					.add(new EnvVarBuilder().withName(SCRIPT_DEBUG).withValue(IntersmashConfig.scriptDebug()).build());
+			dc.getSpec()
+					.getTemplate()
+					.getSpec()
+					.getContainers()
+					.get(0)
+					.getEnv()
+					.add(
+							new EnvVarBuilder()
+									.withName(SCRIPT_DEBUG)
+									.withValue(IntersmashConfig.scriptDebug())
+									.build());
 			openShift.deploymentConfigs().createOrReplace(dc);
 		}
 	}
@@ -129,13 +151,15 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 		// validate all required parameters are set
 		Map<String, String> parameters = rhSsoApplication.getParameters();
 		List.of(ssoRealmParameter, ssoServiceUsernameParameter, ssoServicePasswordParameter)
-				.forEach(expected -> {
-					if (parameters.get(expected) == null || parameters.get(expected).isBlank()) {
-						throw new IllegalStateException(
-								"Realm configuration is specified but required template parameter" + expected
-										+ " isn't.");
-					}
-				});
+				.forEach(
+						expected -> {
+							if (parameters.get(expected) == null || parameters.get(expected).isBlank()) {
+								throw new IllegalStateException(
+										"Realm configuration is specified but required template parameter"
+												+ expected
+												+ " isn't.");
+							}
+						});
 
 		final String ssoRealm = parameters.get(ssoRealmParameter);
 		final String ssoUser = parameters.get(ssoServiceUsernameParameter);
@@ -148,7 +172,10 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 			try (InputStream is = Files.newInputStream(rhSsoApplication.getRealmConfigurationFilePath())) {
 				rhSsoAdminClient.importRealmConfiguration(is);
 			}
-		} catch (KeyStoreException | NoSuchAlgorithmException | KeyManagementException | IOException e) {
+		} catch (KeyStoreException
+				| NoSuchAlgorithmException
+				| KeyManagementException
+				| IOException e) {
 			throw new RuntimeException("Error while importing realm configuration.", e);
 		}
 	}
@@ -157,8 +184,10 @@ public class RhSsoTemplateOpenShiftProvisioner implements OpenShiftProvisioner<R
 	public void scale(int replicas, boolean wait) {
 		openShift.scale(rhSsoApplication.getName(), replicas);
 		if (wait) {
-			OpenShiftWaiters.get(openShift, () -> false).areExactlyNPodsReady(replicas, rhSsoApplication.getName())
-					.level(Level.DEBUG).waitFor();
+			OpenShiftWaiters.get(openShift, () -> false)
+					.areExactlyNPodsReady(replicas, rhSsoApplication.getName())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 

@@ -47,11 +47,12 @@ import cz.xtf.core.openshift.OpenShifts;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Intersmash JUnit extension that handles the process of provisioning a cross-product scenario before starting the
- * test execution.
+ * Intersmash JUnit extension that handles the process of provisioning a cross-product scenario
+ * before starting the test execution.
  */
 @Slf4j
-public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor {
+public class IntersmashExtension
+		implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor {
 
 	@Override
 	public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -75,13 +76,15 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 				// store provisioners right now, those might be needed in each phase independently
 				Provisioner provisioner = ProvisionerManager.getProvisioner(application);
 				// keep the provisioner in the JUpiter Extension Store
-				IntersmashExtensionHelper.getProvisioners(extensionContext).put(application.getClass().getName(), provisioner);
+				IntersmashExtensionHelper.getProvisioners(extensionContext)
+						.put(application.getClass().getName(), provisioner);
 				applications.add(application);
 			}
 			// Cleanup - BTW we don't want to touch anything if the deployment phase is skipped
 			if (!IntersmashConfig.skipDeploy()) {
 				if (IntersmashExtensionHelper.isIntersmashTargetingOperator(extensionContext)) {
-					operatorCleanup(IntersmashExtensionHelper.isIntersmashTargetingKubernetes(extensionContext),
+					operatorCleanup(
+							IntersmashExtensionHelper.isIntersmashTargetingKubernetes(extensionContext),
 							IntersmashExtensionHelper.isIntersmashTargetingOpenShift(extensionContext)
 									&& !IntersmashConfig.isOcp3x(OpenShifts.admin()));
 					deployOperatorGroup(extensionContext);
@@ -94,12 +97,15 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 				}
 			}
 			// deploy
-			applications.stream().forEach((application) -> {
-				if (!IntersmashConfig.skipDeploy()) {
-					deployApplication(
-							IntersmashExtensionHelper.getProvisioners(extensionContext).get(application.getClass().getName()));
-				}
-			});
+			applications.stream()
+					.forEach(
+							(application) -> {
+								if (!IntersmashConfig.skipDeploy()) {
+									deployApplication(
+											IntersmashExtensionHelper.getProvisioners(extensionContext)
+													.get(application.getClass().getName()));
+								}
+							});
 		} catch (Throwable t) {
 			tt = Optional.of(t);
 		} finally {
@@ -115,10 +121,11 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException ite) {
 			if (ite.getCause().getClass().equals(TestAbortedException.class)) {
-				throw new TestAbortedException("Service deployment was aborted (e.g. due to failed assumptions).",
-						ite.getCause());
+				throw new TestAbortedException(
+						"Service deployment was aborted (e.g. due to failed assumptions).", ite.getCause());
 			} else if (ite.getCause().getClass().equals(AssertionFailedError.class)) {
-				throw new AssertionFailedError("Service deployment was aborted due to violated assertions.", ite.getCause());
+				throw new AssertionFailedError(
+						"Service deployment was aborted due to violated assertions.", ite.getCause());
 			} else {
 				throw new RuntimeException(ite);
 			}
@@ -151,7 +158,8 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 			// operator group is not bound to a specific product
 			// no Operator support on OCP3 clusters, OLM doesn't run there
 			if (IntersmashExtensionHelper.isIntersmashTargetingOperator(extensionContext)) {
-				operatorCleanup(IntersmashExtensionHelper.isIntersmashTargetingKubernetes(extensionContext),
+				operatorCleanup(
+						IntersmashExtensionHelper.isIntersmashTargetingKubernetes(extensionContext),
 						IntersmashExtensionHelper.isIntersmashTargetingOpenShift(extensionContext)
 								&& !IntersmashConfig.isOcp3x(OpenShifts.admin()));
 			}
@@ -171,7 +179,8 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 	}
 
 	@Override
-	public void postProcessTestInstance(Object o, ExtensionContext extensionContext) throws Exception {
+	public void postProcessTestInstance(Object o, ExtensionContext extensionContext)
+			throws Exception {
 		injectServiceUrl(o, extensionContext);
 		injectServiceProvisioner(o, extensionContext);
 	}
@@ -197,7 +206,8 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 		}
 	}
 
-	private void injectServiceProvisioner(Object o, ExtensionContext extensionContext) throws IllegalAccessException {
+	private void injectServiceProvisioner(Object o, ExtensionContext extensionContext)
+			throws IllegalAccessException {
 		log.debug("injectServiceProvisioner");
 		List<Field> annotatedFields = AnnotationSupport.findAnnotatedFields(o.getClass(), ServiceProvisioner.class);
 		for (Field field : annotatedFields) {
@@ -209,32 +219,43 @@ public class IntersmashExtension implements BeforeAllCallback, AfterAllCallback,
 				field.set(o, provisioner);
 			} else {
 				throw new RuntimeException(
-						"Cannot inject service provisioner into field of type: " + field.getType().getSimpleName());
+						"Cannot inject service provisioner into field of type: "
+								+ field.getType().getSimpleName());
 			}
 		}
 	}
 
 	private static void deployOperatorGroup(ExtensionContext extensionContext) throws IOException {
 		if (IntersmashExtensionHelper.isIntersmashTargetingKubernetes(extensionContext)) {
-			log.debug("Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
+			log.debug(
+					"Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
 					new OperatorGroup(KubernetesConfig.namespace()).getMetadata().getName());
-			OpenShifts.adminBinary().execute("apply", "-f",
-					new OperatorGroup(KubernetesConfig.namespace()).save().getAbsolutePath());
+			OpenShifts.adminBinary()
+					.execute(
+							"apply",
+							"-f",
+							new OperatorGroup(KubernetesConfig.namespace()).save().getAbsolutePath());
 		}
 		if (IntersmashExtensionHelper.isIntersmashTargetingOpenShift(extensionContext)
 				&& !IntersmashConfig.isOcp3x(OpenShifts.admin())) {
-			log.debug("Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
+			log.debug(
+					"Deploy operatorgroup [{}] to enable operators subscription into tested namespace",
 					new OperatorGroup(OpenShiftConfig.namespace()).getMetadata().getName());
-			OpenShifts.adminBinary().execute("apply", "-f",
-					new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
+			OpenShifts.adminBinary()
+					.execute(
+							"apply",
+							"-f",
+							new OperatorGroup(OpenShiftConfig.namespace()).save().getAbsolutePath());
 		}
 	}
 
 	/**
 	 * Clean all OLM related objects.
+	 *
 	 * <p>
 	 */
-	public static void operatorCleanup(final boolean cleanupKubernetes, final boolean cleanupOpenShift) {
+	public static void operatorCleanup(
+			final boolean cleanupKubernetes, final boolean cleanupOpenShift) {
 		if (cleanupKubernetes) {
 			Kuberneteses.adminBinary().execute("delete", "subscription", "--all");
 			Kuberneteses.adminBinary().execute("delete", "csvs", "--all");

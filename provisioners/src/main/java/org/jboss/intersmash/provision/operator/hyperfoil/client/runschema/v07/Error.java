@@ -28,17 +28,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-		"agent",
-		"msg"
-})
+@JsonPropertyOrder({ "agent", "msg" })
 @Generated("jsonschema2pojo")
 public class Error {
 
 	@JsonProperty("agent")
 	private String agent;
+
 	@JsonProperty("msg")
 	private String msg;
+
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -71,5 +70,4 @@ public class Error {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
-
 }

@@ -57,7 +57,8 @@ public class WildflyHelmChartOpenShiftExampleApplication
 		mavenAdditionalArgs = mavenAdditionalArgs.concat(generateAdditionalMavenArgs());
 		// let's pass the profile for building the deployment too...
 		mavenAdditionalArgs = mavenAdditionalArgs.concat(
-				(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile()) ? ""
+				(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile())
+						? ""
 						: " -Pts.wildfly.target-distribution."
 								+ TestDeploymentProperties.getWildflyDeploymentsBuildProfile()));
 		// ok, let's configure the release via the WildflyHelmChartRelease fluent(-ish) API,

@@ -25,14 +25,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.wildfly.v1alpha1.WildFlyServer;
 
-/**
- * Basic verification of wildflyservers.wildfly.org resource.
- */
+/** Basic verification of wildflyservers.wildfly.org resource. */
 public class WildFlyServersTestCase {
 
-	/**
-	 * Verify that object equals after serialization to file and deserialization back to object.
-	 */
+	/** Verify that object equals after serialization to file and deserialization back to object. */
 	@Test
 	public void writeReadEqualsTest() throws IOException {
 		WildFlyServer wildFlyServer = new WildFlyServerBuilder("wildfly-operator-test")
@@ -46,7 +42,9 @@ public class WildFlyServersTestCase {
 		WildFlyServer testServer = new WildFlyServer();
 		SerializationCapableResource.load(yaml, WildFlyServer.class, testServer);
 		//
-		Assertions.assertEquals(wildFlyServer, testServer,
+		Assertions.assertEquals(
+				wildFlyServer,
+				testServer,
 				"OpenShift resource (WildflyServer) does not equal after serialization into yaml file and deserialization back to an object.");
 	}
 }

@@ -18,11 +18,13 @@ package org.jboss.intersmash.application.operator;
 import org.wildfly.v1alpha1.WildFlyServer;
 
 /**
- * End user Application interface which presents WILDFLY operator application on OpenShift Container Platform.
+ * End user Application interface which presents WILDFLY operator application on OpenShift Container
+ * Platform.
  *
- * The application will be deployed by:
+ * <p>The application will be deployed by:
+ *
  * <ul>
- *     <li>{@link org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner}</li>
+ *   <li>{@link org.jboss.intersmash.provision.operator.WildflyOperatorProvisioner}
  * </ul>
  */
 public interface WildflyOperatorApplication extends OperatorApplication {

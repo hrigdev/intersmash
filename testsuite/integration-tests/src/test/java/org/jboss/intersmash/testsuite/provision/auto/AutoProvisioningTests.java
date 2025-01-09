@@ -32,12 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Test cases that cover usage of a {@link AutoProvisioningOpenShiftApplication}
  *
- * It uses some declarative resources and logic owned by {@link AutoProvisioningHelloOpenShiftApplication}
+ * <p>It uses some declarative resources and logic owned by {@link
+ * AutoProvisioningHelloOpenShiftApplication}
  */
 @Slf4j
-@Intersmash({
-		@Service(AutoProvisioningHelloOpenShiftApplication.class)
-})
+@Intersmash({ @Service(AutoProvisioningHelloOpenShiftApplication.class) })
 @OpenShiftTest
 public class AutoProvisioningTests {
 
@@ -50,16 +49,16 @@ public class AutoProvisioningTests {
 	@Test
 	public void testAppIsLive() {
 		RestAssured.useRelaxedHTTPSValidation();
-		RestAssured.get(appOpenShiftUrl)
-				.then()
-				.statusCode(200);
+		RestAssured.get(appOpenShiftUrl).then().statusCode(200);
 	}
 
 	@Test
 	public void testAppCanScale() {
-		// don't ask scale to wait, let's wait for the exact number of pods here, since this is the test criteria
+		// don't ask scale to wait, let's wait for the exact number of pods here, since this is the test
+		// criteria
 		appOpenShiftProvisioner.scale(2, false);
-		OpenShiftWaiters.get(OpenShifts.master(), () -> false).areExactlyNPodsReady(
-				2, "app", appOpenShiftProvisioner.getApplication().getName()).waitFor();
+		OpenShiftWaiters.get(OpenShifts.master(), () -> false)
+				.areExactlyNPodsReady(2, "app", appOpenShiftProvisioner.getApplication().getName())
+				.waitFor();
 	}
 }

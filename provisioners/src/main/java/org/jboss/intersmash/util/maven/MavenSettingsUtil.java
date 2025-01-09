@@ -55,7 +55,8 @@ public class MavenSettingsUtil {
 		return loadSettings(globalSettings, userSettings);
 	}
 
-	public static Settings loadSettings(File globalSettings, File userSettings) throws SettingsBuildingException {
+	public static Settings loadSettings(File globalSettings, File userSettings)
+			throws SettingsBuildingException {
 		if (settings == null) {
 			SettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
 			request.setGlobalSettingsFile(globalSettings);
@@ -86,15 +87,23 @@ public class MavenSettingsUtil {
 	public static List<RemoteRepository> getRemoteRepositories(Settings settings) {
 		List<RemoteRepository> list = Lists.newArrayList();
 		if (settings.getLocalRepository() != null) {
-			list.add(new RemoteRepository.Builder("localRepoFromSettings", "default", "file:" + settings.getLocalRepository())
-					.build());
+			list.add(
+					new RemoteRepository.Builder(
+							"localRepoFromSettings", "default", "file:" + settings.getLocalRepository())
+							.build());
 		} else {
-			list.add(new RemoteRepository.Builder("localRepoFromSettings", "default", "file:" + DEFAULT_REPOSITORY_LOCAL)
-					.build());
+			list.add(
+					new RemoteRepository.Builder(
+							"localRepoFromSettings", "default", "file:" + DEFAULT_REPOSITORY_LOCAL)
+							.build());
 		}
 		if (System.getProperty("localRepository") != null) {
-			list.add(new RemoteRepository.Builder("localRepoFromSettings", "default",
-					"file:" + System.getProperty("localRepository")).build());
+			list.add(
+					new RemoteRepository.Builder(
+							"localRepoFromSettings",
+							"default",
+							"file:" + System.getProperty("localRepository"))
+							.build());
 		}
 		return list;
 	}

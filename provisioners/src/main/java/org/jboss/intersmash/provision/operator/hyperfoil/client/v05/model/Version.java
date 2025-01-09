@@ -36,24 +36,26 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Version
- */
+/** Version */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class Version {
 	public static final String SERIALIZED_NAME_VERSION = "version";
+
 	@SerializedName(SERIALIZED_NAME_VERSION)
 	private String version;
 
 	public static final String SERIALIZED_NAME_COMMIT_ID = "commitId";
+
 	@SerializedName(SERIALIZED_NAME_COMMIT_ID)
 	private String commitId;
 
 	public static final String SERIALIZED_NAME_DEPLOYMENT_ID = "deploymentId";
+
 	@SerializedName(SERIALIZED_NAME_DEPLOYMENT_ID)
 	private String deploymentId;
 
 	public static final String SERIALIZED_NAME_SERVER_TIME = "serverTime";
+
 	@SerializedName(SERIALIZED_NAME_SERVER_TIME)
 	private OffsetDateTime serverTime;
 
@@ -67,12 +69,12 @@ public class Version {
 	}
 
 	/**
-	* Get version
-	* @return version
-	**/
+	 * Get version
+	 *
+	 * @return version
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getVersion() {
 		return version;
 	}
@@ -88,12 +90,12 @@ public class Version {
 	}
 
 	/**
-	* Get commitId
-	* @return commitId
-	**/
+	 * Get commitId
+	 *
+	 * @return commitId
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getCommitId() {
 		return commitId;
 	}
@@ -109,12 +111,12 @@ public class Version {
 	}
 
 	/**
-	* Get deploymentId
-	* @return deploymentId
-	**/
+	 * Get deploymentId
+	 *
+	 * @return deploymentId
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getDeploymentId() {
 		return deploymentId;
 	}
@@ -130,12 +132,12 @@ public class Version {
 	}
 
 	/**
-	* Get serverTime
-	* @return serverTime
-	**/
+	 * Get serverTime
+	 *
+	 * @return serverTime
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public OffsetDateTime getServerTime() {
 		return serverTime;
 	}
@@ -153,10 +155,10 @@ public class Version {
 			return false;
 		}
 		Version version = (Version) o;
-		return Objects.equals(this.version, version.version) &&
-				Objects.equals(this.commitId, version.commitId) &&
-				Objects.equals(this.deploymentId, version.deploymentId) &&
-				Objects.equals(this.serverTime, version.serverTime);
+		return Objects.equals(this.version, version.version)
+				&& Objects.equals(this.commitId, version.commitId)
+				&& Objects.equals(this.deploymentId, version.deploymentId)
+				&& Objects.equals(this.serverTime, version.serverTime);
 	}
 
 	@Override
@@ -177,8 +179,7 @@ public class Version {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -214,7 +215,8 @@ public class Version {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in Version is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in Version is not found in the empty JSON string",
 								Version.openapiRequiredFields.toString()));
 			}
 		}
@@ -224,23 +226,27 @@ public class Version {
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!Version.openapiFields.contains(entry.getKey())) {
 				throw new IllegalArgumentException(
-						String.format("The field `%s` in the JSON string is not defined in the `Version` properties. JSON: %s",
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `Version` properties. JSON: %s",
 								entry.getKey(), jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("version") != null && !jsonObj.get("version").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `version` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `version` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("version").toString()));
 		}
 		if (jsonObj.get("commitId") != null && !jsonObj.get("commitId").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `commitId` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `commitId` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("commitId").toString()));
 		}
 		if (jsonObj.get("deploymentId") != null && !jsonObj.get("deploymentId").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `deploymentId` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `deploymentId` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("deploymentId").toString()));
 		}
 	}
@@ -268,7 +274,6 @@ public class Version {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}

@@ -18,15 +18,16 @@ package org.jboss.intersmash.provision.operator.model.keycloak.keycloak.spec;
 import org.keycloak.v1alpha1.keycloakspec.External;
 
 /**
- * Contains configuration for external Keycloak instances. Unmanaged needs to be set to true to use this.
+ * Contains configuration for external Keycloak instances. Unmanaged needs to be set to true to use
+ * this.
  */
 public final class KeycloakExternalBuilder {
 	private boolean enabled;
 	private String url;
 
 	/**
-	 * If set to true, this Keycloak will be treated as an external instance.
-	 * The unmanaged field also needs to be set to true if this field is true.
+	 * If set to true, this Keycloak will be treated as an external instance. The unmanaged field also
+	 * needs to be set to true if this field is true.
 	 *
 	 * @param enabled Whether this Keycloak will be treated as an external instance
 	 * @return this

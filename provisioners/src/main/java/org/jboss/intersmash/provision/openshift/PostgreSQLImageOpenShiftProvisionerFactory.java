@@ -22,12 +22,14 @@ import org.jboss.intersmash.provision.ProvisionerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PostgreSQLImageOpenShiftProvisionerFactory implements ProvisionerFactory<PostgreSQLImageOpenShiftProvisioner> {
+public class PostgreSQLImageOpenShiftProvisionerFactory
+		implements ProvisionerFactory<PostgreSQLImageOpenShiftProvisioner> {
 
 	@Override
 	public PostgreSQLImageOpenShiftProvisioner getProvisioner(Application application) {
 		if (PostgreSQLImageOpenShiftApplication.class.isAssignableFrom(application.getClass()))
-			return new PostgreSQLImageOpenShiftProvisioner((PostgreSQLImageOpenShiftApplication) application);
+			return new PostgreSQLImageOpenShiftProvisioner(
+					(PostgreSQLImageOpenShiftApplication) application);
 		return null;
 	}
 }

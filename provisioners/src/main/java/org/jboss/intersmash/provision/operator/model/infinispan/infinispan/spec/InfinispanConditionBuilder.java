@@ -65,9 +65,7 @@ public final class InfinispanConditionBuilder {
 		return infinispanCondition;
 	}
 
-	/**
-	 * Describe the type of the condition
-	 */
+	/** Describe the type of the condition */
 	public enum ConditionType {
 		None(""),
 		ConditionPrelimChecksPassed("PreliminaryChecksPassed"),

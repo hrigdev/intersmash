@@ -96,7 +96,9 @@ public class OpenShiftProvisionerTestBase {
 	static final String TEST_SECRET_BAR = "bar";
 
 	static final Secret TEST_SECRET = new SecretBuilder("test-secret")
-			.setType(SecretType.OPAQUE).addData(TEST_SECRET_FOO, TEST_SECRET_BAR.getBytes()).build();
+			.setType(SecretType.OPAQUE)
+			.addData(TEST_SECRET_FOO, TEST_SECRET_BAR.getBytes())
+			.build();
 
 	static final String WILDFLY_TEST_PROPERTY = "test-property";
 
@@ -164,7 +166,9 @@ public class OpenShiftProvisionerTestBase {
 			public List<String> getCliScript() {
 				Eap7CliScriptBuilder eapCliScriptBuilder = new Eap7CliScriptBuilder();
 				eapCliScriptBuilder.addCommand(
-						String.format("/system-property=%s:add(value=\"%s\")", WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
+						String.format(
+								"/system-property=%s:add(value=\"%s\")",
+								WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
 				return eapCliScriptBuilder.build();
 			}
 
@@ -203,11 +207,14 @@ public class OpenShiftProvisionerTestBase {
 			private final List<EnvVar> envVars;
 
 			{
-				eapImage = WildflyOpenShiftUtils.importBuilderImage(IntersmashConfig.eap7ImageURL()).getMetadata().getName();
-				eapRuntimeImage = WildflyOpenShiftUtils.importRuntimeImage(IntersmashConfig.eap7RuntimeImageUrl()).getMetadata()
+				eapImage = WildflyOpenShiftUtils.importBuilderImage(IntersmashConfig.eap7ImageURL())
+						.getMetadata()
+						.getName();
+				eapRuntimeImage = WildflyOpenShiftUtils.importRuntimeImage(IntersmashConfig.eap7RuntimeImageUrl())
+						.getMetadata()
 						.getName();
 				String deployment = "testsuite/deployments/eap7-shared/eap7-helloworld";
-				//params
+				// params
 				parameters = new HashMap<>();
 				parameters.put("APPLICATION_IMAGE", getName());
 				parameters.put("EAP_IMAGE", eapImage);
@@ -222,9 +229,11 @@ public class OpenShiftProvisionerTestBase {
 				// Set to allow cloning from Gitlab - any value here do the job
 				envVars.add(new EnvVarBuilder().withName("GIT_SSL_NO_VERIFY").withValue("").build());
 				// Let's build just the required deployment
-				envVars.add(new EnvVarBuilder().withName("MAVEN_ARGS_APPEND")
-						.withValue("-pl testsuite/deployments/eap7-shared/eap7-helloworld -am")
-						.build());
+				envVars.add(
+						new EnvVarBuilder()
+								.withName("MAVEN_ARGS_APPEND")
+								.withValue("-pl testsuite/deployments/eap7-shared/eap7-helloworld -am")
+								.build());
 			}
 
 			@Override
@@ -261,7 +270,11 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public List<EnvVar> getEnvVars() {
 				List<EnvVar> list = new ArrayList<>();
-				list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName()).withValue(TEST_ENV_VAR.getValue()).build());
+				list.add(
+						new EnvVarBuilder()
+								.withName(TEST_ENV_VAR.getName())
+								.withValue(TEST_ENV_VAR.getValue())
+								.build());
 				return Collections.unmodifiableList(list);
 			}
 
@@ -289,7 +302,11 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public List<EnvVar> getEnvVars() {
 				List<EnvVar> list = new ArrayList<>();
-				list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName()).withValue(TEST_ENV_VAR.getValue()).build());
+				list.add(
+						new EnvVarBuilder()
+								.withName(TEST_ENV_VAR.getName())
+								.withValue(TEST_ENV_VAR.getValue())
+								.build());
 				return Collections.unmodifiableList(list);
 			}
 
@@ -309,9 +326,10 @@ public class OpenShiftProvisionerTestBase {
 
 			@Override
 			public List<String> getCliScript() {
-				return Arrays
-						.asList(String.format("/system-property=%s:add(value=\"%s\")", WILDFLY_TEST_PROPERTY,
-								WILDFLY_TEST_PROPERTY));
+				return Arrays.asList(
+						String.format(
+								"/system-property=%s:add(value=\"%s\")",
+								WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
 			}
 
 			@Override
@@ -322,30 +340,49 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public List<EnvVar> getEnvVars() {
 				List<EnvVar> list = new ArrayList<>();
-				list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName()).withValue(TEST_ENV_VAR.getValue()).build());
-				// Let's skip addition of the CLI_LAUNCH_SCRIPT environment variable here to test that it's added automatically
-				// in org.jboss.intersmash.provision.openshift.WildflyImageOpenShiftProvisioner#deployImage().
+				list.add(
+						new EnvVarBuilder()
+								.withName(TEST_ENV_VAR.getName())
+								.withValue(TEST_ENV_VAR.getValue())
+								.build());
+				// Let's skip addition of the CLI_LAUNCH_SCRIPT environment variable here to test that it's
+				// added automatically
+				// in
+				// org.jboss.intersmash.provision.openshift.WildflyImageOpenShiftProvisioner#deployImage().
 				list.add(new EnvVarBuilder().withName("ADMIN_USERNAME").withValue("admin").build());
 				list.add(new EnvVarBuilder().withName("ADMIN_PASSWORD").withValue("pass.1234").build());
 				if (!Strings.isNullOrEmpty(this.getMavenMirrorUrl())) {
-					list.add(new EnvVarBuilder().withName("MAVEN_MIRROR_URL")
-							.withValue(this.getMavenMirrorUrl()).build());
+					list.add(
+							new EnvVarBuilder()
+									.withName("MAVEN_MIRROR_URL")
+									.withValue(this.getMavenMirrorUrl())
+									.build());
 				}
 
 				final String deploymentRelativePath = "testsuite/deployments/openshift-jakarta-sample-standalone/";
 				// let's add configurable deployment additional args:
-				// TODO - the `-Dmaven.wagon.http.ssl.insecure=true` property in the next line is a workaround
-				//  and should be removed once Intersmash will run on OCP 4.8, which allows for importing custom CA
+				// TODO - the `-Dmaven.wagon.http.ssl.insecure=true` property in the next line is a
+				// workaround
+				//  and should be removed once Intersmash will run on OCP 4.8, which allows for importing
+				// custom CA
 				String mavenAdditionalArgs = " -f " + deploymentRelativePath + "pom.xml -Dmaven.wagon.http.ssl.insecure=true";
 				mavenAdditionalArgs = mavenAdditionalArgs.concat(generateAdditionalMavenArgs());
 				// let's pass the profile for building the deployment too...
 				mavenAdditionalArgs = mavenAdditionalArgs.concat(
-						(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile()) ? ""
+						(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile())
+								? ""
 								: " -Pts.wildfly.target-distribution."
 										+ TestDeploymentProperties.getWildflyDeploymentsBuildProfile()));
-				list.add(new EnvVarBuilder().withName("MAVEN_ARGS_APPEND").withValue(mavenAdditionalArgs).build());
-				list.add(new EnvVarBuilder().withName("MAVEN_S2I_ARTIFACT_DIRS").withValue(deploymentRelativePath + "target")
-						.build());
+				list.add(
+						new EnvVarBuilder()
+								.withName("MAVEN_ARGS_APPEND")
+								.withValue(mavenAdditionalArgs)
+								.build());
+				list.add(
+						new EnvVarBuilder()
+								.withName("MAVEN_S2I_ARTIFACT_DIRS")
+								.withValue(deploymentRelativePath + "target")
+								.build());
 
 				return Collections.unmodifiableList(list);
 			}
@@ -375,9 +412,10 @@ public class OpenShiftProvisionerTestBase {
 
 			@Override
 			public List<String> getCliScript() {
-				return Arrays
-						.asList(String.format("/system-property=%s:add(value=\"%s\")", WILDFLY_TEST_PROPERTY,
-								WILDFLY_TEST_PROPERTY));
+				return Arrays.asList(
+						String.format(
+								"/system-property=%s:add(value=\"%s\")",
+								WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
 			}
 
 			@Override
@@ -388,26 +426,41 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public List<EnvVar> getEnvVars() {
 				List<EnvVar> list = new ArrayList<>();
-				list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName()).withValue(TEST_ENV_VAR.getValue()).build());
-				list.add(new EnvVarBuilder().withName("CLI_LAUNCH_SCRIPT").withValue("/opt/server/extensions/configure.cli")
-						.build());
+				list.add(
+						new EnvVarBuilder()
+								.withName(TEST_ENV_VAR.getName())
+								.withValue(TEST_ENV_VAR.getValue())
+								.build());
+				list.add(
+						new EnvVarBuilder()
+								.withName("CLI_LAUNCH_SCRIPT")
+								.withValue("/opt/server/extensions/configure.cli")
+								.build());
 
 				list.add(new EnvVarBuilder().withName("ADMIN_USERNAME").withValue("admin").build());
 				list.add(new EnvVarBuilder().withName("ADMIN_PASSWORD").withValue("pass.1234").build());
 				if (!Strings.isNullOrEmpty(this.getMavenMirrorUrl())) {
-					list.add(new EnvVarBuilder().withName("MAVEN_MIRROR_URL")
-							.withValue(this.getMavenMirrorUrl()).build());
+					list.add(
+							new EnvVarBuilder()
+									.withName("MAVEN_MIRROR_URL")
+									.withValue(this.getMavenMirrorUrl())
+									.build());
 				}
 
 				// let's add configurable deployment additional args:
 				String mavenAdditionalArgs = generateAdditionalMavenArgs();
 				// let's pass the profile for building the deployment too...
 				mavenAdditionalArgs = mavenAdditionalArgs.concat(
-						(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile()) ? ""
+						(Strings.isNullOrEmpty(TestDeploymentProperties.getWildflyDeploymentsBuildProfile())
+								? ""
 								: " -Pts.wildfly.target-distribution."
 										+ TestDeploymentProperties.getWildflyDeploymentsBuildProfile()));
 				if (!Strings.isNullOrEmpty(mavenAdditionalArgs)) {
-					list.add(new EnvVarBuilder().withName("MAVEN_ARGS_APPEND").withValue(mavenAdditionalArgs).build());
+					list.add(
+							new EnvVarBuilder()
+									.withName("MAVEN_ARGS_APPEND")
+									.withValue(mavenAdditionalArgs)
+									.build());
 				}
 
 				return Collections.unmodifiableList(list);
@@ -428,7 +481,6 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public String getPingServiceName() {
 				return "wildfly-ping-service";
-
 			}
 		};
 	}
@@ -440,9 +492,12 @@ public class OpenShiftProvisionerTestBase {
 			private Path getApp() {
 				if (app == null) {
 					app = Paths.get(
-							DeploymentsProvider.findStandaloneDeploymentPath("openshift-jakarta-sample-standalone")
-									.toFile().getAbsolutePath(),
-							"target", "server");
+							DeploymentsProvider.findStandaloneDeploymentPath(
+									"openshift-jakarta-sample-standalone")
+									.toFile()
+									.getAbsolutePath(),
+							"target",
+							"server");
 				}
 				return app;
 			}
@@ -564,7 +619,9 @@ public class OpenShiftProvisionerTestBase {
 			public Kafka getKafka() {
 				if (kafka == null) {
 					Map<String, Object> config = new HashMap<>();
-					config.put("inter.broker.protocol.version", KafkaOperatorApplication.INTER_BROKER_PROTOCOL_VERSION);
+					config.put(
+							"inter.broker.protocol.version",
+							KafkaOperatorApplication.INTER_BROKER_PROTOCOL_VERSION);
 					config.put("offsets.topic.replication.factor", KAFKA_INSTANCE_NUM);
 					config.put("transaction.state.log.min.isr", KAFKA_INSTANCE_NUM);
 					config.put("transaction.state.log.replication.factor", KAFKA_INSTANCE_NUM);
@@ -580,12 +637,16 @@ public class OpenShiftProvisionerTestBase {
 
 					// Initialize Kafka resource
 					kafka = new KafkaBuilder()
-							.withNewMetadata().withName(NAME).endMetadata()
+							.withNewMetadata()
+							.withName(NAME)
+							.endMetadata()
 							.withNewSpec()
 							.withNewEntityOperator()
-							.withNewTopicOperator().withReconciliationIntervalSeconds(TOPIC_RECONCILIATION_INTERVAL_SECONDS)
+							.withNewTopicOperator()
+							.withReconciliationIntervalSeconds(TOPIC_RECONCILIATION_INTERVAL_SECONDS)
 							.endTopicOperator()
-							.withNewUserOperator().withReconciliationIntervalSeconds(USER_RECONCILIATION_INTERVAL_SECONDS)
+							.withNewUserOperator()
+							.withReconciliationIntervalSeconds(USER_RECONCILIATION_INTERVAL_SECONDS)
 							.endUserOperator()
 							.endEntityOperator()
 							.withNewKafka()
@@ -594,12 +655,14 @@ public class OpenShiftProvisionerTestBase {
 							.withNewKafkaAuthorizationSimple()
 							.endKafkaAuthorizationSimple()
 							.withReplicas(KAFKA_INSTANCE_NUM)
-							.withNewEphemeralStorage().endEphemeralStorage()
+							.withNewEphemeralStorage()
+							.endEphemeralStorage()
 							.withVersion(KafkaOperatorApplication.KAFKA_VERSION)
 							.endKafka()
 							.withNewZookeeper()
 							.withReplicas(KAFKA_INSTANCE_NUM)
-							.withNewEphemeralStorage().endEphemeralStorage()
+							.withNewEphemeralStorage()
+							.endEphemeralStorage()
 							.endZookeeper()
 							.endSpec()
 							.build();
@@ -684,7 +747,9 @@ public class OpenShiftProvisionerTestBase {
 			public List<String> getCliScript() {
 				Eap7CliScriptBuilder cliScriptBuilder = new Eap7CliScriptBuilder();
 				cliScriptBuilder.addCommand(
-						String.format("/system-property=%s:add(value=\"%s\")", WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
+						String.format(
+								"/system-property=%s:add(value=\"%s\")",
+								WILDFLY_TEST_PROPERTY, WILDFLY_TEST_PROPERTY));
 				return cliScriptBuilder.build();
 			}
 
@@ -696,7 +761,11 @@ public class OpenShiftProvisionerTestBase {
 			@Override
 			public List<EnvVar> getEnvVars() {
 				List<EnvVar> list = new ArrayList<>();
-				list.add(new EnvVarBuilder().withName(TEST_ENV_VAR.getName()).withValue(TEST_ENV_VAR.getValue()).build());
+				list.add(
+						new EnvVarBuilder()
+								.withName(TEST_ENV_VAR.getName())
+								.withValue(TEST_ENV_VAR.getValue())
+								.build());
 				return Collections.unmodifiableList(list);
 			}
 
@@ -725,12 +794,15 @@ public class OpenShiftProvisionerTestBase {
 		return new KeycloakOperatorApplication() {
 			@Override
 			public org.keycloak.k8s.v2alpha1.Keycloak getKeycloak() {
-				// create key, certificate and tls secret: Keycloak expects the secret to be created beforehand
+				// create key, certificate and tls secret: Keycloak expects the secret to be created
+				// beforehand
 				final String hostName = OpenShifts.master().generateHostname(DEFAULT_KEYCLOAK_APP_NAME);
 				final String tlsSecretName = DEFAULT_KEYCLOAK_APP_NAME + "-tls-secret";
-				CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils
-						.generateSelfSignedCertificateAndKey(hostName.replaceFirst("[.].*$", ""), tlsSecretName,
-								OpenShifts.master().getClient(), OpenShifts.master().getNamespace());
+				CertificatesUtils.CertificateAndKey certificateAndKey = CertificatesUtils.generateSelfSignedCertificateAndKey(
+						hostName.replaceFirst("[.].*$", ""),
+						tlsSecretName,
+						OpenShifts.master().getClient(),
+						OpenShifts.master().getNamespace());
 				// build the basic Keycloak resource
 				return new org.keycloak.k8s.v2alpha1.KeycloakBuilder()
 						.withNewMetadata()
@@ -739,14 +811,8 @@ public class OpenShiftProvisionerTestBase {
 						.endMetadata()
 						.withNewSpec()
 						.withInstances(1L)
-						.withIngress(
-								new IngressBuilder()
-										.withEnabled(true)
-										.build())
-						.withHostname(
-								new HostnameBuilder()
-										.withHostname(hostName)
-										.build())
+						.withIngress(new IngressBuilder().withEnabled(true).build())
+						.withHostname(new HostnameBuilder().withHostname(hostName).build())
 						.withHttp(
 								new HttpBuilder()
 										.withTlsSecret(certificateAndKey.tlsSecret.getMetadata().getName())
@@ -768,7 +834,8 @@ public class OpenShiftProvisionerTestBase {
 
 			@Override
 			public Infinispan getInfinispan() {
-				return new InfinispanBuilder(DEFAULT_INFINISPAN_APP_NAME, Map.of("app", DEFAULT_INFINISPAN_APP_NAME))
+				return new InfinispanBuilder(
+						DEFAULT_INFINISPAN_APP_NAME, Map.of("app", DEFAULT_INFINISPAN_APP_NAME))
 						.replicas(1)
 						.build();
 			}
@@ -786,11 +853,11 @@ public class OpenShiftProvisionerTestBase {
 	}
 
 	/**
-	 * Provide an instance of {@link OpenDataHubOperatorApplication}, that represents a minimal Open Data Hub
-	 * application service that is used for instance by {@link ProvisionerCleanupTestCase}
+	 * Provide an instance of {@link OpenDataHubOperatorApplication}, that represents a minimal Open
+	 * Data Hub application service that is used for instance by {@link ProvisionerCleanupTestCase}
 	 *
-	 * @return A concreate instance of {@link OpenDataHubOperatorApplication}, that represents a minimal Open Data Hub
-	 * application service.
+	 * @return A concreate instance of {@link OpenDataHubOperatorApplication}, that represents a
+	 *     minimal Open Data Hub application service.
 	 */
 	static OpenDataHubOperatorApplication getOpenDataHubOperatorApplication() {
 		return new OpenDataHubOperatorApplication() {

@@ -43,11 +43,13 @@ import io.opendatahub.platform.services.v1alpha1.Monitoring;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Defines the contract and default behavior of an Operator based provisioner for the Open Data Hub Operator
+ * Defines the contract and default behavior of an Operator based provisioner for the Open Data Hub
+ * Operator
  */
 @Slf4j
-public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<OpenDataHubOperatorApplication, C> implements Provisioner<OpenDataHubOperatorApplication> {
+public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<OpenDataHubOperatorApplication, C>
+		implements Provisioner<OpenDataHubOperatorApplication> {
 
 	public OpenDataHubOperatorProvisioner(OpenDataHubOperatorApplication application) {
 		super(application, OpenDataHubOperatorProvisioner.OPERATOR_ID);
@@ -105,10 +107,13 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 			deletionDetails = dscInitializationClient().withName(appName).delete();
 			deleted = deletionDetails.stream().allMatch(d -> d.getCauses().isEmpty());
 			if (!deleted) {
-				log.warn("Wasn't able to remove the 'DSCInitialization' resources created for '{}' instance!",
+				log.warn(
+						"Wasn't able to remove the 'DSCInitialization' resources created for '{}' instance!",
 						appName);
 			}
-			new SimpleWaiter(() -> dscInitializationClient().list().getItems().isEmpty()).level(Level.DEBUG).waitFor();
+			new SimpleWaiter(() -> dscInitializationClient().list().getItems().isEmpty())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 		// delete the OLM subscription
 		unsubscribe();
@@ -120,7 +125,8 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 
 	@Override
 	public void scale(int replicas, boolean wait) {
-		throw new UnsupportedOperationException("Scaling is not implemented by Open Data Hub operator based provisioning");
+		throw new UnsupportedOperationException(
+				"Scaling is not implemented by Open Data Hub operator based provisioning");
 	}
 
 	// =================================================================================================================
@@ -143,7 +149,8 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	protected static String ODH_MONITORING_CRD_NAME = "monitorings.services.platform.opendatahub.io";
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -171,17 +178,20 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	private static NonNamespaceOperation<Monitoring, MonitoringList, Resource<Monitoring>> ODH_MONITORING_CLIENT;
 
 	/**
-	 * Get a client capable of working with {@link OpenDataHubOperatorProvisioner#ODH_DATA_SCIENCE_CLUSTER_CLIENT} custom resource.
+	 * Get a client capable of working with {@link
+	 * OpenDataHubOperatorProvisioner#ODH_DATA_SCIENCE_CLUSTER_CLIENT} custom resource.
 	 *
-	 * @return client for operations with {@link OpenDataHubOperatorProvisioner#ODH_DATA_SCIENCE_CLUSTER_CLIENT} custom resource
+	 * @return client for operations with {@link
+	 *     OpenDataHubOperatorProvisioner#ODH_DATA_SCIENCE_CLUSTER_CLIENT} custom resource
 	 */
 	public NonNamespaceOperation<DataScienceCluster, DataScienceClusterList, Resource<DataScienceCluster>> dataScienceClusterClient() {
 		if (ODH_DATA_SCIENCE_CLUSTER_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ODH_DATA_SCIENCE_CLUSTER_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ODH_DATA_SCIENCE_CLUSTER_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ODH_DATA_SCIENCE_CLUSTER_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ODH_DATA_SCIENCE_CLUSTER_CRD_NAME, OPERATOR_ID));
 			}
 			ODH_DATA_SCIENCE_CLUSTER_CLIENT = dataScienceClusterCustomResourcesClient(
 					CustomResourceDefinitionContext.fromCrd(crd));
@@ -190,17 +200,20 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	}
 
 	/**
-	 * Get a client capable of working with {@link OpenDataHubOperatorProvisioner#ODH_DSC_INITIALIZATION_CLIENT} custom resource.
+	 * Get a client capable of working with {@link
+	 * OpenDataHubOperatorProvisioner#ODH_DSC_INITIALIZATION_CLIENT} custom resource.
 	 *
-	 * @return client for operations with {@link OpenDataHubOperatorProvisioner#ODH_DSC_INITIALIZATION_CLIENT} custom resource
+	 * @return client for operations with {@link
+	 *     OpenDataHubOperatorProvisioner#ODH_DSC_INITIALIZATION_CLIENT} custom resource
 	 */
 	public NonNamespaceOperation<DSCInitialization, DSCInitializationList, Resource<DSCInitialization>> dscInitializationClient() {
 		if (ODH_DSC_INITIALIZATION_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ODH_DSC_INITIALIZATION_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ODH_DSC_INITIALIZATION_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ODH_DSC_INITIALIZATION_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ODH_DSC_INITIALIZATION_CRD_NAME, OPERATOR_ID));
 			}
 			ODH_DSC_INITIALIZATION_CLIENT = dscInitializationCustomResourcesClient(
 					CustomResourceDefinitionContext.fromCrd(crd));
@@ -209,17 +222,20 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	}
 
 	/**
-	 * Get a client capable of working with {@link OpenDataHubOperatorProvisioner#ODH_FEATURE_TRACKER_CLIENT} custom resource.
+	 * Get a client capable of working with {@link
+	 * OpenDataHubOperatorProvisioner#ODH_FEATURE_TRACKER_CLIENT} custom resource.
 	 *
-	 * @return client for operations with {@link OpenDataHubOperatorProvisioner#ODH_FEATURE_TRACKER_CLIENT} custom resource
+	 * @return client for operations with {@link
+	 *     OpenDataHubOperatorProvisioner#ODH_FEATURE_TRACKER_CLIENT} custom resource
 	 */
 	public NonNamespaceOperation<FeatureTracker, FeatureTrackerList, Resource<FeatureTracker>> featureTrackerClient() {
 		if (ODH_FEATURE_TRACKER_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ODH_FEATURE_TRACKER_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ODH_FEATURE_TRACKER_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ODH_FEATURE_TRACKER_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ODH_FEATURE_TRACKER_CRD_NAME, OPERATOR_ID));
 			}
 			ODH_FEATURE_TRACKER_CLIENT = featureTrackerCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -227,17 +243,20 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	}
 
 	/**
-	 * Get a client capable of working with {@link OpenDataHubOperatorProvisioner#ODH_MONITORING_CLIENT} custom resource.
+	 * Get a client capable of working with {@link
+	 * OpenDataHubOperatorProvisioner#ODH_MONITORING_CLIENT} custom resource.
 	 *
-	 * @return client for operations with {@link OpenDataHubOperatorProvisioner#ODH_MONITORING_CLIENT} custom resource
+	 * @return client for operations with {@link OpenDataHubOperatorProvisioner#ODH_MONITORING_CLIENT}
+	 *     custom resource
 	 */
 	public NonNamespaceOperation<Monitoring, MonitoringList, Resource<Monitoring>> monitoringClient() {
 		if (ODH_MONITORING_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ODH_MONITORING_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ODH_MONITORING_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ODH_MONITORING_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ODH_MONITORING_CRD_NAME, OPERATOR_ID));
 			}
 			ODH_MONITORING_CLIENT = monitoringCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -245,13 +264,13 @@ public abstract class OpenDataHubOperatorProvisioner<C extends NamespacedKuberne
 	}
 
 	/**
-	 * Get a reference to an {@link DataScienceCluster} instance.
-	 * Use get() to obtain the actual object, or null in case it does not exist on tested cluster.
+	 * Get a reference to an {@link DataScienceCluster} instance. Use get() to obtain the actual
+	 * object, or null in case it does not exist on tested cluster.
 	 *
-	 * @return A concrete {@link Resource} instance representing the {@link DataScienceCluster} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link DataScienceCluster}
+	 *     resource definition
 	 */
 	public Resource<DataScienceCluster> dataScienceCluster() {
 		return dataScienceClusterClient().withName(getApplication().getName());
 	}
-
 }

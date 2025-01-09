@@ -35,19 +35,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Hyperfoil run results
- *
- */
+/** Hyperfoil run results */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-		"$schema",
-		"info",
-		"total",
-		"failure",
-		"phase",
-		"agent"
-})
+@JsonPropertyOrder({ "$schema", "info", "total", "failure", "phase", "agent" })
 @Generated("jsonschema2pojo")
 public class RunStatisticsWrapper {
 
@@ -85,161 +75,98 @@ public class RunStatisticsWrapper {
 		}
 	}
 
-	/**
-	 * This should point to http://hyperfoil.io/run-schema/0.6
-	 *
-	 */
+	/** This should point to http://hyperfoil.io/run-schema/0.6 */
 	@JsonProperty("$schema")
 	@JsonPropertyDescription("This should point to http://hyperfoil.io/run-schema/0.6")
 	private String $schema;
-	/**
-	 * General information about the run.
-	 * (Required)
-	 *
-	 */
+	/** General information about the run. (Required) */
 	@JsonProperty("info")
 	@JsonPropertyDescription("General information about the run.")
 	private Info info;
-	/**
-	 * Aggregated per-phase results.
-	 * (Required)
-	 *
-	 */
+	/** Aggregated per-phase results. (Required) */
 	@JsonProperty("total")
 	@JsonPropertyDescription("Aggregated per-phase results.")
 	private List<PhaseStats> total = null;
-	/**
-	 * SLA failures encountered during the run.
-	 *
-	 */
+	/** SLA failures encountered during the run. */
 	@JsonProperty("failure")
 	@JsonPropertyDescription("SLA failures encountered during the run.")
 	private List<Failure> failure = null;
-	/**
-	 * Detailed data about phases. Phase names are used as keys.
-	 * (Required)
-	 *
-	 */
+	/** Detailed data about phases. Phase names are used as keys. (Required) */
 	@JsonProperty("phase")
 	@JsonPropertyDescription("Detailed data about phases. Phase names are used as keys.")
 	private PhaseDetail phase;
-	/**
-	 * Per-agent statistics
-	 *
-	 */
+	/** Per-agent statistics */
 	@JsonProperty("agent")
 	@JsonPropertyDescription("Per-agent statistics")
 	private Agent agent;
 
-	/**
-	 * This should point to http://hyperfoil.io/run-schema/0.6
-	 *
-	 */
+	/** This should point to http://hyperfoil.io/run-schema/0.6 */
 	@JsonProperty("$schema")
 	public String get$schema() {
 		return $schema;
 	}
 
-	/**
-	 * This should point to http://hyperfoil.io/run-schema/0.6
-	 *
-	 */
+	/** This should point to http://hyperfoil.io/run-schema/0.6 */
 	@JsonProperty("$schema")
 	public void set$schema(String $schema) {
 		this.$schema = $schema;
 	}
 
-	/**
-	 * General information about the run.
-	 * (Required)
-	 *
-	 */
+	/** General information about the run. (Required) */
 	@JsonProperty("info")
 	public Info getInfo() {
 		return info;
 	}
 
-	/**
-	 * General information about the run.
-	 * (Required)
-	 *
-	 */
+	/** General information about the run. (Required) */
 	@JsonProperty("info")
 	public void setInfo(Info info) {
 		this.info = info;
 	}
 
-	/**
-	 * Aggregated per-phase results.
-	 * (Required)
-	 *
-	 */
+	/** Aggregated per-phase results. (Required) */
 	@JsonProperty("total")
 	public List<PhaseStats> getTotal() {
 		return total;
 	}
 
-	/**
-	 * Aggregated per-phase results.
-	 * (Required)
-	 *
-	 */
+	/** Aggregated per-phase results. (Required) */
 	@JsonProperty("total")
 	public void setTotal(List<PhaseStats> total) {
 		this.total = total;
 	}
 
-	/**
-	 * SLA failures encountered during the run.
-	 *
-	 */
+	/** SLA failures encountered during the run. */
 	@JsonProperty("failure")
 	public List<Failure> getFailure() {
 		return failure;
 	}
 
-	/**
-	 * SLA failures encountered during the run.
-	 *
-	 */
+	/** SLA failures encountered during the run. */
 	@JsonProperty("failure")
 	public void setFailure(List<Failure> failure) {
 		this.failure = failure;
 	}
 
-	/**
-	 * Detailed data about phases. Phase names are used as keys.
-	 * (Required)
-	 *
-	 */
+	/** Detailed data about phases. Phase names are used as keys. (Required) */
 	@JsonProperty("phase")
 	public PhaseDetail getPhase() {
 		return phase;
 	}
 
-	/**
-	 * Detailed data about phases. Phase names are used as keys.
-	 * (Required)
-	 *
-	 */
+	/** Detailed data about phases. Phase names are used as keys. (Required) */
 	@JsonProperty("phase")
 	public void setPhase(PhaseDetail phase) {
 		this.phase = phase;
 	}
 
-	/**
-	 * Per-agent statistics
-	 *
-	 */
+	/** Per-agent statistics */
 	@JsonProperty("agent")
 	public Agent getAgent() {
 		return agent;
 	}
 
-	/**
-	 * Per-agent statistics
-	 *
-	 */
+	/** Per-agent statistics */
 	@JsonProperty("agent")
 	public void setAgent(Agent agent) {
 		this.agent = agent;
@@ -248,5 +175,4 @@ public class RunStatisticsWrapper {
 	public List<PhaseStats> getPhaseStats() {
 		return phaseStats;
 	}
-
 }

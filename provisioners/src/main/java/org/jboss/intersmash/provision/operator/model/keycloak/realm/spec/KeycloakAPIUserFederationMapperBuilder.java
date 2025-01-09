@@ -92,7 +92,8 @@ public final class KeycloakAPIUserFederationMapperBuilder {
 	 * @param federationProviderDisplayName The display name of the provider instance
 	 * @return this
 	 */
-	public KeycloakAPIUserFederationMapperBuilder federationProviderDisplayName(String federationProviderDisplayName) {
+	public KeycloakAPIUserFederationMapperBuilder federationProviderDisplayName(
+			String federationProviderDisplayName) {
 		this.federationProviderDisplayName = federationProviderDisplayName;
 		return this;
 	}

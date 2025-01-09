@@ -23,8 +23,8 @@ import cz.xtf.core.waiting.failfast.FailFastBuilder;
 import cz.xtf.core.waiting.failfast.FailFastCheck;
 
 /**
- * Helper class that leverages the XTF library fail-fast APIs in methods that can be used to control the
- * Intersmash provisioning workflow.
+ * Helper class that leverages the XTF library fail-fast APIs in methods that can be used to control
+ * the Intersmash provisioning workflow.
  */
 public class FailFastUtils {
 	private static String[] failFastEventMessages = new String[] {
@@ -46,8 +46,7 @@ public class FailFastUtils {
 		for (int i = 0; i < appNames.length; i++) {
 			appNamesRegex[i] = appNames[i].concat(".*");
 		}
-		return FailFastBuilder
-				.ofTestAndBuildNamespace()
+		return FailFastBuilder.ofTestAndBuildNamespace()
 				.events()
 				.ofNames(appNamesRegex)
 				.after(after)

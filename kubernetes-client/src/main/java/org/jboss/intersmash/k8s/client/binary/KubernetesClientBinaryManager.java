@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.k8s.client.binary;
 
 import java.io.File;
@@ -30,25 +45,37 @@ public class KubernetesClientBinaryManager {
 	public KubernetesClientBinary masterBinary(final String namespace) {
 		Objects.requireNonNull(namespace);
 
-		return getBinary(KubernetesConfig.masterToken(), KubernetesConfig.masterUsername(), KubernetesConfig.masterPassword(),
-				KubernetesConfig.masterKubeconfig(), namespace);
+		return getBinary(
+				KubernetesConfig.masterToken(),
+				KubernetesConfig.masterUsername(),
+				KubernetesConfig.masterPassword(),
+				KubernetesConfig.masterKubeconfig(),
+				namespace);
 	}
 
 	public KubernetesClientBinary adminBinary(final String namespace) {
 		Objects.requireNonNull(namespace);
 
-		return getBinary(KubernetesConfig.adminToken(), KubernetesConfig.adminUsername(), KubernetesConfig.adminPassword(),
-				KubernetesConfig.adminKubeconfig(), namespace);
+		return getBinary(
+				KubernetesConfig.adminToken(),
+				KubernetesConfig.adminUsername(),
+				KubernetesConfig.adminPassword(),
+				KubernetesConfig.adminKubeconfig(),
+				namespace);
 	}
 
-	private KubernetesClientBinary getBinary(final String token, final String username, final String password,
+	private KubernetesClientBinary getBinary(
+			final String token,
+			final String username,
+			final String password,
 			final String kubeconfig,
 			String namespace) {
 		String configPath = createUniqueKubernetesConfigFolder().resolve("kube.config").toAbsolutePath().toString();
 		KubernetesClientBinary kubernetesClientBinary;
 
 		if (StringUtils.isNotEmpty(token) || StringUtils.isNotEmpty(username)) {
-			// If we are using a token or username/password, we start with a nonexisting kubeconfig and do a "kubectl login"
+			// If we are using a token or username/password, we start with a nonexisting kubeconfig and do
+			// a "kubectl login"
 			kubernetesClientBinary = new KubernetesClientBinary(Kuberneteses.getBinaryPath(), configPath);
 			if (StringUtils.isNotEmpty(token)) {
 				kubernetesClientBinary.login(KubernetesConfig.url(), token);
@@ -56,35 +83,46 @@ public class KubernetesClientBinaryManager {
 				kubernetesClientBinary.login(KubernetesConfig.url(), username, password);
 			}
 		} else {
-			// If we are using an existing kubeconfig (or a default kubeconfig), we copy the original kubeconfig
+			// If we are using an existing kubeconfig (or a default kubeconfig), we copy the original
+			// kubeconfig
 			final Path actualConfigPath = Paths.get(configPath);
 			if (StringUtils.isNotEmpty(kubeconfig)) {
 				// flatten kubeconfig in case it contains certs/keys
 				try {
-					Files.write(actualConfigPath,
-							Arrays.asList(new KubernetesClientBinary(Kuberneteses.getBinaryPath(), null)
-									.execute("config", "view", "--kubeconfig", kubeconfig, "--flatten")),
+					Files.write(
+							actualConfigPath,
+							Arrays.asList(
+									new KubernetesClientBinary(Kuberneteses.getBinaryPath(), null)
+											.execute("config", "view", "--kubeconfig", kubeconfig, "--flatten")),
 							StandardCharsets.UTF_8);
 				} catch (IOException e) {
-					throw new IllegalStateException("Couldn't create a copy of an existing Kubernetes configuration file", e);
+					throw new IllegalStateException(
+							"Couldn't create a copy of an existing Kubernetes configuration file", e);
 				}
 			} else {
 				// We copy the default ~/.kube/config
 				File defaultKubeConfig = Paths.get(getHomeDir(), ".kube", "config").toFile();
 				if (defaultKubeConfig.isFile()) {
 					try {
-						Files.write(actualConfigPath,
-								Arrays.asList(new KubernetesClientBinary(Kuberneteses.getBinaryPath(), null)
-										.execute("config", "view", "--kubeconfig", defaultKubeConfig.getAbsolutePath(),
-												"--flatten")),
+						Files.write(
+								actualConfigPath,
+								Arrays.asList(
+										new KubernetesClientBinary(Kuberneteses.getBinaryPath(), null)
+												.execute(
+														"config",
+														"view",
+														"--kubeconfig",
+														defaultKubeConfig.getAbsolutePath(),
+														"--flatten")),
 								StandardCharsets.UTF_8);
 					} catch (IOException e) {
-						throw new IllegalStateException("Couldn't create a copy of the default Kubernetes configuration file",
-								e);
+						throw new IllegalStateException(
+								"Couldn't create a copy of the default Kubernetes configuration file", e);
 					}
 				} else {
-					throw new IllegalStateException(defaultKubeConfig.getAbsolutePath()
-							+ " does not exist and no other Kubernetes master option specified");
+					throw new IllegalStateException(
+							defaultKubeConfig.getAbsolutePath()
+									+ " does not exist and no other Kubernetes master option specified");
 				}
 			}
 			kubernetesClientBinary = new KubernetesClientBinary(Kuberneteses.getBinaryPath(), configPath);

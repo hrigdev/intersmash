@@ -22,9 +22,7 @@ import java.lang.annotation.Target;
 
 import org.jboss.intersmash.provision.openshift.OpenShiftProvisioner;
 
-/**
- * Inject {@link OpenShiftProvisioner} into a field based on the Application FQCN.
- */
+/** Inject {@link OpenShiftProvisioner} into a field based on the Application FQCN. */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ServiceProvisioner {

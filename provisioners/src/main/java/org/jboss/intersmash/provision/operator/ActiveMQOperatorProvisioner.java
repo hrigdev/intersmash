@@ -41,10 +41,12 @@ import io.fabric8.kubernetes.client.dsl.internal.HasMetadataOperationsImpl;
 import lombok.NonNull;
 
 /**
- * Defines the contract and default behavior of an Operator based provisioner for the ActiveMQ Artemis Operator
+ * Defines the contract and default behavior of an Operator based provisioner for the ActiveMQ
+ * Artemis Operator
  */
-public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetesClient> extends
-		OperatorProvisioner<ActiveMQOperatorApplication, C> implements Provisioner<ActiveMQOperatorApplication> {
+public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetesClient>
+		extends OperatorProvisioner<ActiveMQOperatorApplication, C>
+		implements Provisioner<ActiveMQOperatorApplication> {
 
 	public ActiveMQOperatorProvisioner(@NonNull ActiveMQOperatorApplication application) {
 		super(application, ActiveMQOperatorProvisioner.OPERATOR_ID);
@@ -55,8 +57,9 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	// =================================================================================================================
 	protected List<Pod> getLabeledPods(final String labelName, final String labelValue) {
 		return this.getPods().stream()
-				.filter(p -> p.getMetadata().getLabels().entrySet().stream()
-						.anyMatch(l -> l.getKey().equals(labelName) && l.getValue().equals(labelValue)))
+				.filter(
+						p -> p.getMetadata().getLabels().entrySet().stream()
+								.anyMatch(l -> l.getKey().equals(labelName) && l.getValue().equals(labelValue)))
 				.collect(Collectors.toList());
 	}
 
@@ -88,19 +91,21 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 		activeMQArtemisesClient().createOrReplace(getApplication().getActiveMQArtemis());
 		// deploy addresses
 		getApplication().getActiveMQArtemisAddresses().stream()
-				.forEach(activeMQArtemisAddress -> activeMQArtemisAddressesClient().createOrReplace(activeMQArtemisAddress));
+				.forEach(
+						activeMQArtemisAddress -> activeMQArtemisAddressesClient().createOrReplace(activeMQArtemisAddress));
 		// wait for all resources to be ready
 		activeMQArtemisAddresses()
-				.forEach(address -> new SimpleWaiter(() -> address.get() != null)
-						.level(Level.DEBUG)
-						.waitFor());
+				.forEach(
+						address -> new SimpleWaiter(() -> address.get() != null).level(Level.DEBUG).waitFor());
 		new SimpleWaiter(() -> activeMQArtemis().get() != null)
 				.failFast(ffCheck)
 				.level(Level.DEBUG)
 				.waitFor();
-		new SimpleWaiter(() -> getLabeledPods(activeMQArtemis().get().getKind(),
-				getApplication().getActiveMQArtemis().getMetadata().getName())
-				.size() == replicas)
+		new SimpleWaiter(
+				() -> getLabeledPods(
+						activeMQArtemis().get().getKind(),
+						getApplication().getActiveMQArtemis().getMetadata().getName())
+						.size() == replicas)
 				.failFast(ffCheck)
 				.level(Level.DEBUG)
 				.waitFor();
@@ -112,7 +117,8 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 		 * 2. the condition above waits already for the expected (i.e. representing ActiveMQArtemis CRs) number of CR
 		 * pods to be ready
 		 */
-		//		new SimpleWaiter(() -> activeMQArtemis().get().getStatus().getPodStatus().getReady().size() == replicas)
+		//		new SimpleWaiter(() -> activeMQArtemis().get().getStatus().getPodStatus().getReady().size()
+		// == replicas)
 		//				.failFast(ffCheck)
 		//				.level(Level.DEBUG)
 		//				.waitFor();
@@ -122,17 +128,24 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	public void undeploy() {
 		FailFastCheck ffCheck = () -> false;
 		// delete the resources
-		activeMQArtemisAddresses().forEach(address -> address.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
+		activeMQArtemisAddresses()
+				.forEach(address -> address.withPropagationPolicy(DeletionPropagation.FOREGROUND).delete());
 
 		// scaling down to 0 (graceful shutdown) is required since ActiveMQ Operator 7.10
 		this.scale(0, Boolean.TRUE);
 		activeMQArtemis().withPropagationPolicy(DeletionPropagation.FOREGROUND).delete();
 
 		// wait
-		new SimpleWaiter(() -> activeMQArtemisesClient().list().getItems().isEmpty()).failFast(ffCheck).level(Level.DEBUG)
+		new SimpleWaiter(() -> activeMQArtemisesClient().list().getItems().isEmpty())
+				.failFast(ffCheck)
+				.level(Level.DEBUG)
 				.waitFor();
-		activeMQArtemisAddresses().forEach(
-				address -> new SimpleWaiter(() -> address.get() == null).level(Level.DEBUG).failFast(ffCheck).waitFor());
+		activeMQArtemisAddresses()
+				.forEach(
+						address -> new SimpleWaiter(() -> address.get() == null)
+								.level(Level.DEBUG)
+								.failFast(ffCheck)
+								.waitFor());
 
 		unsubscribe();
 	}
@@ -142,9 +155,8 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 		tmpBroker.getSpec().getDeploymentPlan().setSize(replicas);
 		activeMQArtemis().replace(tmpBroker);
 		if (wait) {
-			new SimpleWaiter(() -> getLabeledPods(tmpBroker.getKind(),
-					tmpBroker.getMetadata().getName())
-					.size() == replicas)
+			new SimpleWaiter(
+					() -> getLabeledPods(tmpBroker.getKind(), tmpBroker.getMetadata().getName()).size() == replicas)
 					.level(Level.DEBUG)
 					.waitFor();
 			/*
@@ -153,7 +165,8 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 			 * 2. the condition above waits already for the expected (i.e. representing ActiveMQArtemis CRs) number of CR
 			 * pods to be ready
 			 */
-			//			new SimpleWaiter(() -> activeMQArtemis().get().getStatus().getPodStatus().getReady().size() == replicas)
+			//			new SimpleWaiter(() ->
+			// activeMQArtemis().get().getStatus().getPodStatus().getReady().size() == replicas)
 			//					.failFast(ffCheck)
 			//					.level(Level.DEBUG)
 			//					.waitFor();
@@ -176,7 +189,8 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	protected static String ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME = "activemqartemisaddresses.broker.amq.io";
 
 	/**
-	 * Generic CRD client which is used by client builders default implementation to build the CRDs client
+	 * Generic CRD client which is used by client builders default implementation to build the CRDs
+	 * client
 	 *
 	 * @return A {@link NonNamespaceOperation} instance that represents a
 	 */
@@ -193,17 +207,20 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	private static NonNamespaceOperation<ActiveMQArtemis, ActiveMQArtemisList, Resource<ActiveMQArtemis>> ACTIVE_MQ_ARTEMISES_CLIENT;
 
 	/**
-	 * Get a client capable of working with {@link {@link ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_CRD_NAME}} custom resource.
+	 * Get a client capable of working with {@link {@link
+	 * ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_CRD_NAME}} custom resource.
 	 *
-	 * @return client for operations with {@link {@link ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_CRD_NAME}} custom resource
+	 * @return client for operations with {@link {@link
+	 *     ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_CRD_NAME}} custom resource
 	 */
 	public NonNamespaceOperation<ActiveMQArtemis, ActiveMQArtemisList, Resource<ActiveMQArtemis>> activeMQArtemisesClient() {
 		if (ACTIVE_MQ_ARTEMISES_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ACTIVEMQ_ARTEMIS_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ACTIVEMQ_ARTEMIS_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ACTIVEMQ_ARTEMIS_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ACTIVEMQ_ARTEMIS_CRD_NAME, OPERATOR_ID));
 			}
 			ACTIVE_MQ_ARTEMISES_CLIENT = activeMQArtemisCustomResourcesClient(CustomResourceDefinitionContext.fromCrd(crd));
 		}
@@ -213,17 +230,20 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	private static NonNamespaceOperation<ActiveMQArtemisAddress, ActiveMQArtemisAddressList, Resource<ActiveMQArtemisAddress>> ACTIVE_MQ_ARTEMIS_ADDRESSES_CLIENT;
 
 	/**
-	 * Get a client capable of working with {@link ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME} custom resource.
+	 * Get a client capable of working with {@link
+	 * ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME} custom resource.
 	 *
-	 * @return client for operations with {@link ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME} custom resource
+	 * @return client for operations with {@link
+	 *     ActiveMQOperatorProvisioner#ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME} custom resource
 	 */
 	public NonNamespaceOperation<ActiveMQArtemisAddress, ActiveMQArtemisAddressList, Resource<ActiveMQArtemisAddress>> activeMQArtemisAddressesClient() {
 		if (ACTIVE_MQ_ARTEMIS_ADDRESSES_CLIENT == null) {
-			CustomResourceDefinition crd = customResourceDefinitionsClient()
-					.withName(ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME).get();
+			CustomResourceDefinition crd = customResourceDefinitionsClient().withName(ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME).get();
 			if (crd == null) {
-				throw new RuntimeException(String.format("[%s] custom resource is not provided by [%s] operator.",
-						ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME, OPERATOR_ID));
+				throw new RuntimeException(
+						String.format(
+								"[%s] custom resource is not provided by [%s] operator.",
+								ACTIVEMQ_ARTEMIS_ADDRESS_CRD_NAME, OPERATOR_ID));
 			}
 			ACTIVE_MQ_ARTEMIS_ADDRESSES_CLIENT = activeMQArtemisAddressesCustomResourcesClient(
 					CustomResourceDefinitionContext.fromCrd(crd));
@@ -232,20 +252,24 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	}
 
 	/**
-	 * Get a reference to activeMQArtemis object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
-	 * @return A concrete {@link Resource} instance representing the {@link ActiveMQArtemis} resource definition
+	 * Get a reference to activeMQArtemis object. Use get() to get the actual object, or null in case
+	 * it does not exist on tested cluster.
+	 *
+	 * @return A concrete {@link Resource} instance representing the {@link ActiveMQArtemis} resource
+	 *     definition
 	 */
 	public Resource<ActiveMQArtemis> activeMQArtemis() {
-		return activeMQArtemisesClient().withName(getApplication().getActiveMQArtemis().getMetadata().getName());
+		return activeMQArtemisesClient()
+				.withName(getApplication().getActiveMQArtemis().getMetadata().getName());
 	}
 
 	/**
-	 * Get a reference to activeMQArtemisAddress object. Use get() to get the actual object, or null in case it does not
-	 * exist on tested cluster.
+	 * Get a reference to activeMQArtemisAddress object. Use get() to get the actual object, or null
+	 * in case it does not exist on tested cluster.
 	 *
 	 * @param name name of the activeMQArtemisAddress custom resource
-	 * @return A concrete {@link Resource} instance representing the {@link ActiveMQArtemisAddress} resource definition
+	 * @return A concrete {@link Resource} instance representing the {@link ActiveMQArtemisAddress}
+	 *     resource definition
 	 */
 	public Resource<ActiveMQArtemisAddress> activeMQArtemisAddress(String name) {
 		return activeMQArtemisAddressesClient().withName(name);
@@ -254,9 +278,12 @@ public abstract class ActiveMQOperatorProvisioner<C extends NamespacedKubernetes
 	/**
 	 * Get all activeMQArtemisAddresses maintained by the current operator instance.
 	 *
-	 * Be aware that this method return just a references to the addresses, they might not actually exist on the cluster.
-	 * Use get() to get the actual object, or null in case it does not exist on tested cluster.
-	 * @return A list of {@link Resource} instances representing the {@link ActiveMQArtemisAddress} resource definitions
+	 * <p>Be aware that this method return just a references to the addresses, they might not actually
+	 * exist on the cluster. Use get() to get the actual object, or null in case it does not exist on
+	 * tested cluster.
+	 *
+	 * @return A list of {@link Resource} instances representing the {@link ActiveMQArtemisAddress}
+	 *     resource definitions
 	 */
 	public List<Resource<ActiveMQArtemisAddress>> activeMQArtemisAddresses() {
 		ActiveMQOperatorApplication activeMqOperatorApplication = getApplication();

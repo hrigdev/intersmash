@@ -19,8 +19,9 @@ import io.fabric8.kubernetes.client.CustomResourceList;
 import io.opendatahub.dscinitialization.v1.DSCInitialization;
 
 /**
- * Used by {@link org.jboss.intersmash.provision.operator.OpenDataHubOperatorProvisioner} client methods,
- * this class represents a concrete {@link java.util.List} of {@link DSCInitialization} instances.
+ * Used by {@link org.jboss.intersmash.provision.operator.OpenDataHubOperatorProvisioner} client
+ * methods, this class represents a concrete {@link java.util.List} of {@link DSCInitialization}
+ * instances.
  */
 public class DSCInitializationList extends CustomResourceList<DSCInitialization> {
 }

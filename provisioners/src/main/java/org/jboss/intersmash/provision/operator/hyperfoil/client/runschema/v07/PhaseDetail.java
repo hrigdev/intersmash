@@ -26,14 +26,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-/**
- * Detailed data about phases. Phase names are used as keys.
- *
- */
+/** Detailed data about phases. Phase names are used as keys. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-
-})
+@JsonPropertyOrder({})
 @Generated("jsonschema2pojo")
 public class PhaseDetail {
 
@@ -49,5 +44,4 @@ public class PhaseDetail {
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
 	}
-
 }

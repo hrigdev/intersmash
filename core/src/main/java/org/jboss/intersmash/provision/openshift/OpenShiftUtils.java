@@ -20,11 +20,12 @@ import java.util.Map;
 import cz.xtf.core.openshift.OpenShift;
 
 /**
- * Helper class that leverages the XTF library {@link OpenShift} APIs in methods that can be used to control the
- * Intersmash provisioning workflow.
+ * Helper class that leverages the XTF library {@link OpenShift} APIs in methods that can be used to
+ * control the Intersmash provisioning workflow.
  */
 public class OpenShiftUtils {
-	public static void deleteResourcesWithLabel(OpenShift openShift, String labelKey, String labelValue) {
+	public static void deleteResourcesWithLabel(
+			OpenShift openShift, String labelKey, String labelValue) {
 		openShift.deploymentConfigs().withLabel(labelKey, labelValue).delete();
 
 		openShift.templates().withLabel(labelKey, labelValue).delete();
@@ -42,7 +43,12 @@ public class OpenShiftUtils {
 		openShift.routes().withLabel(labelKey, labelValue).delete();
 		openShift.pods().withLabel(labelKey, labelValue).delete();
 		openShift.persistentVolumeClaims().withLabel(labelKey, labelValue).delete();
-		openShift.autoscaling().v1().horizontalPodAutoscalers().withLabel(labelKey, labelValue).delete();
+		openShift
+				.autoscaling()
+				.v1()
+				.horizontalPodAutoscalers()
+				.withLabel(labelKey, labelValue)
+				.delete();
 		openShift.configMaps().withLabel(labelKey, labelValue).delete();
 		openShift.rbac().roles().withLabel(labelKey, labelValue).delete();
 	}

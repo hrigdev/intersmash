@@ -24,5 +24,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+      - name: Check Code Style
+        run: mvn checkstyle:check pmd:check -B -pl testsuite/deployments/deployments-provider,kubernetes-client,core,provisioners -am
       - name: Build with Maven
         run:  mvn -version ; mvn clean install -U -B -DskipTests ; mvn test -B -pl testsuite/deployments/deployments-provider,kubernetes-client,core,provisioners -am

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2025 Red Hat, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jboss.intersmash.provision.openshift;
 
 import java.util.HashMap;
@@ -20,16 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Provisions PostgreSql on OpenShift via PostgreSql template available on OpenShift and based on a
  * {@link PostgreSQLTemplateOpenShiftApplication} concrete implementation.
- *
  */
 @Slf4j
-public class PostgreSQLTemplateOpenShiftProvisioner implements OpenShiftProvisioner<PostgreSQLTemplateOpenShiftApplication> {
+public class PostgreSQLTemplateOpenShiftProvisioner
+		implements OpenShiftProvisioner<PostgreSQLTemplateOpenShiftApplication> {
 	private FailFastCheck ffCheck = () -> false;
 	private final PostgreSQLTemplateOpenShiftApplication postgreSQLApplication;
 	private final OpenShiftTemplate postgreSQLTemplate;
 	private KubernetesList kubernetesList;
 
-	public PostgreSQLTemplateOpenShiftProvisioner(PostgreSQLTemplateOpenShiftApplication postgreSQLApplication) {
+	public PostgreSQLTemplateOpenShiftProvisioner(
+			PostgreSQLTemplateOpenShiftApplication postgreSQLApplication) {
 		this.postgreSQLApplication = postgreSQLApplication;
 		this.postgreSQLTemplate = postgreSQLApplication.getTemplate();
 	}
@@ -41,22 +57,24 @@ public class PostgreSQLTemplateOpenShiftProvisioner implements OpenShiftProvisio
 
 	@Override
 	public void deploy() {
-		ffCheck = FailFastUtils.getFailFastCheck(EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(),
-				postgreSQLApplication.getName());
+		ffCheck = FailFastUtils.getFailFastCheck(
+				EventHelper.timeOfLastEventBMOrTestNamespaceOrEpoch(), postgreSQLApplication.getName());
 
 		Map<String, String> parameters = new HashMap<>(postgreSQLApplication.getParameters());
-		// DATABASE_SERVICE_NAME parameter has to be aligned with the getName() in case that default is not used
-		if (!postgreSQLApplication.getName().equals("postgresql") || parameters.containsKey("DATABASE_SERVICE_NAME")) {
+		// DATABASE_SERVICE_NAME parameter has to be aligned with the getName() in case that default is
+		// not used
+		if (!postgreSQLApplication.getName().equals("postgresql")
+				|| parameters.containsKey("DATABASE_SERVICE_NAME")) {
 			String dbServiceName = parameters.getOrDefault("DATABASE_SERVICE_NAME", "");
 			if (!dbServiceName.equals(postgreSQLApplication.getName())) {
-				log.warn("DATABASE_SERVICE_NAME has to be aligned with the application name, setting it according to name: {}.",
+				log.warn(
+						"DATABASE_SERVICE_NAME has to be aligned with the application name, setting it according to name: {}.",
 						postgreSQLApplication.getName());
 				parameters.put("DATABASE_SERVICE_NAME", postgreSQLApplication.getName());
 			}
 		}
 		// Get the template from the openshift namespace, recreate it into test namespace and deploy
-		Template template = OpenShifts.master("openshift")
-				.getTemplate(postgreSQLApplication.getTemplate().getLabel());
+		Template template = OpenShifts.master("openshift").getTemplate(postgreSQLApplication.getTemplate().getLabel());
 		template.getMetadata().setNamespace(openShift.getNamespace());
 		template.getMetadata().setResourceVersion(null);
 		openShift.createTemplate(template);
@@ -79,8 +97,10 @@ public class PostgreSQLTemplateOpenShiftProvisioner implements OpenShiftProvisio
 	public void scale(int replicas, boolean wait) {
 		openShift.scale(postgreSQLApplication.getName(), replicas);
 		if (wait) {
-			OpenShiftWaiters.get(openShift, ffCheck).areExactlyNPodsReady(replicas, "name", postgreSQLTemplate.getLabel())
-					.level(Level.DEBUG).waitFor();
+			OpenShiftWaiters.get(openShift, ffCheck)
+					.areExactlyNPodsReady(replicas, "name", postgreSQLTemplate.getLabel())
+					.level(Level.DEBUG)
+					.waitFor();
 		}
 	}
 

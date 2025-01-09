@@ -37,8 +37,8 @@ import cz.xtf.core.waiting.Waiters;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Utilities that can be used when automating Git related operations, as for instance when cloning Helm Charts
- * repositories.
+ * Utilities that can be used when automating Git related operations, as for instance when cloning
+ * Helm Charts repositories.
  */
 @Slf4j
 public final class GitUtil {
@@ -57,11 +57,13 @@ public final class GitUtil {
 		return cloneRepository(target, url, null, null, branch);
 	}
 
-	public static GitProject cloneRepository(Path target, String url, String username, String password) {
+	public static GitProject cloneRepository(
+			Path target, String url, String username, String password) {
 		return cloneRepository(target, url, username, password, "master");
 	}
 
-	public static GitProject cloneRepository(Path target, String url, String username, String password, String branch) {
+	public static GitProject cloneRepository(
+			Path target, String url, String username, String password, String branch) {
 		if (Files.exists(target)) {
 			try {
 				FileUtils.deleteDirectory(target.toFile());
@@ -70,8 +72,11 @@ public final class GitUtil {
 			}
 		}
 
-		//CloneCommand cloneCommand = Git.cloneRepository().setURI(url).setDirectory(target.toFile());
-		CloneCommand cloneCommand = Git.cloneRepository().setBranch(branch).setURI(url).setDirectory(target.toFile())
+		// CloneCommand cloneCommand = Git.cloneRepository().setURI(url).setDirectory(target.toFile());
+		CloneCommand cloneCommand = Git.cloneRepository()
+				.setBranch(branch)
+				.setURI(url)
+				.setDirectory(target.toFile())
 				.setTimeout(120_000);
 
 		CredentialsProvider credentials = null;
@@ -112,7 +117,8 @@ public final class GitUtil {
 		return initRepository(target, url, null, null);
 	}
 
-	public static GitProject initRepository(Path target, String url, String username, String password) {
+	public static GitProject initRepository(
+			Path target, String url, String username, String password) {
 		InitCommand initCommand = Git.init().setDirectory(target.toFile());
 
 		CredentialsProvider credentials = null;

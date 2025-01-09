@@ -35,20 +35,21 @@ import com.google.gson.stream.JsonWriter;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Agent
- */
+/** Agent */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2022-07-18T14:39:47.341166292+02:00[Europe/Rome]")
 public class Agent {
 	public static final String SERIALIZED_NAME_NAME = "name";
+
 	@SerializedName(SERIALIZED_NAME_NAME)
 	private String name;
 
 	public static final String SERIALIZED_NAME_ADDRESS = "address";
+
 	@SerializedName(SERIALIZED_NAME_ADDRESS)
 	private String address;
 
 	public static final String SERIALIZED_NAME_STATUS = "status";
+
 	@SerializedName(SERIALIZED_NAME_STATUS)
 	private String status;
 
@@ -62,12 +63,12 @@ public class Agent {
 	}
 
 	/**
-	* Get name
-	* @return name
-	**/
+	 * Get name
+	 *
+	 * @return name
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getName() {
 		return name;
 	}
@@ -83,12 +84,12 @@ public class Agent {
 	}
 
 	/**
-	* Get address
-	* @return address
-	**/
+	 * Get address
+	 *
+	 * @return address
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getAddress() {
 		return address;
 	}
@@ -104,12 +105,12 @@ public class Agent {
 	}
 
 	/**
-	* Get status
-	* @return status
-	**/
+	 * Get status
+	 *
+	 * @return status
+	 */
 	@javax.annotation.Nullable
 	@ApiModelProperty(value = "")
-
 	public String getStatus() {
 		return status;
 	}
@@ -127,9 +128,9 @@ public class Agent {
 			return false;
 		}
 		Agent agent = (Agent) o;
-		return Objects.equals(this.name, agent.name) &&
-				Objects.equals(this.address, agent.address) &&
-				Objects.equals(this.status, agent.status);
+		return Objects.equals(this.name, agent.name)
+				&& Objects.equals(this.address, agent.address)
+				&& Objects.equals(this.status, agent.status);
 	}
 
 	@Override
@@ -149,8 +150,7 @@ public class Agent {
 	}
 
 	/**
-	 * Convert the given object to string with each line indented by 4 spaces
-	 * (except the first line).
+	 * Convert the given object to string with each line indented by 4 spaces (except the first line).
 	 */
 	private String toIndentedString(Object o) {
 		if (o == null) {
@@ -185,7 +185,8 @@ public class Agent {
 				return;
 			} else { // has required fields
 				throw new IllegalArgumentException(
-						String.format("The required field(s) %s in Agent is not found in the empty JSON string",
+						String.format(
+								"The required field(s) %s in Agent is not found in the empty JSON string",
 								Agent.openapiRequiredFields.toString()));
 			}
 		}
@@ -195,24 +196,31 @@ public class Agent {
 		for (Entry<String, JsonElement> entry : entries) {
 			if (!Agent.openapiFields.contains(entry.getKey())) {
 				throw new IllegalArgumentException(
-						String.format("The field `%s` in the JSON string is not defined in the `Agent` properties. JSON: %s",
+						String.format(
+								"The field `%s` in the JSON string is not defined in the `Agent` properties. JSON: %s",
 								entry.getKey(), jsonObj.toString()));
 			}
 		}
 		if (jsonObj.get("name") != null && !jsonObj.get("name").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `name` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `name` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("name").toString()));
 		}
-		if (jsonObj.get("address") != null && !jsonObj.get("address").isJsonNull()
+		if (jsonObj.get("address") != null
+				&& !jsonObj.get("address").isJsonNull()
 				&& !jsonObj.get("address").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `address` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `address` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("address").toString()));
 		}
-		if (jsonObj.get("status") != null && !jsonObj.get("status").isJsonNull() && !jsonObj.get("status").isJsonPrimitive()) {
+		if (jsonObj.get("status") != null
+				&& !jsonObj.get("status").isJsonNull()
+				&& !jsonObj.get("status").isJsonPrimitive()) {
 			throw new IllegalArgumentException(
-					String.format("Expected the field `status` to be a primitive type in the JSON string but got `%s`",
+					String.format(
+							"Expected the field `status` to be a primitive type in the JSON string but got `%s`",
 							jsonObj.get("status").toString()));
 		}
 	}
@@ -240,7 +248,6 @@ public class Agent {
 					validateJsonObject(jsonObj);
 					return thisAdapter.fromJsonTree(jsonObj);
 				}
-
 			}.nullSafe();
 		}
 	}
