@@ -190,3 +190,8 @@ When reporting an issue please choose the proper template and fill it with the r
 ## Contributing
 Intersmash is an open source community project.  We welcome participation and contributions.
 See [Intersmash contributing guidelines](CONTRIBUTING.md).
+
+
+
+
+eeare
